@@ -2,505 +2,852 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <title>Pi Thịnh Vượng</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&family=Poppins:wght@300;400&display=swap"
-      rel="stylesheet"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kiểm Tra Ví Pi - Công Nghệ Tương Lai</title>
     <style>
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        font-family: "Orbitron", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        line-height: 1.2;
       }
 
       body {
-        background: #0a0a0a;
-        font-family: "Exo 2", sans-serif;
-        color: #e6f0fa;
+        background: #0d0d2b;
+        background-image: linear-gradient(
+          45deg,
+          rgba(0, 255, 221, 0.1),
+          rgba(255, 0, 221, 0.1)
+        );
+        background-size: 200% 200%;
+        animation: gradientShift 15s ease infinite;
+        color: #f0f0f0;
+        min-height: 100vh;
+        padding: 12px;
         overflow-x: hidden;
-        -webkit-tap-highlight-color: transparent;
       }
 
-      #particles-js {
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
       }
 
       .container {
-        position: relative;
-        z-index: 2;
+        max-width: 600px;
         width: 100%;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: linear-gradient(
-          135deg,
-          rgba(0, 221, 235, 0.15) 0%,
-          rgba(107, 0, 255, 0.15) 100%
-        );
-        padding: 30px 20px 100px;
-      }
-
-      .header {
-        text-align: center;
-        margin: 20px 0;
-        position: relative;
-        width: 100%;
-      }
-
-      .avatar-wrapper {
-        position: relative;
-        display: inline-block;
-        margin: 0;
-      }
-
-      #avatar {
-        width: 180px;
-        height: 180px;
-        border-radius: 50%;
-        border: 4px solid;
-        border-image: linear-gradient(45deg, #00ddeb, #6b00ff) 1;
-        box-shadow: 0 0 20px #00ddeb, 0 0 30px #6b00ff;
-        animation: zoomIn 1s ease-out;
-        display: block;
         margin: 0 auto;
-        position: relative;
-        z-index: 1;
-        object-fit: cover;
-      }
-
-      .avatar-wrapper::before {
-        content: "";
-        position: absolute;
-        top: -15px;
-        left: -15px;
-        right: -15px;
-        bottom: -15px;
-        border: 2px solid;
-        border-image: linear-gradient(45deg, #00ddeb, #6b00ff, #00ddeb) 1;
-        border-radius: 50%;
-        animation: rotateHolographic 5s infinite linear;
-      }
-
-      .avatar-wrapper::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          45deg,
-          transparent,
-          rgba(0, 221, 235, 0.1),
-          transparent
-        );
-        animation: shimmer 5s infinite;
-      }
-
-      #avatar:hover {
-        box-shadow: 0 0 30px #00ddeb, 0 0 40px #6b00ff;
       }
 
       h1 {
-        font-size: 36px;
-        color: #e6f0fa;
-        background: linear-gradient(45deg, #00ddeb, #6b00ff);
-        padding: 5px 15px;
-        border: 2px solid;
-        border-image: linear-gradient(45deg, #00ddeb, #6b00ff) 1;
-        border-radius: 8px;
-        animation: scaleIn 1.2s ease-out;
-        margin: 10px 0 5px;
-        display: inline-block;
-        white-space: pre-wrap;
-      }
-
-      #name span {
-        display: inline-block;
-        opacity: 0;
-        animation: type 0.1s forwards;
-      }
-
-      .description {
-        font-size: 16px;
-        color: #ffd700;
-        font-family: "Poppins", sans-serif;
-        margin-bottom: 10px;
-        animation: fadeSlide 1.5s ease-out;
-      }
-
-      .welcome {
-        font-size: 14px;
-        color: #ffd700;
-        text-shadow: 0 0 5px #00ddeb;
-        animation: flicker 2s infinite;
-        font-family: "Poppins", sans-serif;
-        position: relative;
-        overflow: hidden;
-        margin-top: 5px;
-      }
-
-      .welcome::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, #00ddeb, transparent);
-        animation: scanLine 2s infinite;
-      }
-
-      .body {
         text-align: center;
-        width: 100%;
-        max-width: 800px;
-        padding: 40px 0;
+        font-size: 2rem;
+        font-weight: 900;
+        color: #00ffdd;
+        margin-bottom: 12px;
+        animation: glitch 2s linear infinite;
       }
 
-      .info-card {
-        background: rgba(0, 221, 235, 0.05);
-        border: 1px solid #6b00ff;
-        border-radius: 12px;
-        padding: 15px;
-        margin-bottom: 30px;
-        width: 100%;
-        animation: zoomIn 1s ease-out 0.2s backwards;
-      }
-
-      #username,
-      #wallet {
-        font-size: 16px;
-        margin: 10px 0;
-        font-family: "Poppins", sans-serif;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-      }
-
-      #username {
-        color: #6b00ff;
-      }
-
-      #wallet {
-        color: #ffea00;
-        font-size: 18px;
-        cursor: pointer;
-        padding: 5px 10px;
-        border-radius: 5px;
-        transition: all 0.3s;
-        border: 1px solid;
-        border-image: linear-gradient(45deg, #00ddeb, #6b00ff) 1;
-        animation: pulseWallet 2s infinite;
-      }
-
-      #wallet:hover {
-        background: rgba(255, 215, 0, 0.1);
-        box-shadow: 0 0 10px #ffea00;
-      }
-
-      @keyframes pulseWallet {
-        0% {
-          box-shadow: 0 0 5px #ffea00;
+      @keyframes glitch {
+        2%,
+        64% {
+          transform: translate(2px, 0) skew(0deg);
         }
-        50% {
-          box-shadow: 0 0 15px #ffea00;
+        4%,
+        60% {
+          transform: translate(-2px, 0) skew(0deg);
         }
-        100% {
-          box-shadow: 0 0 5px #ffea00;
+        62% {
+          transform: translate(0, 0) skew(5deg);
         }
       }
 
-      .wallet-icon,
-      .icon,
-      .guide-icon {
-        width: 16px;
-        height: 16px;
-        filter: drop-shadow(0 0 3px #ffd700);
-      }
-
-      .buttons {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
-        margin: 20px 0;
-      }
-
-      .buttons a {
-        position: relative;
-        width: 160px;
-        animation: fadeSlide 1s ease-out 0.4s backwards;
-      }
-
-      .buttons button {
-        background: linear-gradient(45deg, #00ddeb, #6b00ff);
-        color: #e6f0fa;
-        border: 2px solid #ffd700;
-        padding: 8px;
-        width: 100%;
-        border-radius: 8px;
-        font-size: 13px;
-        font-family: "Exo 2", sans-serif;
-        cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 0 8px #00ddeb;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-      }
-
-      .buttons button:hover {
-        background: linear-gradient(45deg, #6b00ff, #00ddeb);
-        box-shadow: 0 0 15px #00ddeb;
-        transform: scale(1.05);
-      }
-
-      .buttons button::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(
-          circle at center,
-          rgba(0, 221, 235, 0.5) 0%,
-          transparent 70%
-        );
-        opacity: 0;
-        transition: opacity 0.3s;
-      }
-
-      .buttons button:active::after {
-        opacity: 1;
-        animation: ripple 0.5s;
-      }
-
-      .buttons a:nth-child(2) button {
-        background: linear-gradient(45deg, #6b00ff, #00f7ff);
-        border-color: #e6f0fa;
-      }
-
-      .buttons a:nth-child(2) button:hover {
-        background: linear-gradient(45deg, #00f7ff, #6b00ff);
-        box-shadow: 0 0 15px #00f7ff;
-      }
-
-      .buttons a:nth-child(3) button {
-        background: linear-gradient(45deg, #00ddeb, #6b00ff);
-        border-color: #e6f0fa;
-      }
-
-      .buttons a:nth-child(3) button:hover {
-        background: linear-gradient(45deg, #6b00ff, #00ddeb);
-        box-shadow: 0 0 15px #00ddeb;
-      }
-
-      .guides {
-        margin: 40px 0;
-        width: 100%;
-        max-width: 800px;
-      }
-
-      .guide {
-        background: rgba(0, 221, 235, 0.05);
-        border: 1px solid;
-        border-image: linear-gradient(45deg, #00ddeb, #6b00ff) 1;
-        border-radius: 12px;
+      .avatar-section {
+        text-align: center;
         margin-bottom: 15px;
-        transition: all 0.3s;
-        animation: fadeSlide 1s ease-out 0.6s backwards;
       }
 
-      .guide:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 15px #00ddeb;
-      }
-
-      .guide h3 {
-        font-size: 20px;
-        color: #00ddeb;
-        text-shadow: 0 0 5px #6b00ff;
-        padding: 10px;
-        cursor: pointer;
-        animation: flicker 2s infinite;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .guide-content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.5s ease-out;
-        padding: 0 10px;
-      }
-
-      .guide-content.active {
-        max-height: 150px;
-        padding: 10px;
-      }
-
-      .guide-content p {
-        font-size: 14px;
-        color: #e6f0fa;
-        font-family: "Poppins", sans-serif;
-        margin-bottom: 10px;
-        opacity: 0;
-        transform: translateY(10px);
-        animation: fadeSlide 0.5s forwards;
-      }
-
-      .guide-content button {
-        background: linear-gradient(45deg, #00ddeb, #6b00ff);
-        color: #e6f0fa;
-        border: 2px solid #ffd700;
-        padding: 8px 16px;
+      .avatar {
+        width: 70px;
+        height: 70px;
         border-radius: 5px;
-        font-size: 14px;
-        font-family: "Exo 2", sans-serif;
-        cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 0 8px #00ddeb;
+        object-fit: cover;
+        border: 1px solid #00ffdd;
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+        transition: transform 0.3s ease;
       }
 
-      .guide-content button:hover {
-        background: linear-gradient(45deg, #6b00ff, #00ddeb);
-        box-shadow: 0 0 15px #00ddeb;
+      .avatar:hover {
         transform: scale(1.05);
       }
 
-      .footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: rgba(10, 10, 10, 0.9);
-        text-align: center;
-        padding: 5px;
-        z-index: 3;
-        box-shadow: 0 -5px 15px rgba(0, 221, 235, 0.2);
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .footer-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0;
-      }
-
-      #slogan {
-        font-size: 18px;
-        color: #ffd700;
-        font-style: italic;
-        background: linear-gradient(45deg, #00ddeb, #ffd700, #6b00ff);
+      .member-name {
+        font-size: 1.4rem;
+        font-weight: 800;
+        margin-top: 6px;
+        background: linear-gradient(45deg, #00ffdd, #ff00dd);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 5px #6b00ff;
-        font-family: "Poppins", sans-serif;
-        position: relative;
-        overflow: hidden;
       }
 
-      #slogan::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, #00ddeb, transparent);
-        animation: scanLine 2s infinite;
+      .block {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 5px;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid;
+        border-image: linear-gradient(45deg, #00ffdd, #ff00dd) 1;
+        box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+        backdrop-filter: blur(6px);
+        animation: slideIn 0.5s ease-out;
+        will-change: transform;
       }
 
-      @keyframes zoomIn {
+      @keyframes slideIn {
         from {
-          transform: scale(0.8);
           opacity: 0;
-        }
-        to {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-
-      @keyframes scaleIn {
-        from {
-          transform: scale(0.9);
-          opacity: 0;
-        }
-        to {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-
-      @keyframes fadeSlide {
-        from {
           transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .block.wallet-block {
+        border-image: linear-gradient(45deg, #00ff00, #ff00dd) 1;
+      }
+
+      .block.actions-block {
+        padding: 12px;
+      }
+
+      .block h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #00ffdd;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      .wallet-content {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid;
+        border-image: linear-gradient(45deg, #00ffdd, #ff00dd) 1;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #f0f0f0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+        word-wrap: break-word;
+        margin-bottom: 8px;
+        text-align: center;
+      }
+
+      .price-btn {
+        display: block;
+        width: 120px;
+        height: 35px;
+        margin: 8px auto 0;
+        background: linear-gradient(45deg, #00ffdd, #ff00dd);
+        border: 1px solid #00ffdd;
+        border-radius: 6px;
+        color: #ffffff;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-align: center;
+        line-height: 33px;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        cursor: default;
+        animation: fadeIn 0.5s ease;
+        position: relative;
+        transition: transform 0.3s ease;
+      }
+
+      .price-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .price-btn.error {
+        background: linear-gradient(45deg, #ff5555, #ff00dd);
+        cursor: pointer;
+      }
+
+      .price-btn.error i {
+        margin-left: 4px;
+      }
+
+      .price-btn:hover::after {
+        content: "Giá Pi từ CoinGecko";
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: #00ffdd;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        white-space: nowrap;
+      }
+
+      @keyframes fadeIn {
+        from {
           opacity: 0;
         }
         to {
-          transform: translateY(0);
           opacity: 1;
         }
+      }
+
+      .wallet-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+      }
+
+      .points-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        gap: 8px;
+        max-width: 360px;
+        margin: 0 auto 12px;
+      }
+
+      .points-card {
+        padding: 8px;
+        border: 1px solid;
+        border-image: linear-gradient(45deg, #00ffdd, #ff00dd) 1;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #f0f0f0;
+        font-size: 0.95rem;
+        font-weight: 600;
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+
+      .points-card.pi-balance {
+        box-shadow: 0 0 12px rgba(255, 0, 204, 0.5);
+      }
+
+      .points-card:hover {
+        transform: translateY(-2px);
+      }
+
+      .points-card i {
+        margin-right: 3px;
+        color: #ff00dd;
+      }
+
+      .action-content {
+        margin-bottom: 10px;
+        text-align: center;
+        padding: 10px;
+        border: 1px solid;
+        border-image: linear-gradient(45deg, #00ffdd, #ff00dd) 1;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+      }
+
+      .action-content label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #00ffdd;
+        margin-bottom: 6px;
+        display: block;
+      }
+
+      .input-group {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .input-wrapper {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        max-width: 180px;
+        width: 100%;
+      }
+
+      .action-content input {
+        width: 100%;
+        padding: 8px 30px 8px 8px;
+        border: 1px solid;
+        border-image: linear-gradient(45deg, #00ffdd, #ff00dd) 1;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.15);
+        color: #f0f0f0;
+        font-size: 0.9rem;
+        font-family: "Orbitron", sans-serif;
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+        transition: box-shadow 0.3s ease;
+      }
+
+      .action-content input:focus {
+        box-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
+        outline: none;
+      }
+
+      .action-content input.invalid {
+        animation: shake 0.3s;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-3px);
+        }
+        75% {
+          transform: translateX(3px);
+        }
+      }
+
+      .max-btn {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(45deg, #00ff00, #00ffdd);
+        border: none;
+        border-radius: 4px;
+        color: #ffffff;
+        font-size: 0.7rem;
+        padding: 3px 6px;
+        cursor: pointer;
+        box-shadow: 0 0 6px rgba(0, 255, 255, 0.3);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .input-wrapper:focus-within .max-btn {
+        opacity: 1;
+      }
+
+      .action-content .conversion-info {
+        font-size: 0.8rem;
+        color: #ff00dd;
+        margin-top: 6px;
+        display: block;
+      }
+
+      .btn {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        color: #ffffff;
+        background: linear-gradient(45deg, #00ffdd, #ff00dd);
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+        transition: all 0.3s ease;
+        min-width: 100px;
+        height: 35px;
+        will-change: transform;
+        animation: pulse 2s ease infinite;
       }
 
       @keyframes pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.1);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-
-      @keyframes pulseIcon {
-        0% {
-          transform: scale(1);
-          opacity: 1;
-        }
-        50% {
-          transform: scale(1.2);
-          opacity: 0.7;
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-
-      @keyframes flicker {
         0%,
         100% {
-          opacity: 1;
+          transform: scale(1);
         }
         50% {
-          opacity: 0.8;
+          transform: scale(1.03);
         }
       }
 
-      @keyframes rotateHolographic {
+      .btn:active {
+        transform: scale(0.95);
+        animation: none;
+      }
+
+      .btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
+        animation: none;
+      }
+
+      .btn-checkin {
+        background: linear-gradient(45deg, #ffd700, #ff4500);
+        font-size: 0.85rem;
+        min-width: 70px;
+        margin-bottom: 8px;
+        position: relative;
+      }
+
+      .btn-checkin::after {
+        content: "Nhận 10 PP + 100 Pidoge";
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: #00ffdd;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      .btn-checkin:hover::after {
+        opacity: 1;
+      }
+
+      .btn-convert {
+        background: linear-gradient(45deg, #00ff00, #00ffdd);
+      }
+
+      .btn-withdraw {
+        background: linear-gradient(45deg, #ff00dd, #00ffdd);
+      }
+
+      .earn-pi-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border: 1px solid;
+        border-image: linear-gradient(45deg, #00ffdd, #ff00dd) 1;
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+      }
+
+      .earn-pi-section h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        background: linear-gradient(45deg, #00ffdd, #ff00dd);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      .earn-pi-section .steps {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .earn-pi-section .step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.3s ease;
+      }
+
+      .earn-pi-section .step:hover {
+        transform: translateX(2px);
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+      }
+
+      .earn-pi-section .step-icon {
+        width: 25px;
+        height: 25px;
+        background: linear-gradient(45deg, #00ffdd, #ff00dd);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #ffffff;
+        box-shadow: 0 0 6px rgba(0, 255, 255, 0.5);
+      }
+
+      .earn-pi-section .step-text {
+        font-size: 0.85rem;
+        color: #f0f0f0;
+      }
+
+      .earn-pi-section .step-text strong {
+        color: #00ffdd;
+      }
+
+      .instructions {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+      }
+
+      .instructions h2 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        background: linear-gradient(45deg, #00ffdd, #ff00dd);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+      }
+
+      .instructions ol {
+        list-style: decimal;
+        padding-left: 12px;
+        font-size: 0.85rem;
+        color: #f0f0f0;
+      }
+
+      .instructions ol li {
+        margin-bottom: 6px;
+      }
+
+      .instructions a {
+        color: #00ffdd;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .instructions a:hover {
+        text-decoration: underline;
+      }
+
+      .video-carousel {
+        position: relative;
+        max-width: 100%;
+        margin: 15px 0;
+        border-radius: 5px;
+        box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .carousel-inner {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+      }
+
+      .carousel-item {
+        flex: 0 0 100%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .carousel-item.active {
+        display: flex;
+      }
+
+      .video-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid;
+        border-image: linear-gradient(45deg, #00ffdd, #ff00dd) 1;
+        border-radius: 5px;
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+      }
+
+      .video-wrapper iframe {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 5px;
+      }
+
+      .video-info h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        background: linear-gradient(45deg, #00ffdd, #ff00dd);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .video-info p {
+        font-size: 0.8rem;
+        color: #f0f0f0;
+        opacity: 0.9;
+      }
+
+      .carousel-control {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(45deg, #00ffdd, #ff00dd);
+        border: none;
+        color: #ffffff;
+        font-size: 1rem;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+      }
+
+      .carousel-control.prev {
+        left: 8px;
+      }
+      .carousel-control.next {
+        right: 8px;
+      }
+
+      .carousel-dots {
+        text-align: center;
+        margin-top: 8px;
+      }
+
+      .dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 50%;
+        margin: 0 4px;
+        cursor: pointer;
+      }
+
+      .dot.active {
+        background: #00ffdd;
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.8);
+      }
+
+      .carousel-caption {
+        text-align: center;
+        font-size: 0.9rem;
+        color: #00ffdd;
+        margin-top: 8px;
+        font-weight: 600;
+      }
+
+      .security-note {
+        background: rgba(255, 0, 0, 0.2);
+        border-radius: 5px;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(255, 0, 0, 0.4);
+        color: #ff9999;
+        font-size: 0.85rem;
+        text-align: center;
+      }
+
+      .contact {
+        text-align: center;
+        padding: 12px;
+        margin-bottom: 15px;
+      }
+
+      .contact p {
+        margin-bottom: 8px;
+        font-size: 0.85rem;
+      }
+
+      .social-footer {
+        position: fixed;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 6px 12px;
+        border-radius: 15px;
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+        backdrop-filter: blur(6px);
+      }
+
+      .social-footer a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(45deg, #00ffdd, #ff00dd);
+        border-radius: 50%;
+        color: #ffffff;
+        font-size: 1rem;
+        text-decoration: none;
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+        transition: all 0.3s ease;
+      }
+
+      .social-footer a:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
+      }
+
+      .social-footer a::after {
+        content: attr(title);
+        position: absolute;
+        top: -25px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #00ffdd;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+
+      .social-footer a:hover::after {
+        opacity: 1;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 12px;
+        right: 12px;
+        padding: 8px 15px;
+        border-radius: 5px;
+        color: #ffffff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transform: translateY(15px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast.success {
+        background: linear-gradient(45deg, #00ff00, #00ffdd);
+      }
+
+      .toast.success::before {
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+      }
+
+      .toast.error {
+        background: linear-gradient(45deg, #ff0000, #ff00dd);
+      }
+
+      .toast.error::before {
+        content: "\f00d";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+      }
+
+      .modal-content {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 5px;
+        padding: 15px;
+        max-width: 320px;
+        width: 90%;
+        text-align: center;
+        border: 1px solid;
+        border-image: linear-gradient(45deg, #00ffdd, #ff00dd) 1;
+        box-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
+      }
+
+      .modal-content h3 {
+        font-size: 1.3rem;
+        color: #00ffdd;
+        margin-bottom: 8px;
+      }
+
+      .modal-content p {
+        font-size: 0.85rem;
+        color: #f0f0f0;
+        margin-bottom: 12px;
+      }
+
+      .modal-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+      }
+
+      .modal-buttons button {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        color: #ffffff;
+      }
+
+      .modal-buttons .confirm {
+        background: linear-gradient(45deg, #00ff00, #00ffdd);
+      }
+
+      .modal-buttons .cancel {
+        background: linear-gradient(45deg, #ff0000, #ff00dd);
+      }
+
+      .modal-buttons .retry {
+        background: linear-gradient(45deg, #ffd700, #ff4500);
+      }
+
+      .loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
+      }
+
+      .spinner {
+        width: 35px;
+        height: 35px;
+        border: 3px solid #00ffdd;
+        border-top: 3px solid #ff00dd;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
         0% {
           transform: rotate(0deg);
         }
@@ -509,479 +856,869 @@
         }
       }
 
-      @keyframes shimmer {
-        0% {
-          transform: translateX(-100%);
-        }
-        100% {
-          transform: translateX(100%);
-        }
+      .confetti {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 4000;
       }
 
-      @keyframes scanLine {
-        0% {
-          transform: translateX(-100%);
-        }
-        100% {
-          transform: translateX(100%);
-        }
+      .confetti-piece {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: linear-gradient(45deg, #00ffdd, #ff00dd);
+        opacity: 0.8;
+        animation: fall 2s linear;
       }
 
-      @keyframes ripple {
+      @keyframes fall {
         0% {
+          transform: translateY(-100vh) rotate(0deg);
           opacity: 1;
-          transform: scale(0);
         }
         100% {
+          transform: translateY(100vh) rotate(720deg);
           opacity: 0;
-          transform: scale(2);
         }
       }
 
-      @keyframes type {
-        to {
-          opacity: 1;
-        }
-      }
-
-      @media (min-width: 600px) {
-        .container {
-          padding: 40px 30px 120px;
-        }
-        #avatar {
-          width: 200px;
-          height: 200px;
-        }
+      @media (max-width: 480px) {
         h1 {
-          font-size: 40px;
+          font-size: 1.6rem;
         }
-        .description {
-          font-size: 18px;
-        }
-        .welcome {
-          font-size: 16px;
-        }
-        #username,
-        #wallet {
-          font-size: 18px;
-        }
-        .buttons a {
-          width: 180px;
-        }
-        .buttons button {
-          font-size: 14px;
+        .block {
           padding: 10px;
         }
-        .guide h3 {
-          font-size: 22px;
+        .avatar {
+          width: 50px;
+          height: 50px;
         }
-        .guide-content p {
-          font-size: 15px;
+        .member-name {
+          font-size: 1.2rem;
         }
-      }
-
-      @media (max-width: 400px) {
-        .header {
-          margin: 10px 0;
+        .block h2 {
+          font-size: 1.1rem;
         }
-        .welcome {
-          font-size: 12px;
+        .points-grid {
+          grid-template-columns: 1fr;
         }
-        #avatar {
-          width: 140px;
-          height: 140px;
+        .points-card {
+          font-size: 0.85rem;
         }
-        h1 {
-          font-size: 30px;
+        .wallet-buttons {
+          flex-direction: column;
+          gap: 6px;
         }
-        .description {
-          font-size: 14px;
-        }
-        #wallet {
-          font-size: 16px;
-        }
-        .buttons a {
-          width: 140px;
-        }
-        .buttons button {
-          font-size: 12px;
+        .btn {
+          font-size: 0.85rem;
           padding: 6px;
+          height: 32px;
+          min-width: 90px;
         }
-        .footer {
-          padding: 5px;
-          height: 25px;
+        .btn-checkin {
+          min-width: 65px;
         }
-        #slogan {
-          font-size: 14px;
+        .action-content input {
+          max-width: 100%;
+        }
+        .input-group {
+          flex-direction: column;
+          align-items: center;
+        }
+        .earn-pi-section h2 {
+          font-size: 1.1rem;
+        }
+        .earn-pi-section .step-text {
+          font-size: 0.8rem;
+        }
+        .social-footer a {
+          width: 30px;
+          height: 30px;
+          font-size: 0.9rem;
+        }
+        .action-content label {
+          font-size: 0.9rem;
+        }
+        .action-content .conversion-info {
+          font-size: 0.75rem;
         }
       }
     </style>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
   </head>
   <body>
-    <div id="particles-js"></div>
     <div class="container">
-      <div class="header">
-        <div class="avatar-wrapper">
-          <img
-            id="avatar"
-            src="https://via.placeholder.com/180"
-            alt="Avatar"
-            onerror="this.src='https://via.placeholder.com/180'"
-          />
-        </div>
-        <h1 id="name"></h1>
-        <div class="description">PI LÀ TIỀN ĐIỆN TỬ PHỔ BIẾN NHẤT TOÀN CẦU</div>
-        <div class="welcome">CÙNG PI CHÚNG TA THAY ĐỔI THẾ GIỚI!</div>
+      <h1>Kiểm Tra Ví Pi</h1>
+
+      <!-- Avatar section -->
+      <div class="avatar-section">
+        <img
+          id="avatar"
+          class="avatar"
+          src="https://via.placeholder.com/100?text=Avatar"
+          alt="Avatar"
+          loading="lazy"
+        />
+        <div id="member-name" class="member-name">Chưa có thông tin</div>
       </div>
-      <div class="body">
-        <div class="info-card">
-          <p id="username">Username: Loading...</p>
-          <p id="wallet" onclick="copyWallet()">
-            <img
-              class="wallet-icon"
-              src="https://via.placeholder.com/16"
-              alt="Wallet"
-            />
-            Wallet: Loading...
-          </p>
-        </div>
-        <div class="buttons">
-          <a id="zalo-personal" href="#" target="_blank">
-            <button>
-              <img class="icon" src="https://github.com/minhpipi/pinetwork/blob/main/img/Icon-Zalo-2021.jpg?raw=true" alt="Zalo" />
-              Zalo Cá Nhân
-            </button>
-          </a>
-          <a id="zalo-group" href="#" target="_blank">
-            <button>
-              <img class="icon" src="https://github.com/minhpipi/pinetwork/blob/main/img/Icon-Zalo-2021.jpg?raw=true" />
-              Zalo Nhóm Hỗ Trợ
-            </button>
-          </a>
-          <a id="xintel" href="#" target="_blank">
-            <button>
-              <img class="icon" src="img/handphone-6baf74d1.png" alt="Xintel" />
-              Xintel
-            </button>
-          </a>
-        </div>
-        <div class="guides">
-          <div class="guide">
-            <h3 onclick="toggleGuide(this)">
-              <img class="guide-icon" src="https://github.com/pimainet/pi/blob/main/pib.png?raw=true" alt="KYC" />
-              Hướng Dẫn KYC
-            </h3>
-            <div class="guide-content">
-              <p>
-                1. Tải app Pi Network, đăng nhập tài khoản. 2. Vào phần KYC,
-                chụp CMND/hộ chiếu. 3. Xác minh qua video call (nếu cần). Hoàn
-                tất trong 5 phút!
-              </p>
-              <button
-                onclick="window.open('https://minepi.com/kyc-guide', '_blank')"
-              >
-                Tìm Hiểu Thêm
-              </button>
-            </div>
-          </div>
-          <div class="guide">
-            <h3 onclick="toggleGuide(this)">
-              <img class="guide-icon" src="https://github.com/pimainet/pi/blob/main/pib.png?raw=true" alt="Transfer" />
-              Hướng Dẫn Chuyển Pi
-            </h3>
-            <div class="guide-content">
-              <p>
-                1. Mở ví Pi Network. 2. Chọn "Transfer", nhập địa chỉ ví người
-                nhận. 3. Xác nhận giao dịch qua mã PIN. Đảm bảo kiểm tra kỹ địa
-                chỉ!
-              </p>
-              <button
-                onclick="window.open('https://minepi.com/transfer-guide', '_blank')"
-              >
-                Tìm Hiểu Thêm
-              </button>
-            </div>
-          </div>
-          <div class="guide">
-            <h3 onclick="toggleGuide(this)">
-              <img class="guide-icon" src="https://github.com/pimainet/pi/blob/main/pib.png?raw=true" alt="Trading" />
-              Hướng Dẫn Giao Dịch Pi Trên Sàn
-            </h3>
-            <div class="guide-content">
-              <p>
-                1. Đăng ký tài khoản trên sàn uy tín (VD: Binance). 2. Nạp Pi từ
-                ví vào sàn. 3. Giao dịch Pi với USDT hoặc BTC. Theo dõi giá
-                thường xuyên!
-              </p>
-              <button
-                onclick="window.open('https://minepi.com/trading-guide', '_blank')"
-              >
-                Tìm Hiểu Thêm
-              </button>
-            </div>
-          </div>
+
+      <!-- Wallet Block -->
+      <div class="block wallet-block">
+        <h2>Ví Pi của bạn</h2>
+        <div id="wallet-content" class="wallet-content">Chưa có địa chỉ ví</div>
+        <button
+          id="price-button"
+          class="price-btn"
+          aria-label="Giá Pi hiện tại"
+        >
+          Đang tải...
+        </button>
+        <div class="wallet-buttons">
+          <button
+            class="btn"
+            onclick="copyWalletAddress()"
+            aria-label="Copy địa chỉ ví"
+          >
+            Copy ví
+          </button>
+          <a
+            id="explorer-link"
+            href="#"
+            class="btn"
+            aria-label="Kiểm tra ví trên blockchain"
+            >Kiểm tra ví</a
+          >
         </div>
       </div>
-      <div class="footer">
-        <div class="footer-content">
-          <p id="slogan">PI NETWORK-ĐỊNH HÌNH TƯƠNG LAI TÀI CHÍNH THẾ GIỚI</p>
+
+      <!-- Actions Block -->
+      <div class="block actions-block">
+        <h2>Hoạt động</h2>
+        <div class="points-grid">
+          <div class="points-card">
+            <i class="fas fa-coins"></i>Pidoge:
+            <span id="pidoge-balance">0</span>
+          </div>
+          <div class="points-card">
+            <i class="fas fa-star"></i>PP: <span id="pp-balance">0</span>
+          </div>
+          <div class="points-card pi-balance">
+            <i class="fab fa-pi"></i>Pi: <span id="pi-balance">0</span>
+          </div>
+        </div>
+        <div class="action-content" id="convert-section">
+          <button
+            class="btn btn-checkin"
+            onclick="checkIn()"
+            aria-label="Điểm danh hàng ngày"
+          >
+            Điểm danh
+          </button>
+          <label for="convert-amount">Điểm danh & Chuyển PP sang Pi</label>
+          <div class="input-group">
+            <div class="input-wrapper">
+              <input
+                type="number"
+                id="convert-amount"
+                min="5000"
+                placeholder="Nhập số PP"
+                aria-label="Số PP muốn chuyển"
+                aria-describedby="conversion-info"
+              />
+              <button
+                class="max-btn"
+                onclick="setMaxPP()"
+                aria-label="Chọn số PP tối đa"
+              >
+                Max
+              </button>
+            </div>
+            <button
+              class="btn btn-convert"
+              onclick="showConvertModal()"
+              aria-label="Chuyển PP sang Pi"
+            >
+              Chuyển PP sang Pi
+            </button>
+          </div>
+          <div id="conversion-info" class="conversion-info">
+            Tối thiểu: 5000 PP
+          </div>
+        </div>
+        <div class="action-content" id="withdraw-section">
+          <label for="withdraw-amount">Rút Pi</label>
+          <div class="input-group">
+            <div class="input-wrapper">
+              <input
+                type="number"
+                id="withdraw-amount"
+                min="1"
+                step="0.01"
+                placeholder="Nhập số Pi (Tối thiểu: 1 Pi)"
+                aria-label="Số Pi muốn rút"
+              />
+            </div>
+            <button
+              class="btn btn-withdraw"
+              onclick="showWithdrawModal()"
+              aria-label="Rút Pi"
+            >
+              Rút Pi
+            </button>
+          </div>
         </div>
       </div>
+
+      <!-- Earn Pi section -->
+      <div class="earn-pi-section">
+        <h2>Kiếm Pi Cùng Thẻ Thông Minh Pi NFC</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-icon">1</div>
+            <div class="step-text">
+              Quét <strong>thẻ Pi NFC</strong> bằng điện thoại để truy cập ví cá
+              nhân.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon">2</div>
+            <div class="step-text">
+              Nhấn "<strong>Điểm danh</strong>" mỗi ngày để nhận
+              <strong>10 PP</strong> và <strong>100 Pidoge</strong>.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon">3</div>
+            <div class="step-text">
+              Chuyển <strong>PP</strong> thành <strong>Pi</strong> khi đủ số dư
+              tối thiểu.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon">4</div>
+            <div class="step-text">
+              Rút <strong>Pi</strong> về ví của bạn, được xử lý nhanh chóng!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instructions -->
+      <div class="instructions">
+        <h2>Nguyên tắc bảo mật để không bị mất cắp</h2>
+        <ol>
+          <li>
+            Hiểu biết về các rủi ro tiềm ẩn thực sự, nắm rõ các mẹo để kiểm tra
+            tình trạng của điện thoại.
+          </li>
+          <li>
+            Không lưu cụm mật khẩu trên điện thoại, không chụp hình...hãy ghi nó
+            ra giấy.
+          </li>
+          <li>Khi có trang web yêu cầu nhập ví thì nhất quyết không nhập.</li>
+          <li>Cảnh giác với các video hướng dẫn nhận thưởng, 100% lừa đảo.</li>
+          <li>
+            Nếu phát hiện vấn đề, liên hệ chúng tôi qua thông tin bên dưới.
+          </li>
+        </ol>
+      </div>
+
+      <!-- Video Carousel -->
+      <div class="video-carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="video-wrapper">
+              <iframe
+                src="https://www.youtube.com/embed/2nrUeR4Cl2c?mute=1&autoplay=1"
+                title="Hướng dẫn tăng tốc khai thác Pi"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+              ></iframe>
+              <div class="video-info">
+                <h3>Hướng dẫn tăng tốc khai thác Pi</h3>
+                <p>Tối ưu hóa tốc độ đào Pi của bạn dễ dàng!</p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="video-wrapper">
+              <iframe
+                src="https://www.youtube.com/embed/example_security?mute=1&autoplay=1"
+                title="Hướng dẫn bảo mật ví Pi"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+              ></iframe>
+              <div class="video-info">
+                <h3>Hướng dẫn bảo mật ví Pi</h3>
+                <p>Bảo vệ ví Pi của bạn khỏi các rủi ro!</p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="video-wrapper">
+              <iframe
+                src="https://www.youtube.com/embed/example_usage?mute=1&autoplay=1"
+                title="Hướng dẫn sử dụng ví Pi"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+              ></iframe>
+              <div class="video-info">
+                <h3>Hướng dẫn sử dụng ví Pi</h3>
+                <p>Quản lý và giao dịch với ví Pi hiệu quả!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          class="carousel-control prev"
+          onclick="moveSlide(-1)"
+          aria-label="Video trước"
+        >
+          ❮
+        </button>
+        <button
+          class="carousel-control next"
+          onclick="moveSlide(1)"
+          aria-label="Video tiếp theo"
+        >
+          ❯
+        </button>
+        <div class="carousel-dots">
+          <span
+            class="dot active"
+            onclick="currentSlide(0)"
+            aria-label="Video 1"
+          ></span>
+          <span
+            class="dot"
+            onclick="currentSlide(1)"
+            aria-label="Video 2"
+          ></span>
+          <span
+            class="dot"
+            onclick="currentSlide(2)"
+            aria-label="Video 3"
+          ></span>
+        </div>
+        <div class="carousel-caption">Trượt để xem video hướng dẫn!</div>
+      </div>
+
+      <!-- Security note -->
+      <div class="security-note">
+        <strong>Cảnh báo:</strong> Không chia sẻ khóa bí mật (private key) hoặc
+        cụm từ khôi phục của ví với bất kỳ ai. Chúng tôi không bao giờ yêu cầu
+        thông tin này.
+      </div>
+
+      <!-- Contact -->
+      <div class="contact">
+        <p>Có vấn đề? Liên hệ chúng tôi:</p>
+        <p>
+          <a href="https://zalo.me/g/qardra541">Zalo nhóm hỗ trợ</a> |
+          <a href="tel:+84983197621">+84983197621</a>
+        </p>
+      </div>
+
+      <!-- Social Footer -->
+      <div class="social-footer">
+        <a
+          href="https://x.com/your_profile"
+          target="_blank"
+          title="Follow us on X"
+          ><i class="fab fa-x-twitter"></i
+        ></a>
+        <a
+          href="https://t.me/your_channel"
+          target="_blank"
+          title="Join our Telegram"
+          ><i class="fab fa-telegram-plane"></i
+        ></a>
+      </div>
+
+      <!-- Toast Notification -->
+      <div id="toast" class="toast"></div>
+
+      <!-- Modal -->
+      <div id="modal" class="modal">
+        <div class="modal-content">
+          <h3>Xác nhận hành động</h3>
+          <p id="modal-message"></p>
+          <div class="modal-buttons">
+            <button class="confirm" onclick="confirmModal()">Xác nhận</button>
+            <button class="cancel" onclick="closeModal()">Hủy</button>
+            <button class="retry" onclick="retryAction()" style="display: none">
+              Thử lại
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Confetti -->
+      <div id="confetti" class="confetti"></div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script>
-      let particlesConfig = {
-        particles: {
-          number: { value: 60, density: { enable: true, value_area: 800 } },
-          color: { value: ["#00DDEB", "#6B00FF", "#00F7FF"] },
-          shape: { type: "circle" },
-          opacity: { value: 0.5, random: true },
-          size: { value: 3, random: true },
-          line_linked: {
-            enable: true,
-            distance: 150,
-            color: "#6B00FF",
-            opacity: 0.4,
-            width: 1.5,
-          },
-          move: { enable: true, speed: 2, direction: "none", random: true },
+      const memberData = {
+        "001": {
+          name: "HOÀNG VĂN MINH",
+          avatar: "https://bom.so/gmB6v2",
+          wallet_address:
+            "GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
         },
-        interactivity: {
-          detect_on: "canvas",
-          events: {
-            onhover: { enable: true, mode: "repulse" },
-            onclick: { enable: true, mode: "push" },
-          },
-          modes: { repulse: { distance: 100 }, push: { particles_nb: 4 } },
-        },
-        retina_detect: true,
-      };
-      particlesJS("particles-js", particlesConfig);
-
-      window.addEventListener("scroll", () => {
-        const scrollY = window.scrollY;
-        particlesConfig.particles.move.speed = 1.5 + scrollY * 0.003;
-        particlesJS("particles-js", particlesConfig);
-      });
-
-      let memberId = "member001";
-      if (window.URLSearchParams) {
-        const urlParams = new URLSearchParams(window.location.search);
-        memberId = urlParams.get("id")?.toLowerCase() || "member001";
-      }
-
-      const members = {
-        member001: {
-          name: "PHẠM THỊ XUÂN",
-          username: "phamthixuan79",
-          wallet: "GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
-          zaloPersonal: "http://zaloapp.com/qr/p/fwubdzur20yc",
-          zaloGroup: "https://zalo.me/g/qardra541",
-          xintel: "https://dapp.xintel.co/register?sponsor=5791486",
-          avatar:
-            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/333513902_1932195023807300_1163851942859129592_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEHUbUzai7uybMKKCX41vePUHHOaW9qRuVQcc5pb2pG5TMcLbXM7749XtjmZxexAOiueFtBjmWgkEO3QyI37KQg&_nc_ohc=lH3McysU4aoQ7kNvwGfvN8R&_nc_oc=AdkwIF8CjfKrcRQehY1YEX-4uW7SwDKKLckM0d3txT13U20SquRj7-igGkubpy4JZM_iTGyaMxWWZYkAfutJjSKR&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=G9m3bscMHqlpSJnqOk_DJg&oh=00_AfEEectXgQccCRTxRZ2Bau3F5V8vH0eurHMVJnmWLGKLEw&oe=6808C859",
-          joined: "",
-        },
-        member002: {
+        "002": {
           name: "LÊ VĂN HOẰNG",
-          username: "levanhoang1958",
-          wallet: "GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
-          zaloPersonal: "https://zaloapp.com/qr/p/p7tm8py4zmdq",
-          zaloGroup: "https://zalo.me/g/qardra541",
-          xintel: "https://xintravel.app.link/RcmKVPOnARb",
-          avatar: "https://github.com/minhpipi/pinetwork/blob/main/img/pifounders.jpg?raw=true",
-          joined: "",
+          avatar:
+            "https://cdn-ilcbnhb.nitrocdn.com/eyWebYtfntWmnihDSZRZvIqipddxdlOp/assets/images/optimized/rev-0a2b4a3/minepi.com/wp-content/uploads/2022/06/b7-1536x864.jpg",
+          wallet_address:
+            "GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
         },
-        member003: {
-          name: "Tên Thành Viên 3",
-          username: "Pioneer_3",
-          wallet: "pi1xyz0003",
-          zaloPersonal: "https://zalo.me/placeholder3",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2023",
+        "003": {
+          name: "PHẠM THỊ XUÂN",
+          avatar:
+            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/333513902_1932195023807300_1163851942859129592_n.jpg",
+          wallet_address:
+            "GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
         },
-        member004: {
-          name: "Tên Thành Viên 4",
-          username: "Pioneer_4",
-          wallet: "pi1xyz0004",
-          zaloPersonal: "https://zalo.me/placeholder4",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2024",
+        "004": {
+          name: "LÊ THỊ HƯƠNG",
+          avatar:
+            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/491577955_1189938295959905_8489318223622425228_n.jpg",
+          wallet_address:
+            "GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
         },
-        member005: {
-          name: "Tên Thành Viên 5",
-          username: "Pioneer_5",
-          wallet: "pi1xyz0005",
-          zaloPersonal: "https://zalo.me/placeholder5",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2023",
+        "005": {
+          name: "LÊ TRỌNG KHOA",
+          avatar:
+            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/493192748_1733657324175687_1257877052875128746_n.jpg",
+          wallet_address:
+            "GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
         },
-        member006: {
-          name: "Tên Thành Viên 6",
-          username: "Pioneer_6",
-          wallet: "pi1xyz0006",
-          zaloPersonal: "https://zalo.me/placeholder6",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2024",
+        "006": {
+          name: "HOÀNG VĂN TRỤ",
+          avatar:
+            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/493108752_1733753667499386_17622212115165894_n.jpg",
+          wallet_address:
+            "GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
         },
-        member007: {
-          name: "Tên Thành Viên 7",
-          username: "Pioneer_7",
-          wallet: "pi1xyz0007",
-          zaloPersonal: "https://zalo.me/placeholder7",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2023",
+        "007": {
+          name: "MINH TRANG",
+          avatar:
+            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/459020914_2207803129648889_9083612727790770567_n.jpg",
+          wallet_address:
+            "GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
         },
-        member008: {
-          name: "Tên Thành Viên 8",
-          username: "Pioneer_8",
-          wallet: "pi1xyz0008",
-          zaloPersonal: "https://zalo.me/placeholder8",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2024",
-        },
-        member009: {
-          name: "Tên Thành Viên 9",
-          username: "Pioneer_9",
-          wallet: "pi1xyz0009",
-          zaloPersonal: "https://zalo.me/placeholder9",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2023",
-        },
-        member010: {
-          name: "Tên Thành Viên 10",
-          username: "Pioneer_10",
-          wallet: "pi1xyz0010",
-          zaloPersonal: "https://zalo.me/placeholder10",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2024",
-        },
-        member011: {
-          name: "Tên Thành Viên 11",
-          username: "Pioneer_11",
-          wallet: "pi1xyz0011",
-          zaloPersonal: "https://zalo.me/placeholder11",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2023",
-        },
-        member012: {
-          name: "Tên Thành Viên 12",
-          username: "Pioneer_12",
-          wallet: "pi1xyz0012",
-          zaloPersonal: "https://zalo.me/placeholder12",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2024",
-        },
-        member013: {
-          name: "Tên Thành Viên 13",
-          username: "Pioneer_13",
-          wallet: "pi1xyz0013",
-          zaloPersonal: "https://zalo.me/placeholder13",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2023",
-        },
-        member014: {
-          name: "Tên Thành Viên 14",
-          username: "Pioneer_14",
-          wallet: "pi1xyz0014",
-          zaloPersonal: "https://zalo.me/placeholder14",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2024",
-        },
-        member015: {
-          name: "Tên Thành Viên 15",
-          username: "Pioneer_15",
-          wallet: "pi1xyz0015",
-          zaloPersonal: "https://zalo.me/placeholder15",
-          zaloGroup: "https://zalo.me/g/supportgroup",
-          xintel: "https://dapp.xintel.co",
-          avatar: "https://via.placeholder.com/180",
-          joined: "2023",
+        "008": {
+          name: "LÊ THỊ HÀ",
+          avatar:
+            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/491397391_122228848976217325_5812334186522958901_n.jpg",
+          wallet_address:
+            "GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
         },
       };
 
-      const member = members[memberId] || {
-        name: "Unknown",
-        username: "N/A",
-        wallet: "N/A",
-        zaloPersonal: "https://zalo.me",
-        zaloGroup: "https://zalo.me",
-        xintel: "https://dapp.xintel.co",
-        avatar: "https://via.placeholder.com/180",
-        joined: "N/A",
-      };
+      const urlParams = new URLSearchParams(window.location.search);
+      const tagId = urlParams.get("tag_id");
+      const API_BASE_URL = "YOUR_BACKEND_URL";
 
-      const nameElement = document.getElementById("name");
-      if (member.name && member.name.trim() !== "") {
-        const words = member.name.split(" ");
-        let charIndex = 0;
-        const html = words
-          .map((word) => {
-            const chars = word
-              .split("")
-              .map((char, i) => {
-                const delay = (charIndex + i) * 0.1;
-                return `<span style="animation-delay: ${delay}s">${char}</span>`;
-              })
-              .join("");
-            charIndex += word.length + 1;
-            return chars;
-          })
-          .join(" ");
-        nameElement.innerHTML = html;
-      } else {
-        nameElement.textContent = "Tên không khả dụng";
-        console.error("Lỗi: Không tìm thấy tên cho memberId:", memberId);
+      let ppToPiRate = 100;
+      let ppBalance = 0;
+      let modalCallback = null;
+      let retryCallback = null;
+
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+        setTimeout(() => {
+          toast.className = "toast";
+        }, 3000);
       }
 
-      document.getElementById("avatar").src = member.avatar;
-      document.getElementById(
-        "username"
-      ).textContent = `Username: ${member.username}`;
-      document.getElementById(
-        "wallet"
-      ).textContent = `Wallet: ${member.wallet}`;
-      document.getElementById("zalo-personal").href = member.zaloPersonal;
-      document.getElementById("zalo-group").href = member.zaloGroup;
-      document.getElementById("xintel").href = member.xintel;
-      document.querySelector(
-        ".description"
-      ).textContent = `CÙNG PI CHÚNG TA THAY ĐỔI THẾ GIỚI! ${member.joined}`;
+      function showModal(message, callback, isRetry = false, retryFn = null) {
+        document.getElementById("modal-message").textContent = message;
+        document.getElementById("modal").style.display = "flex";
+        modalCallback = callback;
+        retryCallback = retryFn;
+        document.querySelector(".modal-buttons .retry").style.display = isRetry
+          ? "block"
+          : "none";
+      }
 
-      function copyWallet() {
-        navigator.clipboard.writeText(member.wallet).then(() => {
-          alert("Đã sao chép địa chỉ ví!");
+      function closeModal() {
+        document.getElementById("modal").style.display = "none";
+        modalCallback = null;
+        retryCallback = null;
+      }
+
+      function confirmModal() {
+        if (modalCallback) modalCallback();
+        closeModal();
+      }
+
+      function retryAction() {
+        if (retryCallback) retryCallback();
+        closeModal();
+      }
+
+      function showLoading() {
+        document.getElementById("loading").style.display = "flex";
+      }
+
+      function hideLoading() {
+        document.getElementById("loading").style.display = "none";
+      }
+
+      function showConfetti() {
+        const confettiContainer = document.getElementById("confetti");
+        for (let i = 0; i < 50; i++) {
+          const piece = document.createElement("div");
+          piece.className = "confetti-piece";
+          piece.style.left = `${Math.random() * 100}%`;
+          piece.style.animationDelay = `${Math.random() * 2}s`;
+          confettiContainer.appendChild(piece);
+        }
+        setTimeout(() => {
+          confettiContainer.innerHTML = "";
+        }, 3000);
+      }
+
+      async function fetchConfig() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/config`);
+          const data = await response.json();
+          ppToPiRate = data.pp_to_pi_rate;
+          updateConversionInfo();
+        } catch (error) {
+          showToast("Lỗi tải tỷ lệ đổi", "error");
+        }
+      }
+
+      function updateConversionInfo() {
+        const ppAmount = document.getElementById("convert-amount").value;
+        const piAmount = ppAmount ? (ppAmount / ppToPiRate).toFixed(2) : 0;
+        document.getElementById("conversion-info").textContent = ppAmount
+          ? `Tỷ lệ đổi: ${ppAmount} PP = ${piAmount} Pi`
+          : `Tối thiểu: 5000 PP (${5000 / ppToPiRate} Pi)`;
+      }
+
+      function setMaxPP() {
+        document.getElementById("convert-amount").value = ppBalance;
+        updateConversionInfo();
+      }
+
+      async function fetchPiPrice() {
+        const cacheKey = "pi_price";
+        const cacheTimeKey = "pi_price_time";
+        const cacheDuration = 5 * 60 * 1000;
+        const cachedPrice = localStorage.getItem(cacheKey);
+        const cachedTime = localStorage.getItem(cacheTimeKey);
+        const now = Date.now();
+
+        if (cachedPrice && cachedTime && now - cachedTime < cacheDuration) {
+          updatePriceDisplay(cachedPrice);
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            "https://api.coingecko.com/api/v3/simple/price?ids=pi-network&vs_currencies=usd"
+          );
+          const data = await response.json();
+          const price = data["pi-network"]?.usd || "N/A";
+          if (price !== "N/A") {
+            localStorage.setItem(cacheKey, price);
+            localStorage.setItem(cacheTimeKey, now);
+            updatePriceDisplay(price);
+          } else {
+            updatePriceDisplay(null, true);
+          }
+        } catch (error) {
+          updatePriceDisplay(null, true);
+        }
+      }
+
+      function updatePriceDisplay(price, isError = false) {
+        const priceButton = document.getElementById("price-button");
+        if (isError) {
+          priceButton.innerHTML = `Lỗi tải giá <i class="fas fa-redo"></i>`;
+          priceButton.className = "price-btn error";
+          priceButton.onclick = fetchPiPrice;
+        } else {
+          priceButton.textContent = `Giá Pi: $${price.toFixed(2)}`;
+          priceButton.className = "price-btn";
+          priceButton.onclick = null;
+        }
+      }
+
+      async function fetchUserData() {
+        if (!tagId) {
+          showToast("Không tìm thấy thông tin", "error");
+          updateUIWithError();
+          return;
+        }
+        try {
+          showLoading();
+          const response = await fetch(`${API_BASE_URL}/api/user/${tagId}`);
+          const user = await response.json();
+          if (user.error) {
+            showToast(user.error, "error");
+            updateUIWithError();
+            return;
+          }
+          ppBalance = user.pp_balance;
+          document.getElementById("avatar").src =
+            memberData[tagId]?.avatar ||
+            "https://via.placeholder.com/100?text=Avatar";
+          document.getElementById("member-name").textContent = user.name;
+          document.getElementById("wallet-content").textContent =
+            user.wallet_address;
+          animateBalance("pidoge-balance", user.pidoge_balance);
+          animateBalance("pp-balance", user.pp_balance);
+          animateBalance("pi-balance", user.pi_balance.toFixed(2));
+          document.getElementById("explorer-link").href =
+            memberData[tagId]?.explorer_link || "#";
+        } catch (error) {
+          showToast("Lỗi tải dữ liệu", "error");
+          updateUIWithError();
+        } finally {
+          hideLoading();
+        }
+      }
+
+      function animateBalance(elementId, value) {
+        const element = document.getElementById(elementId);
+        element.style.opacity = 0;
+        element.style.transform = "translateY(8px)";
+        element.textContent = value;
+        setTimeout(() => {
+          element.style.opacity = 1;
+          element.style.transform = "translateY(0)";
+        }, 100);
+        if (elementId === "pi-balance") {
+          const piCard = element.closest(".points-card");
+          piCard.classList.add("pi-balance");
+          setTimeout(() => {
+            piCard.classList.remove("pi-balance");
+          }, 2000);
+        }
+      }
+
+      function updateUIWithError() {
+        document.getElementById("member-name").textContent =
+          "Không tìm thấy thông tin";
+        document.getElementById("pidoge-balance").textContent = "0";
+        document.getElementById("pp-balance").textContent = "0";
+        document.getElementById("pi-balance").textContent = "0";
+        document.getElementById("wallet-content").textContent =
+          "Không tìm thấy ví";
+        document.getElementById(
+          "price-button"
+        ).innerHTML = `Lỗi tải giá <i class="fas fa-redo"></i>`;
+        document.getElementById("price-button").className = "price-btn error";
+        document.querySelector(".btn-checkin").disabled = true;
+      }
+
+      async function checkIn() {
+        try {
+          showLoading();
+          const response = await fetch(`${API_BASE_URL}/api/checkin/${tagId}`, {
+            method: "POST",
+          });
+          const data = await response.json();
+          if (data.error) {
+            showToast(data.error, "error");
+            return;
+          }
+          showToast(
+            `Điểm danh thành công! Nhận ${data.pp_added} PP và ${data.pidoge_added} Pidoge`,
+            "success"
+          );
+          showConfetti();
+          document.querySelector(".btn-checkin").disabled = true;
+          document.querySelector(".btn-checkin").textContent =
+            "Đã điểm danh hôm nay";
+          fetchUserData();
+        } catch (error) {
+          showToast("Lỗi khi điểm danh", "error");
+          showModal("Lỗi kết nối. Thử lại?", null, true, checkIn);
+        } finally {
+          hideLoading();
+        }
+      }
+
+      async function checkCheckinStatus() {
+        if (!tagId) return;
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/checkin/${tagId}`, {
+            method: "POST",
+          });
+          const data = await response.json();
+          if (data.error && data.error.includes("Already checked in")) {
+            document.querySelector(".btn-checkin").disabled = true;
+            document.querySelector(".btn-checkin").textContent =
+              "Đã điểm danh hôm nay";
+          }
+        } catch (error) {
+          console.error("Error checking check-in status:", error);
+        }
+      }
+
+      function showConvertModal() {
+        const ppAmount = document.getElementById("convert-amount").value;
+        if (!ppAmount || ppAmount < 5000) {
+          showToast("Vui lòng nhập số PP hợp lệ (tối thiểu 5000 PP)", "error");
+          const input = document.getElementById("convert-amount");
+          input.classList.add("invalid");
+          setTimeout(() => input.classList.remove("invalid"), 300);
+          return;
+        }
+        const piAmount = (ppAmount / ppToPiRate).toFixed(2);
+        showModal(
+          `Bạn muốn chuyển ${ppAmount} PP thành ${piAmount} Pi?`,
+          async () => {
+            try {
+              showLoading();
+              const response = await fetch(
+                `${API_BASE_URL}/api/convert/${tagId}`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ pp_amount: parseInt(ppAmount) }),
+                }
+              );
+              const data = await response.json();
+              if (data.error) {
+                showToast(data.error, "error");
+                return;
+              }
+              showToast(
+                `Chuyển ${ppAmount} PP thành ${data.pi_added.toFixed(
+                  2
+                )} Pi thành công`,
+                "success"
+              );
+              document.getElementById("convert-amount").value = "";
+              updateConversionInfo();
+              fetchUserData();
+            } catch (error) {
+              showToast("Lỗi khi chuyển PP", "error");
+              showModal("Lỗi kết nối. Thử lại?", null, true, showConvertModal);
+            } finally {
+              hideLoading();
+            }
+          }
+        );
+      }
+
+      function showWithdrawModal() {
+        const piAmount = document.getElementById("withdraw-amount").value;
+        if (!piAmount || piAmount < 1) {
+          showToast("Vui lòng nhập số Pi hợp lệ (tối thiểu 1 Pi)", "error");
+          const input = document.getElementById("withdraw-amount");
+          input.classList.add("invalid");
+          setTimeout(() => input.classList.remove("invalid"), 300);
+          return;
+        }
+        showModal(`Bạn muốn rút ${piAmount} Pi về ví?`, async () => {
+          try {
+            showLoading();
+            const response = await fetch(
+              `${API_BASE_URL}/api/withdraw/${tagId}`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ pi_amount: parseFloat(piAmount) }),
+              }
+            );
+            const data = await response.json();
+            if (data.error) {
+              showToast(data.error, "error");
+              return;
+            }
+            showToast(`Yêu cầu rút ${piAmount} Pi đã được gửi`, "success");
+            document.getElementById("withdraw-amount").value = "";
+            fetchUserData();
+          } catch (error) {
+            showToast("Lỗi khi gửi yêu cầu rút", "error");
+            showModal("Lỗi kết nối. Thử lại?", null, true, showWithdrawModal);
+          } finally {
+            hideLoading();
+          }
         });
       }
 
-      function toggleGuide(element) {
-        const content = element.nextElementSibling;
-        content.classList.toggle("active");
+      function copyWalletAddress() {
+        const wallet = document.getElementById("wallet-content").textContent;
+        navigator.clipboard.writeText(wallet.trim()).then(() => {
+          showToast("Đã copy địa chỉ ví!", "success");
+        });
       }
+
+      let slideIndex = 0;
+      function moveSlide(n) {
+        const slides = document.getElementsByClassName("carousel-item");
+        const dots = document.getElementsByClassName("dot");
+        slideIndex += n;
+        if (slideIndex >= slides.length) slideIndex = 0;
+        if (slideIndex < 0) slideIndex = slides.length - 1;
+        for (let i = 0; i < slides.length; i++) {
+          slides[i].classList.remove("active");
+          dots[i].classList.remove("active");
+        }
+        slides[slideIndex].classList.add("active");
+        dots[slideIndex].classList.add("active");
+      }
+
+      function currentSlide(n) {
+        slideIndex = n;
+        moveSlide(0);
+      }
+
+      document
+        .getElementById("convert-amount")
+        .addEventListener("input", updateConversionInfo);
+
+      fetchConfig();
+      fetchUserData();
+      fetchPiPrice();
+      checkCheckinStatus();
     </script>
   </body>
 </html>
