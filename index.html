@@ -6,6 +6,8 @@
     <title>Ví Pi - Đầy đủ</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- TradingView Widget Script -->
+    <script src="https://s3.tradingview.com/tv.js"></script>
     <style>
       body {
         -webkit-tap-highlight-color: transparent;
@@ -25,6 +27,13 @@
         word-wrap: break-word;
         overflow-wrap: break-word;
         white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* Giới hạn 2 dòng */
+        -webkit-box-orient: vertical;
+        font-size: 0.75rem; /* Giảm kích thước font */
+        max-width: 100%; /* Đảm bảo không vượt quá khung */
       }
       #avatar {
         object-fit: cover;
@@ -40,19 +49,9 @@
       #editModal.show {
         display: flex;
       }
-      .chart-container {
-        position: relative;
+      #tradingview_chart {
         width: 100%;
-        height: 0;
-        padding-top: 56.25%; /* Tỷ lệ 16:9 */
-      }
-      .chart-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: none;
+        height: 300px; /* Tăng chiều cao để biểu đồ hiển thị rõ hơn */
       }
     </style>
   </head>
@@ -100,19 +99,10 @@
         </div>
       </div>
 
-      <!-- Chart Section (TradingView Embed) -->
+      <!-- Chart Section (TradingView Widget) -->
       <div class="bg-white shadow-xl rounded-2xl p-6 mb-6">
         <h3 class="text-lg font-bold mb-4">Giá Pi (USD)</h3>
-        <div class="chart-container">
-          <!-- Thay mã iframe này bằng mã nhúng chính thức từ TradingView -->
-          <iframe
-            src="https://www.tradingview.com/chart/?symbol=OKX%3APIUSDT"
-            title="Biểu đồ giá PI/USDT"
-            frameborder="0"
-            allowtransparency="true"
-            allowfullscreen
-          ></iframe>
-        </div>
+        <div id="tradingview_chart"></div>
       </div>
 
       <!-- Safety Check Section -->
@@ -612,6 +602,31 @@
             `;
         document.body.appendChild(modal);
       }
+
+      // Khởi tạo TradingView Widget
+      window.onload = function () {
+        new TradingView.widget({
+          container_id: "tradingview_chart",
+          width: "100%",
+          height: "100%",
+          symbol: "OKX:PIUSDT",
+          interval: "D", // Khoảng thời gian: ngày
+          timezone: "Etc/UTC",
+          theme: "light",
+          style: "1", // Kiểu biểu đồ: nến
+          locale: "en",
+          toolbar_bg: "#f1f3f6",
+          enable_publishing: false,
+          allow_symbol_change: true,
+          details: true,
+          hotlist: true,
+          calendar: true,
+          studies: ["Volume@tv-basicstudies"],
+          show_popup_button: true,
+          popup_width: "1000",
+          popup_height: "650",
+        });
+      };
     </script>
   </body>
 </html>
