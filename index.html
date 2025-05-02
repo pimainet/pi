@@ -51,7 +51,8 @@
       }
       #tradingview_chart {
         width: 100%;
-        height: 600px; /* Tăng chiều cao lên 600px để dễ nhìn hơn cho người lớn tuổi */
+        height: 450px !important; /* Enforce 450px height */
+        overflow: hidden; /* Prevent overflow issues */
       }
     </style>
   </head>
@@ -148,7 +149,7 @@
               Điểm danh
             </button>
             <div>
-              <p id="ppBalance" class="text-sm text-gray-600">0 PP</p>
+              <p id="ppBalance" class="text-sm center">0 PP</p>
               <p id="pidogeBalance" class="text-sm text-gray-600">0 Pidoge</p>
             </div>
           </div>
@@ -608,7 +609,7 @@
         new TradingView.widget({
           container_id: "tradingview_chart",
           width: "100%",
-          height: "100%",
+          height: 450, // Explicitly set to 450px
           symbol: "OKX:PIUSDT",
           interval: "D", // Khoảng thời gian: ngày
           timezone: "Etc/UTC",
