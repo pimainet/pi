@@ -26,14 +26,14 @@
       #walletAddress {
         word-wrap: break-word;
         overflow-wrap: break-word;
-        word-break: break-all; /* Ép xuống dòng tại bất kỳ ký tự nào */
+        word-break: break-all;
         white-space: normal;
-        font-size: 0.75rem; /* Giảm kích thước font */
-        max-width: 100%; /* Đảm bảo không vượt quá khung */
+        font-size: 0.75rem;
+        max-width: 100%;
       }
       .wallet-container {
-        max-width: 100%; /* Giới hạn chiều rộng của khung chứa */
-        overflow: hidden; /* Ẩn phần tràn ra ngoài */
+        max-width: 100%;
+        overflow: hidden;
       }
       #avatar {
         object-fit: cover;
@@ -51,7 +51,7 @@
       }
       #tradingview_chart {
         width: 100%;
-        height: 300px; /* Tăng chiều cao để biểu đồ hiển thị rõ hơn */
+        height: 600px; /* Tăng chiều cao lên 600px để dễ nhìn hơn cho người lớn tuổi */
       }
     </style>
   </head>
@@ -612,19 +612,25 @@
           symbol: "OKX:PIUSDT",
           interval: "D", // Khoảng thời gian: ngày
           timezone: "Etc/UTC",
-          theme: "light",
+          theme: "dark", // Theme tối để dễ nhìn
           style: "1", // Kiểu biểu đồ: nến
           locale: "en",
-          toolbar_bg: "#f1f3f6",
+          toolbar_bg: "#1e222d", // Màu nền toolbar tối
           enable_publishing: false,
           allow_symbol_change: true,
           details: true,
           hotlist: true,
           calendar: true,
-          studies: ["Volume@tv-basicstudies"],
+          studies: [
+            "Volume@tv-basicstudies",
+            "RSI@tv-basicstudies", // Chỉ báo RSI để hỗ trợ phân tích
+          ],
           show_popup_button: true,
           popup_width: "1000",
           popup_height: "650",
+          grid: {
+            color: "#444", // Màu lưới tối, dễ nhìn
+          },
         });
       };
     </script>
