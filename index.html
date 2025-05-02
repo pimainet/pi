@@ -26,14 +26,14 @@
       #walletAddress {
         word-wrap: break-word;
         overflow-wrap: break-word;
+        word-break: break-all; /* Ép xuống dòng tại bất kỳ ký tự nào */
         white-space: normal;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2; /* Giới hạn 2 dòng */
-        -webkit-box-orient: vertical;
         font-size: 0.75rem; /* Giảm kích thước font */
         max-width: 100%; /* Đảm bảo không vượt quá khung */
+      }
+      .wallet-container {
+        max-width: 100%; /* Giới hạn chiều rộng của khung chứa */
+        overflow: hidden; /* Ẩn phần tràn ra ngoài */
       }
       #avatar {
         object-fit: cover;
@@ -68,7 +68,7 @@
             alt="Avatar"
             class="w-20 h-20 rounded-full mr-4 border-2 border-blue-200"
           />
-          <div class="flex-1">
+          <div class="flex-1 wallet-container">
             <h2 id="userName" class="text-xl font-bold truncate">
               Tên của bạn
             </h2>
