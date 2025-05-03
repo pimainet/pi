@@ -12,11 +12,11 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body
-    class="bg-gradient-to-b from-blue-100 to-gray-100 min-h-screen font-sans text-gray-800"
+    class="bg-gradient-to-br from-blue-50 via-blue-100 to-indigo-100 min-h-screen font-sans text-gray-800"
   >
     <div class="container mx-auto p-4 max-w-md">
       <!-- Card Section -->
-      <div class="bg-white shadow-xl rounded-2xl p-6 mb-6">
+      <div class="bg-white shadow-xl rounded-2xl p-6 mb-6 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
         <div class="flex items-center mb-4">
           <img
             id="avatar"
@@ -24,12 +24,12 @@
             alt="Avatar"
             class="w-20 h-20 rounded-full mr-4 border-2 border-blue-200"
           />
-          <div class="flex-1 wallet-container">
+          <div class="wallet-container max-w-[calc(100%-5rem)]">
             <h2 id="userName" class="text-xl font-bold truncate">
               Tên của bạn
             </h2>
             <p class="text-sm text-gray-500 break-words">
-              Ví: <span id="walletAddress" class="break-words">Chưa nhập địa chỉ ví</span>
+              Ví: <span id="walletAddress" class="break-words inline-block">Chưa nhập địa chỉ ví</span>
             </p>
           </div>
         </div>
@@ -56,22 +56,22 @@
       </div>
 
       <!-- Chart Section (TradingView Widget) -->
-      <div class="bg-white shadow-xl rounded-2xl p-6 mb-6">
+      <div class="bg-white shadow-xl rounded-2xl p-6 mb-6 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
         <h3 class="text-lg font-bold mb-4">Giá Pi (USD)</h3>
         <div id="tradingview_chart"></div>
       </div>
 
       <!-- Safety Check Section -->
-      <div class="bg-white shadow-xl rounded-2xl p-6 mb-6">
+      <div class="bg-white shadow-xl rounded-2xl p-6 mb-6 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
         <h3 class="text-lg font-bold mb-4">Kiểm tra Web/Ứng dụng</h3>
-        <select id="checkType" class="w-full p-2 border rounded mb-4">
+        <select id="checkType" class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300">
           <option value="website">Trang web</option>
           <option value="app">Ứng dụng</option>
         </select>
         <input
           id="safetyUrl"
           type="text"
-          class="w-full p-2 border rounded mb-4"
+          class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300"
           placeholder="Nhập URL (ví dụ: https://example.com hoặc link Google Play)"
         />
         <div class="flex space-x-2">
@@ -105,7 +105,7 @@
       </div>
 
       <!-- Check-in and Management Section -->
-      <div class="bg-white shadow-xl rounded-2xl p-6 mb-6">
+      <div class="bg-white shadow-xl rounded-2xl p-6 mb-6 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
         <h3 class="text-lg font-bold mb-4">Quản lý Ví</h3>
         <div class="space-y-4">
           <div class="flex items-center justify-between">
@@ -146,17 +146,17 @@
       </div>
 
       <!-- Support Section -->
-      <div class="bg-white shadow-xl rounded-2xl p-6">
+      <div class="bg-white shadow-xl rounded-2xl p-6 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
         <h3 class="text-lg font-bold mb-4">Hỗ trợ</h3>
         <p class="text-sm text-gray-600 mb-2">
           Liên hệ:
-          <a href="mailto:support@example.com" class="text-blue-500"
+          <a href="mailto:support@example.com" class="text-blue-500 hover:underline"
             >support@example.com</a
           >
         </p>
         <p class="text-sm text-gray-600 mb-4">
           Hotline:
-          <a href="tel:+84987654321" class="text-blue-500">+84 987 654 321</a>
+          <a href="tel:+84987654321" class="text-blue-500 hover:underline">+84 987 654 321</a>
         </p>
         <h4 class="text-md font-bold mb-2">Video hướng dẫn</h4>
         <div class="relative" style="padding-top: 56.25%">
@@ -174,19 +174,19 @@
       <!-- Edit Modal -->
       <div
         id="editModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden modal"
       >
-        <div class="bg-white rounded-lg p-6 w-11/12 max-w-sm">
+        <div class="bg-white rounded-lg p-6 w-11/12 max-w-sm transform scale-95 opacity-0 transition-all duration-300">
           <h3 class="text-lg font-bold mb-4">Chỉnh sửa Thông Tin</h3>
           <input
             id="editUserName"
             type="text"
-            class="w-full p-2 border rounded mb-4"
+            class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300"
             placeholder="Tên của bạn"
           />
           <textarea
             id="editWalletAddress"
-            class="w-full p-2 border rounded mb-4 break-words resize-none"
+            class="w-full p-2 border rounded mb-4 break-words resize-none focus:ring-2 focus:ring-indigo-300"
             placeholder="Địa chỉ ví"
             rows="4"
           ></textarea>
@@ -198,11 +198,11 @@
               id="editAvatarInput"
               type="file"
               accept="image/*"
-              class="w-full p-2 border rounded mb-2"
+              class="w-full p-2 border rounded mb-2 focus:ring-2 focus:ring-indigo-300"
             />
             <div
               id="editDropZone"
-              class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center"
+              class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-500 transition-colors"
             >
               <p class="text-sm text-gray-600">Kéo thả hình ảnh vào đây</p>
             </div>
@@ -210,19 +210,19 @@
           <input
             id="passwordInput"
             type="password"
-            class="w-full p-2 border rounded mb-4"
+            class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300"
             placeholder="Nhập mật khẩu"
           />
           <div class="flex justify-end space-x-2">
             <button
               onclick="hideEditModal()"
-              class="bg-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-400"
+              class="bg-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-400 btn"
             >
               Hủy
             </button>
             <button
               onclick="saveChanges()"
-              class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+              class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 btn"
             >
               Lưu
             </button>
