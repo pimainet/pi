@@ -210,17 +210,22 @@
             type="text"
             class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300"
             placeholder="Tên của bạn"
+            readonly
           />
-          <textarea
-            id="editWalletAddress"
-            class="w-full p-2 border rounded mb-4 break-words resize-none focus:ring-2 focus:ring-indigo-300"
-            placeholder="Địa chỉ ví"
-            rows="4"
-            style="padding-left: 0; margin-left: 0;"
-          ></textarea>
+          <div class="mb-4">
+            <p class="text-sm text-gray-600 mb-2">Địa chỉ ví (không thể thay đổi)</p>
+            <textarea
+              id="editWalletAddress"
+              class="w-full p-2 border rounded mb-4 break-words resize-none focus:ring-2 focus:ring-indigo-300"
+              placeholder="Địa chỉ ví"
+              rows="4"
+              style="padding-left: 0; margin-left: 0;"
+              readonly
+            ></textarea>
+          </div>
           <div class="mb-4">
             <p class="text-sm text-gray-600 mb-2">
-              Kéo thả hoặc chọn hình ảnh:
+              Kéo thả hoặc chọn hình ảnh đại diện:
             </p>
             <input
               id="editAvatarInput"
