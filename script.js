@@ -1,3 +1,6 @@
+// Global variable to store authenticated user data
+let authUser = null;
+
 // Show Toast Notification
 function showToast(message, type = 'success') {
   const toast = document.getElementById('toast');
@@ -13,11 +16,47 @@ function showToast(message, type = 'success') {
   }, 3000);
 }
 
-// Check Balance (Using Pi Block Explorer)
+// Authenticate User on Load
+const scopes = ['username', 'payments'];
+function onIncompletePaymentFound(payment) {
+  console.log('Incomplete payment found:', payment);
+  // Handle incomplete payments (e.g., send to backend for completion)
+  fetch('/incomplete-payment', {
+    method: 'POST',
+    body: JSON.stringify({ payment }),
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  Pi.authenticate(scopes, onIncompletePaymentFound).then(auth => {
+    console.log('Authenticated:', auth);
+    authUser = auth;
+    document.getElementById('userName').textContent = auth.user.username || 'Tên của bạn';
+    showToast('Đã đăng nhập thành công!');
+  }).catch(error => {
+    console.error('Authentication error:', error);
+    showToast('Không thể đăng nhập! Vui lòng mở ứng dụng trong Pi Browser.', 'error');
+  });
+
+  // Load Dark Mode Preference
+  const darkModePreference = localStorage.getItem('darkMode');
+  if (darkModePreference === 'enabled') {
+    document.body.classList.add('dark-mode');
+    document.getElementById('darkModeToggle').textContent = 'Chuyển chế độ sáng';
+  }
+});
+
+// Check Balance (Mock Implementation - Replace with API call)
 async function checkBalance() {
   const balanceDisplay = document.getElementById('balanceDisplay');
   const walletAddress = document.getElementById('walletAddress').textContent;
   
+  if (!authUser) {
+    showToast('Vui lòng đăng nhập trước!', 'error');
+    return;
+  }
+
   if (!walletAddress || walletAddress === 'Chưa nhập địa chỉ ví') {
     showToast('Vui lòng nhập địa chỉ ví trước!', 'error');
     return;
@@ -26,16 +65,14 @@ async function checkBalance() {
   balanceDisplay.textContent = 'Đang kiểm tra...';
   
   try {
-    // Replace this with the actual API endpoint for the Pi Block Explorer
-    const response = await fetch(`https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}/json`);
-    if (!response.ok) {
-      throw new Error('Không thể lấy thông tin số dư');
-    }
-    
+    // Mock balance fetch (replace with actual API call using authUser.accessToken)
+    const response = await fetch('https://api.minepi.com/v2/me', {
+      headers: { 'Authorization': `Bearer ${authUser.accessToken}` }
+    });
     const data = await response.json();
-    const balance = data.balance || '0'; // Adjust based on actual API response structure
-    
+    const balance = data.balance || '123.45'; // Mock value if balance isn't in response
     balanceDisplay.textContent = `${balance} Pi`;
+    document.getElementById('withdrawBalance').textContent = `${balance} Pi`;
     showToast('Đã kiểm tra số dư thành công!');
   } catch (error) {
     console.error('Error fetching balance:', error);
@@ -68,7 +105,7 @@ function hideEditModal() {
   editModal.classList.add('hidden');
 }
 
-// Save Changes in Modal
+// Save Changes in Edit Modal
 function saveChanges() {
   const userName = document.getElementById('editUserName').value;
   const walletAddress = document.getElementById('editWalletAddress').value;
@@ -85,7 +122,92 @@ function saveChanges() {
   hideEditModal();
 }
 
-// Mock Safety Check (Replace with actual implementation)
+// Show Withdraw Modal
+function showWithdrawModal() {
+  if (!authUser) {
+    showToast('Vui lòng đăng nhập trước!', 'error');
+    return;
+  }
+  const withdrawModal = document.getElementById('withdrawModal');
+  withdrawModal.classList.remove('hidden');
+  withdrawModal.classList.add('show');
+}
+
+// Hide Withdraw Modal
+function hideWithdrawModal() {
+  const withdrawModal = document.getElementById('withdrawModal');
+  withdrawModal.classList.remove('show');
+  withdrawModal.classList.add('hidden');
+}
+
+// Withdraw Pi (Mock A2U Payment - Requires Backend)
+function withdrawPi() {
+  const amount = parseFloat(document.getElementById('withdrawAmount').value);
+  const password = document.getElementById('withdrawPassword').value;
+  const withdrawStatus = document.getElementById('withdrawStatus');
+
+  if (!amount || amount < 0.01) {
+    showToast('Số lượng Pi phải lớn hơn 0 và tối thiểu 1$!', 'error');
+    return;
+  }
+
+  if (!password) {
+    showToast('Vui lòng nhập mật khẩu!', 'error');
+    return;
+  }
+
+  withdrawStatus.textContent = 'Đang xử lý...';
+
+  // Mock A2U payment (replace with backend call)
+  setTimeout(() => {
+    withdrawStatus.textContent = 'Đã gửi yêu cầu rút Pi';
+    showToast('Yêu cầu rút Pi đã được gửi!');
+    hideWithdrawModal();
+  }, 1500);
+
+  // Actual implementation would involve a backend call:
+  // fetch('/withdraw-pi', {
+  //   method: 'POST',
+  //   body: JSON.stringify({ userUid: authUser.user.uid, amount, memo: 'Rút Pi' }),
+  //   headers: { 'Content-Type': 'application/json' }
+  // });
+}
+
+// PP to Pi Conversion (U2A Payment)
+function convertPPtoPi() {
+  if (!authUser) {
+    showToast('Vui lòng đăng nhập trước!', 'error');
+    return;
+  }
+
+  Pi.createPayment({
+    amount: 10, // Example amount
+    memo: "Chuyển PP sang Pi",
+    metadata: { type: "PPtoPi" }
+  }, {
+    onReadyForServerApproval: paymentId => {
+      // Send paymentId to backend for approval
+      fetch('/approve-payment', {
+        method: 'POST',
+        body: JSON.stringify({ paymentId }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+    },
+    onReadyForServerCompletion: (paymentId, txid) => {
+      fetch('/complete-payment', {
+        method: 'POST',
+        body: JSON.stringify({ paymentId, txid }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      document.getElementById('piBalance').textContent = '10 Pi'; // Mock update
+      showToast('Đã đổi PP sang Pi thành công!');
+    },
+    onCancel: paymentId => showToast('Đã hủy chuyển đổi!', 'error'),
+    onError: (error, payment) => showToast('Lỗi khi chuyển đổi!', 'error')
+  });
+}
+
+// Safety Check (Mock)
 function checkSafety() {
   const checkButton = document.getElementById('checkButton');
   const loadingSpinner = document.getElementById('loadingSpinner');
@@ -102,7 +224,6 @@ function checkSafety() {
     loadingSpinner.style.display = 'none';
     safetyResult.classList.remove('hidden');
     
-    // Mock result
     const isSafe = Math.random() > 0.5;
     safetyResult.classList.remove('safe', 'unsafe');
     safetyResult.classList.add(isSafe ? 'safe' : 'unsafe');
@@ -122,24 +243,15 @@ function clearForm() {
   showToast('Đã xóa biểu mẫu!');
 }
 
-// Mock Check-In (Replace with actual implementation)
+// Check-In (Mock)
 function checkIn() {
+  if (!authUser) {
+    showToast('Vui lòng đăng nhập trước!', 'error');
+    return;
+  }
   const checkInStatus = document.getElementById('checkInStatus');
   checkInStatus.classList.remove('hidden');
   showToast('Điểm danh thành công!');
-}
-
-// Mock PP to Pi Conversion (Replace with actual implementation)
-function convertPPtoPi() {
-  showToast('Đã đổi PP sang Pi thành công!');
-  document.getElementById('piBalance').textContent = '10 Pi'; // Mock value
-}
-
-// Mock Withdraw Pi (Replace with actual implementation)
-function withdrawPi() {
-  const withdrawStatus = document.getElementById('withdrawStatus');
-  withdrawStatus.textContent = 'Đã gửi yêu cầu rút Pi';
-  showToast('Yêu cầu rút Pi đã được gửi!');
 }
 
 // Dark Mode Toggle
@@ -148,13 +260,4 @@ document.getElementById('darkModeToggle').addEventListener('click', () => {
   const isDarkMode = document.body.classList.contains('dark-mode');
   document.getElementById('darkModeToggle').textContent = isDarkMode ? 'Chuyển chế độ sáng' : 'Chuyển chế độ tối';
   localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
-});
-
-// Load Dark Mode Preference
-document.addEventListener('DOMContentLoaded', () => {
-  const darkModePreference = localStorage.getItem('darkMode');
-  if (darkModePreference === 'enabled') {
-    document.body.classList.add('dark-mode');
-    document.getElementById('darkModeToggle').textContent = 'Chuyển chế độ sáng';
-  }
 });
