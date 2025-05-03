@@ -49,21 +49,21 @@ body {
 /* Wallet Address Wrapping */
 .wallet-container {
   max-width: calc(100% - 5rem); /* Adjust for avatar width */
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-all;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  word-break: break-all !important;
   white-space: normal !important;
 }
 
 #walletAddress {
-  display: inline-block;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  word-break: break-all;
+  display: inline-block !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: break-all !important;
   white-space: normal !important;
-  font-size: 0.75rem;
-  max-width: 100%;
-  line-height: 1.2;
+  font-size: 0.75rem !important;
+  max-width: 100% !important;
+  line-height: 1.2 !important;
 }
 
 /* Avatar Styling */
