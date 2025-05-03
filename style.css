@@ -5,6 +5,39 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+/* Dark Mode */
+body.dark-mode {
+  background: linear-gradient(to bottom right, #1e293b, #334155, #475569);
+  color: #e2e8f0;
+}
+
+body.dark-mode .bg-white {
+  background: #2d3748;
+  color: #e2e8f0;
+}
+
+body.dark-mode .text-gray-500,
+body.dark-mode .text-gray-600,
+body.dark-mode .text-gray-800 {
+  color: #a0aec0;
+}
+
+body.dark-mode a.text-blue-500 {
+  color: #60a5fa;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background: #4a5568;
+  color: #e2e8f0;
+  border-color: #718096;
+}
+
+body.dark-mode .border-gray-300 {
+  border-color: #718096;
+}
+
 /* Button Styles */
 .btn {
   transition: all 0.2s ease;
@@ -48,7 +81,7 @@ body {
 
 /* Wallet Address Wrapping */
 .wallet-container {
-  max-width: calc(100% - 5rem); /* Adjust for avatar width */
+  max-width: calc(100% - 5rem);
   overflow-wrap: break-word !important;
   word-wrap: break-word !important;
   word-break: break-all !important;
@@ -76,6 +109,20 @@ body {
   white-space: pre-wrap !important;
   width: 100% !important;
   box-sizing: border-box !important;
+}
+
+/* Withdraw Modal Styling */
+#withdrawModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+#withdrawModal.show {
+  display: flex;
 }
 
 /* Avatar Styling */
@@ -130,10 +177,42 @@ body {
   }
 }
 
+/* Toast Notification */
+#toast {
+  transition: opacity 0.3s ease;
+}
+
+#toast.show {
+  opacity: 1;
+}
+
+/* Safety Check Result Styling */
+#safetyResult.safe #safetyStatus {
+  color: #10b981;
+}
+
+#safetyResult.unsafe #safetyStatus {
+  color: #ef4444;
+}
+
+#safetyResult.safe #statusIcon {
+  stroke: #10b981;
+}
+
+#safetyResult.unsafe #statusIcon {
+  stroke: #ef4444;
+}
+
 /* Typography and Card Enhancements */
 h2, h3, h4 {
   font-weight: 700;
   color: #1f2937;
+}
+
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4 {
+  color: #e2e8f0;
 }
 
 h2 {
