@@ -19,12 +19,18 @@ function showToast(message, type = 'success') {
 // Load user data from localStorage
 function loadUserData() {
   const userData = JSON.parse(localStorage.getItem('userData')) || {};
+  const urlParams = new URLSearchParams(window.location.search);
+  const tagId = urlParams.get('tag_id');
+  if (tagId === '001' && !userData.userName) {
+    userData.userName = 'Hoàng Văn Minh';
+  }
   if (userData.userName) {
     document.getElementById('userName').textContent = userData.userName;
   }
   if (userData.walletAddress) {
     document.getElementById('walletAddress').textContent = userData.walletAddress;
   }
+  saveUserData(userData.userName, userData.walletAddress);
 }
 
 // Save user data to localStorage
@@ -33,29 +39,48 @@ function saveUserData(userName, walletAddress) {
   localStorage.setItem('userData', JSON.stringify(userData));
 }
 
-// Auto-check balance from URL (Redirect to Pi Block Explorer)
+// Auto-check balance from URL
 function autoCheckBalanceFromURL() {
   const urlParams = new URLSearchParams(window.location.search);
   const walletAddress = urlParams.get('wallet');
   if (walletAddress) {
     document.getElementById('walletAddress').textContent = walletAddress;
     saveUserData(document.getElementById('userName').textContent, walletAddress);
-    checkBalance(); // This will now redirect to Pi Block Explorer
+    checkBalance();
   }
 }
 
-// Check Balance (Redirect to Pi Block Explorer)
-function checkBalance() {
+// Check Balance (Scrape from Pi Block Explorer)
+async function checkBalance() {
+  const balanceDisplay = document.getElementById('balanceDisplay');
   const walletAddress = document.getElementById('walletAddress').textContent;
 
   if (!walletAddress || walletAddress === 'Chưa nhập địa chỉ ví') {
+    balanceDisplay.textContent = 'Chưa nhập địa chỉ ví';
     showToast('Vui lòng nhập địa chỉ ví trước!', 'error');
     return;
   }
 
-  // Redirect to Pi Block Explorer
-  const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
-  window.location.href = explorerUrl;
+  balanceDisplay.textContent = 'Đang kiểm tra...';
+
+  try {
+    const response = await fetch(`https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`);
+    if (!response.ok) {
+      throw new Error('Không thể truy cập trình khám phá');
+    }
+    const html = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const balanceElement = doc.querySelector('span.account-balance'); // Điều chỉnh selector dựa trên thực tế
+    const balance = balanceElement ? balanceElement.textContent.trim().replace(' PI', '') : '0';
+    balanceDisplay.textContent = `${balance} Pi`;
+    document.getElementById('withdrawBalance').textContent = `${balance} Pi`;
+    showToast('Đã kiểm tra số dư thành công!');
+  } catch (error) {
+    console.error('Error fetching balance:', error);
+    balanceDisplay.textContent = 'Lỗi khi kiểm tra';
+    showToast('Không thể kiểm tra số dư!', 'error');
+  }
 }
 
 // Authenticate User on Load
@@ -76,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
   Pi.authenticate(scopes, onIncompletePaymentFound).then(auth => {
     console.log('Authenticated:', auth);
     authUser = auth;
-    const userName = auth.user.username || 'Tên của bạn';
+    const userName = auth.user.username || document.getElementById('userName').textContent;
     document.getElementById('userName').textContent = userName;
     saveUserData(userName, document.getElementById('walletAddress').textContent);
     showToast('Đã đăng nhập thành công!');
@@ -107,6 +132,9 @@ function showEditModal() {
   const editModal = document.getElementById('editModal');
   editModal.classList.remove('hidden');
   editModal.classList.add('show');
+  // Populate modal with current values
+  document.getElementById('editUserName').value = document.getElementById('userName').textContent;
+  document.getElementById('editWalletAddress').value = document.getElementById('walletAddress').textContent;
 }
 
 // Hide Edit Modal
@@ -130,6 +158,7 @@ function saveChanges() {
   document.getElementById('userName').textContent = userName;
   document.getElementById('walletAddress').textContent = walletAddress;
   saveUserData(userName, walletAddress);
+  checkBalance(); // Update balance after changing wallet address
   showToast('Đã lưu thay đổi thành công!');
   hideEditModal();
 }
