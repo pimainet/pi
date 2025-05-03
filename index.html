@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,13 +8,58 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Pi SDK -->
-    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <script>Pi.init({ version: "2.0", sandbox: true })</script>
     <!-- TradingView Widget Script -->
     <script src="https://s3.tradingview.com/tv.js"></script>
-    <!-- Local CSS -->
-    <link rel="stylesheet" href="styles.css" />
+    <!-- Local CSS (inline for simplicity) -->
+    <style>
+      .dark-mode {
+        background: linear-gradient(to bottom right, #1a202c, #2d3748, #4a5568);
+        color: #e2e8f0;
+      }
+      .dark-mode .bg-white {
+        background: #2d3748;
+      }
+      .dark-mode .text-gray-800 {
+        color: #e2e8f0;
+      }
+      .dark-mode .text-gray-500, .dark-mode .text-gray-600 {
+        color: #a0aec0;
+      }
+      .dark-mode .bg-gray-200 {
+        background: #4a5568;
+      }
+      .dark-mode .hover:bg-gray-300 {
+        background: #718096;
+      }
+      .dark-mode .border-gray-300 {
+        border-color: #4a5568;
+      }
+      .dark-mode .hover:border-blue-500 {
+        border-color: #63b3ed;
+      }
+      .dark-mode .btn:hover {
+        filter: brightness(1.1);
+      }
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        display: none;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .safe { color: #2ecc71; }
+      .unsafe { color: #e74c3c; }
+      .modal.show {
+        opacity: 1;
+        transform: scale-100;
+      }
+    </style>
   </head>
   <body
     class="bg-gradient-to-br from-blue-50 via-blue-100 to-indigo-100 min-h-screen font-sans text-gray-800 transition-colors duration-300"
@@ -305,7 +350,349 @@
       </div>
     </div>
 
-    <!-- Local JavaScript -->
-    <script src="script.js"></script>
+    <!-- Inline JavaScript -->
+    <script>
+      // Danh sách dữ liệu thành viên từ code của bạn
+      const memberData = {
+        "001": {
+          name: "HOÀNG VĂN MINH ",
+          avatar: "https://bom.so/gmB6v2",
+          wallet_address:
+            "GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
+        },
+        "002": {
+          name: "LÊ VĂN HOẰNG",
+          avatar:
+            "https://cdn-ilcbnhb.nitrocdn.com/eyWebYtfntWmnihDSZRZvIqipddxdlOp/assets/images/optimized/rev-0a2b4a3/minepi.com/wp-content/uploads/2022/06/b7-1536x864.jpg",
+          wallet_address:
+            "GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
+        },
+        "003": {
+          name: "PHẠM THỊ XUÂN",
+          avatar:
+            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/333513902_1932195023807300_1163851942859129592_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEHUbUzai7uybMKKCX41vePUHHOaW9qRuVQcc5pb2pG5TMcLbXM7749XtjmZxexAOiueFtBjmWgkEO3QyI37KQg&_nc_ohc=2welsrt2YlMQ7kNvwFOc7hn&_nc_oc=Adk_sEaoXH3oRXMqnoqfoFZUJeW51zk8C1kGlxqHXsw4ssAxOaotBjRCgMthjIawAkRMVzySEDrzJzpaMu857opF&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=fbVmX5ala3m2lS9mp2CWoA&oh=00_AfHdYB0zfaTS4NOm24PhuUW9b6Un0nwF_rlNw0Uz3HPn-w&oe=6810E999",
+          wallet_address:
+            "GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
+        },
+        "004": {
+          name: "LÊ THỊ HƯƠNG",
+          avatar:
+            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/491577955_1189938295959905_8489318223622425228_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeEKaNmN3EMNo5OPTJm-RTXghTawRiFc5_WFNrBGIVzn9Ru16jvb4yNoeTmWk3xiLZ9qkucZiptZAKXVCXh6-qhQ&_nc_ohc=XsGUn2tjS18Q7kNvwGmpi4-&_nc_oc=AdmTx9BTl2UKWp94btd4tMJRKnEbS5WceXszgrJ_EZgbxBXUsFgK8IDuYfMrcCQbyrRhC1MBxsVRSGZA852cw4sz&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=9yomIWlBUAh83U6ENEt4Kw&oh=00_AfFb9s9k0xdsMtfF4H9cXikQXb4JxZlHTA7yZQZsz12g6g&oe=6810B70E",
+          wallet_address:
+            "GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
+        },
+        "005": {
+          name: "LÊ TRỌNG KHOA",
+          avatar:
+            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/493192748_1733657324175687_1257877052875128746_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeH8XsKzNXgL0yj8z53qHIOtaVJWQIRCD6FpUlZAhEIPoWvV_ysyrHvZPL6RcheGuoJ6PVB5QKk-G0NLasDmDZJg&_nc_ohc=7Px-qfQ5lWQQ7kNvwHYVFhk&_nc_oc=AdlpfYi2vi89mFfK7IPldFASnOFj3koz62XDT8UC5Q0xUTR_aY3SwcSCDv5Fup1zqqo_quOvwDEk_C4sHs19Purs&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=exEYcb5mTNsTiCTOXVZr6A&oh=00_AfEs3ZBU6la6YyE0i-PZlOEDbZRw69eU9zOT7VJbJtg3ng&oe=6810F531",
+          wallet_address:
+            "GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
+        },
+        "006": {
+          name: "HOÀNG VĂN TRỤ",
+          avatar:
+            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/493108752_1733753667499386_17622212115165894_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFWkb5oRJIywNLPIbarT4xAsXKWT3Q0IG2xcpZPdDQgbZLWj82Oe1iFMByWKW-T1pN3-jkNFbqcGzuCvZA8kwfw&_nc_ohc=u3JjcYuZ3HUQ7kNvwFpJuhS&_nc_oc=AdnqHLjnrpmTiBtX9uIlyjCnXBRxMsXfixwUT9c2OQBZ65Z53aC8PNtiiKH5fRaiIpOjQLtXWgkDjLJAjvGRde_Uhh&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=PzpxmMuS2kTQyGk6q2qdbA&oh=00_AfHffHzmd2bPGcBrxcl7rtaT_HjpOuDn-SSyVnUYJ2ClXQ&oe=68113600",
+          wallet_address:
+            "GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
+        },
+        "007": {
+          name: "MINH TRANG",
+          avatar:
+            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/459020914_2207803129648889_9083612727790770567_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEJB1D7cb229eMaz1Tnljv37WSJkrt-6NXtZImSu37o1VVf19czvRfBbJtbDj5OR34CVLCU34_-69wPg090ODaa&_nc_ohc=lzre0bmBz-AQ7kNvwE7BfJp&_nc_oc=Adm9GKxGty-0Z42FQwYm0_uwI8Nd409RtQMch6rxOMi7eABoW5Mt6sByJdjrKm7jv_u_o5n4wbAmAZfr__fPcBGs&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=N5PB6m8Jb2AphoVgDZwqCQ&oh=00_AfFrra6S7brzwMX_b23hAUnqPa4gQxdUkMUNMJFz49RlsQ&oe=68126FF6",
+          wallet_address:
+            "GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
+        },
+        "008": {
+          name: "LÊ THỊ HÀ",
+          avatar:
+            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/491397391_122228848976217325_5812334186522958901_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGkgyQ87OtvNEhgg2G8NL2rwhyzNJKY4HbCHLM0kpjgdghCH501spAOZjH5JdhPl-dGkXQHUToUb8AsZm2_pr4h&_nc_ohc=CDt9Dj35ZmEQ7kNvwHzjhmP&_nc_oc=Adk5SG-e19biNbTLAauHy1rlHbBax96hK7tKu4v4hXaNEbwV_vznFKPrRGztEP1t8zDHFjJVjcBmGK3EGKf22QnV&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=g6gl2ukwn3CLEAWEJSh_Hw&oh=00_AfE4YYjuD-c8SpfzVNTIwNnF3Cn-6yPM69g9RRmnTrrp1g&oe=6813C792",
+          wallet_address:
+            "GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
+        },
+      };
+
+      // Show Toast Notification
+      function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        toastMessage.textContent = message;
+        toast.classList.remove('bg-green-500', 'bg-red-500');
+        toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
+        toast.classList.remove('hidden');
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+          toast.classList.add('hidden');
+        }, 3000);
+      }
+
+      // Load user data based on tag_id
+      function loadUserData() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tagId = urlParams.get('tag_id');
+        const userName = document.getElementById('userName');
+        const walletAddress = document.getElementById('walletAddress');
+        const avatar = document.getElementById('avatar');
+
+        if (tagId && memberData[tagId]) {
+          const member = memberData[tagId];
+          userName.textContent = member.name;
+          walletAddress.textContent = member.wallet_address;
+          avatar.src = member.avatar;
+        } else {
+          userName.textContent = 'Không tìm thấy thông tin';
+          walletAddress.textContent = 'Không tìm thấy địa chỉ ví';
+          avatar.src = 'https://via.placeholder.com/80';
+        }
+      }
+
+      // Auto-check balance from URL
+      function autoCheckBalanceFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const walletAddress = urlParams.get('wallet');
+        if (walletAddress) {
+          document.getElementById('walletAddress').textContent = walletAddress;
+          checkBalance();
+        }
+      }
+
+      // Check Balance (Redirect to Pi Block Explorer)
+      function checkBalance() {
+        const walletAddress = document.getElementById('walletAddress').textContent;
+
+        if (!walletAddress || walletAddress === 'Không tìm thấy địa chỉ ví') {
+          showToast('Không có địa chỉ ví để kiểm tra!', 'error');
+          return;
+        }
+
+        const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
+        window.location.href = explorerUrl;
+      }
+
+      // Initialize on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        loadUserData();
+        autoCheckBalanceFromURL();
+
+        const darkModePreference = localStorage.getItem('darkMode');
+        if (darkModePreference === 'enabled') {
+          document.body.classList.add('dark-mode');
+          document.getElementById('darkModeToggle').textContent = 'Chuyển chế độ sáng';
+        }
+
+        // Initialize TradingView Widget
+        new TradingView.widget({
+          "width": "100%",
+          "height": 300,
+          "symbol": "BINANCE:PIUSDT",
+          "interval": "D",
+          "timezone": "Etc/UTC",
+          "theme": "light",
+          "style": "1",
+          "locale": "en",
+          "toolbar_bg": "#f1f3f6",
+          "enable_publishing": false,
+          "allow_symbol_change": true,
+          "container_id": "tradingview_chart"
+        });
+      });
+
+      // Copy Wallet Address
+      function copyWalletAddress() {
+        const walletAddress = document.getElementById('walletAddress').textContent;
+        if (walletAddress === 'Không tìm thấy địa chỉ ví') {
+          showToast('Không có địa chỉ ví để sao chép!', 'error');
+          return;
+        }
+        navigator.clipboard.writeText(walletAddress).then(() => {
+          showToast('Đã sao chép địa chỉ ví!');
+        }).catch(() => {
+          showToast('Không thể sao chép địa chỉ ví!', 'error');
+        });
+      }
+
+      // Show Edit Modal
+      function showEditModal() {
+        const editModal = document.getElementById('editModal');
+        editModal.classList.remove('hidden');
+        editModal.classList.add('show');
+        document.getElementById('editUserName').value = document.getElementById('userName').textContent;
+        document.getElementById('editWalletAddress').value = document.getElementById('walletAddress').textContent;
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('editAvatarInput').value = '';
+      }
+
+      // Hide Edit Modal
+      function hideEditModal() {
+        const editModal = document.getElementById('editModal');
+        editModal.classList.remove('show');
+        editModal.classList.add('hidden');
+      }
+
+      // Update Avatar
+      function updateAvatar(file) {
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            document.getElementById('avatar').src = e.target.result;
+            showToast('Đã cập nhật ảnh đại diện thành công!');
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      // Save Changes in Edit Modal
+      function saveChanges() {
+        const password = document.getElementById('passwordInput').value.trim();
+
+        if (!password) {
+          showToast('Vui lòng nhập mật khẩu!', 'error');
+          return;
+        }
+
+        const avatarInput = document.getElementById('editAvatarInput');
+        if (avatarInput.files && avatarInput.files[0]) {
+          updateAvatar(avatarInput.files[0]);
+        } else {
+          showToast('Đã lưu thay đổi (không có thay đổi ảnh)!');
+        }
+
+        hideEditModal();
+      }
+
+      // Show Withdraw Modal
+      function showWithdrawModal() {
+        const withdrawModal = document.getElementById('withdrawModal');
+        withdrawModal.classList.remove('hidden');
+        withdrawModal.classList.add('show');
+      }
+
+      // Hide Withdraw Modal
+      function hideWithdrawModal() {
+        const withdrawModal = document.getElementById('withdrawModal');
+        withdrawModal.classList.remove('show');
+        withdrawModal.classList.add('hidden');
+      }
+
+      // Withdraw Pi (Mock)
+      function withdrawPi() {
+        const amount = parseFloat(document.getElementById('withdrawAmount').value);
+        const password = document.getElementById('withdrawPassword').value;
+        const withdrawStatus = document.getElementById('withdrawStatus');
+
+        if (!amount || amount < 0.01) {
+          showToast('Số lượng Pi phải lớn hơn 0 và tối thiểu 1$!', 'error');
+          return;
+        }
+
+        if (!password) {
+          showToast('Vui lòng nhập mật khẩu!', 'error');
+          return;
+        }
+
+        withdrawStatus.textContent = 'Đang xử lý...';
+
+        setTimeout(() => {
+          withdrawStatus.textContent = 'Đã gửi yêu cầu rút Pi';
+          showToast('Yêu cầu rút Pi đã được gửi!');
+          hideWithdrawModal();
+        }, 1500);
+      }
+
+      // PP to Pi Conversion (Mock)
+      function convertPPtoPi() {
+        document.getElementById('piBalance').textContent = '10 Pi';
+        showToast('Đã đổi PP sang Pi thành công (giả lập)!');
+      }
+
+      // Safety Check (Mock)
+      function checkSafety() {
+        const checkButton = document.getElementById('checkButton');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const safetyResult = document.getElementById('safetyResult');
+        const safetyStatus = document.getElementById('safetyStatus');
+        const safetyScore = document.getElementById('safetyScore');
+        const safetyWarnings = document.getElementById('safetyWarnings');
+
+        checkButton.disabled = true;
+        loadingSpinner.style.display = 'block';
+        safetyResult.classList.add('hidden');
+
+        setTimeout(() => {
+          loadingSpinner.style.display = 'none';
+          safetyResult.classList.remove('hidden');
+          
+          const isSafe = Math.random() > 0.5;
+          safetyResult.classList.remove('safe', 'unsafe');
+          safetyResult.classList.add(isSafe ? 'safe' : 'unsafe');
+          safetyStatus.textContent = isSafe ? 'An toàn' : 'Không an toàn';
+          safetyScore.textContent = isSafe ? '85' : '30';
+          safetyWarnings.textContent = isSafe ? 'Không có cảnh báo' : 'Trang web có thể không đáng tin cậy';
+
+          checkButton.disabled = false;
+          showToast(isSafe ? 'Kiểm tra thành công: An toàn!' : 'Kiểm tra thành công: Không an toàn!', isSafe ? 'success' : 'error');
+        }, 1500);
+      }
+
+      // Clear Safety Check Form
+      function clearForm() {
+        document.getElementById('safetyUrl').value = '';
+        document.getElementById('safetyResult').classList.add('hidden');
+        showToast('Đã xóa biểu mẫu!');
+      }
+
+      // Check-In (Mock)
+      function checkIn() {
+        const checkInStatus = document.getElementById('checkInStatus');
+        checkInStatus.classList.remove('hidden');
+        showToast('Điểm danh thành công!');
+      }
+
+      // Dark Mode Toggle
+      document.getElementById('darkModeToggle').addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        document.getElementById('darkModeToggle').textContent = isDarkMode ? 'Chuyển chế độ sáng' : 'Chuyển chế độ tối';
+        localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+      });
+
+      // Handle file drop for avatar
+      document.getElementById('editDropZone').addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.target.classList.add('border-blue-500');
+      });
+
+      document.getElementById('editDropZone').addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.target.classList.remove('border-blue-500');
+      });
+
+      document.getElementById('editDropZone').addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.target.classList.remove('border-blue-500');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+          updateAvatar(file);
+        } else {
+          showToast('Vui lòng chọn một tệp hình ảnh!', 'error');
+        }
+      });
+    </script>
   </body>
 </html>
