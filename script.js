@@ -16,11 +16,52 @@ function showToast(message, type = 'success') {
   }, 3000);
 }
 
+// Load user data from localStorage
+function loadUserData() {
+  const userData = JSON.parse(localStorage.getItem('userData')) || {};
+  if (userData.userName) {
+    document.getElementById('userName').textContent = userData.userName;
+  }
+  if (userData.walletAddress) {
+    document.getElementById('walletAddress').textContent = userData.walletAddress;
+  }
+}
+
+// Save user data to localStorage
+function saveUserData(userName, walletAddress) {
+  const userData = { userName, walletAddress };
+  localStorage.setItem('userData', JSON.stringify(userData));
+}
+
+// Auto-check balance from URL (Redirect to Pi Block Explorer)
+function autoCheckBalanceFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const walletAddress = urlParams.get('wallet');
+  if (walletAddress) {
+    document.getElementById('walletAddress').textContent = walletAddress;
+    saveUserData(document.getElementById('userName').textContent, walletAddress);
+    checkBalance(); // This will now redirect to Pi Block Explorer
+  }
+}
+
+// Check Balance (Redirect to Pi Block Explorer)
+function checkBalance() {
+  const walletAddress = document.getElementById('walletAddress').textContent;
+
+  if (!walletAddress || walletAddress === 'Chưa nhập địa chỉ ví') {
+    showToast('Vui lòng nhập địa chỉ ví trước!', 'error');
+    return;
+  }
+
+  // Redirect to Pi Block Explorer
+  const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
+  window.location.href = explorerUrl;
+}
+
 // Authenticate User on Load
 const scopes = ['username', 'payments'];
 function onIncompletePaymentFound(payment) {
   console.log('Incomplete payment found:', payment);
-  // Handle incomplete payments (e.g., send to backend for completion)
   fetch('/incomplete-payment', {
     method: 'POST',
     body: JSON.stringify({ payment }),
@@ -29,57 +70,27 @@ function onIncompletePaymentFound(payment) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  loadUserData();
+  autoCheckBalanceFromURL();
+
   Pi.authenticate(scopes, onIncompletePaymentFound).then(auth => {
     console.log('Authenticated:', auth);
     authUser = auth;
-    document.getElementById('userName').textContent = auth.user.username || 'Tên của bạn';
+    const userName = auth.user.username || 'Tên của bạn';
+    document.getElementById('userName').textContent = userName;
+    saveUserData(userName, document.getElementById('walletAddress').textContent);
     showToast('Đã đăng nhập thành công!');
   }).catch(error => {
     console.error('Authentication error:', error);
     showToast('Không thể đăng nhập! Vui lòng mở ứng dụng trong Pi Browser.', 'error');
   });
 
-  // Load Dark Mode Preference
   const darkModePreference = localStorage.getItem('darkMode');
   if (darkModePreference === 'enabled') {
     document.body.classList.add('dark-mode');
     document.getElementById('darkModeToggle').textContent = 'Chuyển chế độ sáng';
   }
 });
-
-// Check Balance (Mock Implementation - Replace with API call)
-async function checkBalance() {
-  const balanceDisplay = document.getElementById('balanceDisplay');
-  const walletAddress = document.getElementById('walletAddress').textContent;
-  
-  if (!authUser) {
-    showToast('Vui lòng đăng nhập trước!', 'error');
-    return;
-  }
-
-  if (!walletAddress || walletAddress === 'Chưa nhập địa chỉ ví') {
-    showToast('Vui lòng nhập địa chỉ ví trước!', 'error');
-    return;
-  }
-
-  balanceDisplay.textContent = 'Đang kiểm tra...';
-  
-  try {
-    // Mock balance fetch (replace with actual API call using authUser.accessToken)
-    const response = await fetch('https://api.minepi.com/v2/me', {
-      headers: { 'Authorization': `Bearer ${authUser.accessToken}` }
-    });
-    const data = await response.json();
-    const balance = data.balance || '123.45'; // Mock value if balance isn't in response
-    balanceDisplay.textContent = `${balance} Pi`;
-    document.getElementById('withdrawBalance').textContent = `${balance} Pi`;
-    showToast('Đã kiểm tra số dư thành công!');
-  } catch (error) {
-    console.error('Error fetching balance:', error);
-    balanceDisplay.textContent = 'Lỗi khi kiểm tra';
-    showToast('Không thể kiểm tra số dư!', 'error');
-  }
-}
 
 // Copy Wallet Address
 function copyWalletAddress() {
@@ -118,6 +129,7 @@ function saveChanges() {
 
   document.getElementById('userName').textContent = userName;
   document.getElementById('walletAddress').textContent = walletAddress;
+  saveUserData(userName, walletAddress);
   showToast('Đã lưu thay đổi thành công!');
   hideEditModal();
 }
@@ -158,19 +170,11 @@ function withdrawPi() {
 
   withdrawStatus.textContent = 'Đang xử lý...';
 
-  // Mock A2U payment (replace with backend call)
   setTimeout(() => {
     withdrawStatus.textContent = 'Đã gửi yêu cầu rút Pi';
     showToast('Yêu cầu rút Pi đã được gửi!');
     hideWithdrawModal();
   }, 1500);
-
-  // Actual implementation would involve a backend call:
-  // fetch('/withdraw-pi', {
-  //   method: 'POST',
-  //   body: JSON.stringify({ userUid: authUser.user.uid, amount, memo: 'Rút Pi' }),
-  //   headers: { 'Content-Type': 'application/json' }
-  // });
 }
 
 // PP to Pi Conversion (U2A Payment)
@@ -181,12 +185,11 @@ function convertPPtoPi() {
   }
 
   Pi.createPayment({
-    amount: 10, // Example amount
+    amount: 10,
     memo: "Chuyển PP sang Pi",
     metadata: { type: "PPtoPi" }
   }, {
     onReadyForServerApproval: paymentId => {
-      // Send paymentId to backend for approval
       fetch('/approve-payment', {
         method: 'POST',
         body: JSON.stringify({ paymentId }),
@@ -199,7 +202,7 @@ function convertPPtoPi() {
         body: JSON.stringify({ paymentId, txid }),
         headers: { 'Content-Type': 'application/json' }
       });
-      document.getElementById('piBalance').textContent = '10 Pi'; // Mock update
+      document.getElementById('piBalance').textContent = '10 Pi';
       showToast('Đã đổi PP sang Pi thành công!');
     },
     onCancel: paymentId => showToast('Đã hủy chuyển đổi!', 'error'),
