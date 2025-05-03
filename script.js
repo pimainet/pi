@@ -135,6 +135,7 @@ function showEditModal() {
   // Populate modal with current values
   document.getElementById('editUserName').value = document.getElementById('userName').textContent;
   document.getElementById('editWalletAddress').value = document.getElementById('walletAddress').textContent;
+  document.getElementById('passwordInput').value = ''; // Clear password field
 }
 
 // Hide Edit Modal
@@ -146,9 +147,9 @@ function hideEditModal() {
 
 // Save Changes in Edit Modal
 function saveChanges() {
-  const userName = document.getElementById('editUserName').value;
-  const walletAddress = document.getElementById('editWalletAddress').value;
-  const password = document.getElementById('passwordInput').value;
+  const userName = document.getElementById('editUserName').value.trim();
+  const walletAddress = document.getElementById('editWalletAddress').value.trim();
+  const password = document.getElementById('passwordInput').value.trim();
 
   if (!userName || !walletAddress || !password) {
     showToast('Vui lòng điền đầy đủ thông tin!', 'error');
