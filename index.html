@@ -80,25 +80,27 @@
 
       <!-- Card Section -->
       <div class="bg-white shadow-xl rounded-2xl p-6 mb-6 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
-        <div class="flex flex-wrap mb-4">
+        <div class="flex items-center mb-4">
           <img
             id="avatar"
             src="https://via.placeholder.com/80"
             alt="Avatar"
-            class="w-20 h-20 rounded-full mr-4 border-2 border-blue-200"
+            class="w-16 h-16 rounded-full mr-4 border-2 border-blue-200"
           />
-          <div class="wallet-container max-w-[calc(100%-5rem)]">
+          <div class="flex-1">
             <h2 id="userName" class="text-xl font-bold">
               Tên của bạn
             </h2>
-            <p class="text-sm text-gray-500 break-words">
-              Ví: 
-              <div id="walletAddress" class="break-words">Chưa nhập địa chỉ ví</div>
-            </p>
-            <p class="text-sm text-gray-500 mt-1">
-              Số dư: <span id="balanceDisplay">Chưa kiểm tra</span>
-            </p>
           </div>
+        </div>
+        <div class="mb-4">
+          <p class="text-sm text-gray-500">
+            Ví: 
+            <span id="walletAddress" class="break-words text-sm text-gray-500">Chưa nhập địa chỉ ví</span>
+          </p>
+          <p class="text-sm text-gray-500 mt-1">
+            Số dư: <span id="balanceDisplay">Chưa kiểm tra</span>
+          </p>
         </div>
         <div class="flex space-x-2">
           <button
