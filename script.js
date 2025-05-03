@@ -88,16 +88,27 @@ let userData = {
 const urlParams = new URLSearchParams(window.location.search);
 const tagId = urlParams.get("tag_id");
 
-if (tagId && memberData[tagId]) {
-  const member = memberData[tagId];
-  userData.name = member.name;
-  userData.walletAddress = member.wallet_address;
-  userData.avatar = member.avatar;
+if (tagId) {
+  console.log("Tag ID from URL:", tagId); // Debug log
+  console.log("Member Data for Tag ID:", memberData[tagId]); // Debug log
+  if (memberData[tagId]) {
+    const member = memberData[tagId];
+    userData.name = member.name;
+    userData.walletAddress = member.wallet_address;
+    userData.avatar = member.avatar;
 
-  document.getElementById("userName").innerText = userData.name;
-  document.getElementById("walletAddress").innerText = userData.walletAddress;
-  document.getElementById("avatar").src = userData.avatar;
+    document.getElementById("userName").innerText = userData.name;
+    document.getElementById("walletAddress").innerText = userData.walletAddress;
+    document.getElementById("avatar").src = userData.avatar;
+  } else {
+    console.error("No member data found for tag_id:", tagId);
+    document.getElementById("userName").innerText = "Không tìm thấy thông tin";
+    document.getElementById("walletAddress").innerText =
+      "Không tìm thấy địa chỉ ví";
+    document.getElementById("avatar").src = "https://via.placeholder.com/80";
+  }
 } else {
+  console.error("No tag_id provided in URL");
   document.getElementById("userName").innerText = "Không tìm thấy thông tin";
   document.getElementById("walletAddress").innerText =
     "Không tìm thấy địa chỉ ví";
