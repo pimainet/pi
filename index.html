@@ -18,6 +18,7 @@
       /* Smooth Scroll */
       html {
         scroll-behavior: smooth;
+        overscroll-behavior: contain;
       }
 
       /* Parallax Background */
@@ -25,7 +26,8 @@
         background: linear-gradient(135deg, #e0e7ff, #c3dafe, #a5b4fc);
         position: relative;
         overflow-x: hidden;
-        animation: gradientShift 15s ease infinite;
+        animation: gradientShift 10s ease infinite;
+        will-change: background-position;
       }
 
       @keyframes gradientShift {
@@ -81,15 +83,21 @@
       .dark-mode #safetyStatus,
       .dark-mode #safetyScore,
       .dark-mode #safetyWarnings,
-      .dark-mode #ppBalance,
       .dark-mode #pidogeBalance,
+      .dark-mode #tlkBalance,
       .dark-mode #piBalance,
       .dark-mode #withdrawStatus,
       .dark-mode #checkInStatus,
-      .dark-mode .text-sm {
+      .dark-mode .text-sm,
+      .dark-mode .history-item {
         color: #a0aec0;
       }
       .dark-mode a {
+        color: #60a5fa;
+      }
+      .dark-mode .balance-badge,
+      .dark-mode .history-badge {
+        background: rgba(96, 165, 250, 0.2);
         color: #60a5fa;
       }
 
@@ -99,6 +107,7 @@
         backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.2);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
+        will-change: transform, box-shadow;
       }
       .card:hover {
         transform: translateY(-5px);
@@ -110,6 +119,7 @@
         position: relative;
         overflow: hidden;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
+        will-change: transform;
       }
       .btn:hover {
         transform: scale(1.05);
@@ -195,170 +205,93 @@
         border-color: #6366f1;
       }
 
-      /* Chatbox Styles */
-      .chatbox {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 350px;
-        background: rgba(106, 13, 173, 0.9); /* Màu tím đặc trưng của Pi */
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(106, 13, 173, 0.5);
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        display: none;
-        flex-direction: column;
-        height: 500px;
-        transition: transform 0.3s ease;
-        z-index: 1000;
+      /* Avatar Styles */
+      .avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        object-fit: cover;
+        transition: all 0.3s ease;
+        opacity: 0;
+        will-change: transform, box-shadow, border;
       }
-      .chatbox:hover {
-        transform: translateY(-5px);
+      .avatar.loaded {
+        opacity: 1;
       }
-      .chat-header {
-        background: #4B0082; /* Tím đậm hơn cho header */
-        color: white;
-        padding: 10px;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-        cursor: pointer;
-        transition: background 0.3s ease;
+      .avatar:hover {
+        transform: scale(1.1) rotate(3deg);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        border: 2px solid transparent;
+        background: linear-gradient(45deg, #6366f1, #a5b4fc) border-box;
       }
-      .chat-header:hover {
-        background: #3A0066; /* Tím tối hơn khi hover */
-      }
-      .chat-messages {
-        flex: 1;
-        overflow-y: auto;
-        padding: 10px;
-        background: #f3e5f5; /* Nền tím nhạt cho messages */
-      }
-      .message {
-        margin: 5px 0;
-        padding: 8px;
-        border-radius: 5px;
-        max-width: 70%;
-        white-space: pre-wrap; /* Hỗ trợ xuống dòng cho phản hồi dài */
-      }
-      .user-message {
-        background: #e1bee7; /* Tím nhạt cho tin nhắn người dùng */
-        margin-left: auto;
-      }
-      .bot-message {
-        background: #d1c4e9; /* Tím nhạt hơn cho tin nhắn bot */
-      }
-      .chat-input {
-        display: flex;
-        padding: 10px;
-        border-top: 1px solid #ce93d8; /* Viền tím nhạt */
-      }
-      .chat-input input {
-        flex: 1;
-        padding: 8px;
-        border: 1px solid #ce93d8;
-        border-radius: 5px;
-        margin-right: 10px;
-        transition: box-shadow 0.3s ease;
-      }
-      .chat-input input:focus {
-        box-shadow: 0 0 10px rgba(106, 13, 173, 0.4);
-        border-color: #6A0DAD;
-      }
-      .chat-input button {
-        padding: 8px 15px;
-        background: #4B0082; /* Nút tím đậm */
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-      }
-      .chat-input button:hover {
-        background: #3A0066; /* Tím tối hơn khi hover */
+      .dark-mode .avatar:hover {
+        background: linear-gradient(45deg, #60a5fa, #a0aec0) border-box;
       }
 
-      /* Chat Icon Styles */
-      .chat-icon {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 80px;
-        height: 80px;
-        background: url('https://via.placeholder.com/80?text=Chatbot') no-repeat center;
-        background-size: cover;
-        border-radius: 50%;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        cursor: pointer;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        z-index: 1000;
+      /* Balance Badge */
+      .balance-badge {
+        display: inline-block;
+        background: rgba(79, 70, 229, 0.1);
+        color: #4f46e5;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: transform 0.2s ease, background 0.2s ease;
       }
-      .chat-icon:hover {
-        transform: scale(1.1);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      .balance-badge:hover {
+        transform: scale(1.05);
+        background: rgba(79, 70, 229, 0.2);
       }
-      .chat-icon-tooltip {
-        position: absolute;
-        bottom: calc(100% + 10px);
-        right: 0;
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
+
+      /* History Item */
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         padding: 8px 12px;
         border-radius: 8px;
-        font-size: 12px;
-        line-height: 1.4;
-        opacity: 0;
-        transition: opacity 0.5s ease, transform 0.5s ease;
-        pointer-events: none;
-        max-width: 140px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease, background 0.2s ease;
       }
-      .chat-icon-tooltip.show {
-        opacity: 1;
-        transform: scale(1.05);
+      .history-item:hover {
+        transform: translateX(5px);
+        background: rgba(79, 70, 229, 0.1);
       }
-      .chat-icon-tooltip.hide {
-        opacity: 0;
-        transform: scale(0.95);
+      .history-badge {
+        display: inline-block;
+        background: rgba(34, 197, 94, 0.1);
+        color: #22c55e;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 500;
       }
-      .chat-icon:hover .chat-icon-tooltip {
-        opacity: 1;
-        transform: scale(1.05);
+      .history-list {
+        max-height: 120px; /* 3 items (~40px each) */
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #a5b4fc #e0e7ff;
       }
-      .chat-icon-tooltip .line {
-        display: block;
-        margin: 0;
-        padding: 2px 0;
+      .history-list::-webkit-scrollbar {
+        width: 6px;
       }
-      .chat-icon-tooltip::after {
-        content: '';
-        position: absolute;
-        top: 100%;
-        right: 20px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+      .history-list::-webkit-scrollbar-track {
+        background: #e0e7ff;
       }
-
-      /* Overlay for closing chatbox */
-      .chat-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.3);
-        display: none;
-        z-index: 999;
+      .history-list::-webkit-scrollbar-thumb {
+        background: #a5b4fc;
+        border-radius: 3px;
       }
-      .chat-overlay.active {
-        display: block;
+      .dark-mode .history-list::-webkit-scrollbar-track {
+        background: #4a5568;
+      }
+      .dark-mode .history-list::-webkit-scrollbar-thumb {
+        background: #60a5fa;
       }
     </style>
   </head>
-  <body
-    class="min-h-screen font-sans text-gray-800 transition-colors duration-500"
-  >
+  <body class="min-h-screen font-sans text-gray-800 transition-colors duration-500">
     <div class="container mx-auto p-4 max-w-md">
       <!-- Dark Mode Toggle -->
       <div class="flex justify-end mb-4">
@@ -379,15 +312,14 @@
       </div>
 
       <!-- Card Section -->
-      <div
-        class="card shadow-xl rounded-2xl p-6 mb-6"
-      >
+      <div class="card shadow-xl rounded-2xl p-6 mb-6">
         <div class="flex items-center mb-4">
           <img
             id="avatar"
-            src="https://via.placeholder.com/80"
+            src="https://picsum.photos/80"
             alt="Avatar"
-            class="w-16 h-16 rounded-full mr-4 border-2 border-indigo-200 transition-transform duration-300 hover:scale-110"
+            class="avatar mr-4"
+            loading="lazy"
           />
           <div class="flex-1">
             <h2 id="userName" class="text-xl font-bold">Tên của bạn</h2>
@@ -395,13 +327,10 @@
         </div>
         <div class="mb-4">
           <p class="text-sm text-gray-500">
-            Ví:
-            <span id="walletAddress" class="break-words text-sm text-gray-500"
-              >Chưa nhập địa chỉ ví</span
-            >
+            Ví: <span id="walletAddress" class="break-words text-sm text-gray-500">Chưa nhập địa chỉ ví</span>
           </p>
           <p class="text-sm text-gray-500 mt-1">
-            Số dư: <span id="balanceDisplay">Chưa kiểm tra</span>
+            Số dư Pi: <span id="piBalance">Chưa kiểm tra</span>
           </p>
         </div>
         <div class="flex space-x-2">
@@ -420,18 +349,39 @@
         </div>
       </div>
 
+      <!-- Daily Check-In Section -->
+      <div class="card shadow-xl rounded-2xl p-6 mb-6">
+        <h3 class="text-lg font-bold mb-4">Điểm danh mỗi ngày</h3>
+        <p class="text-sm text-gray-500 mb-2">
+          Trạng thái: <span id="checkInStatus">Chưa điểm danh hôm nay</span>
+        </p>
+        <div class="flex space-x-4 mb-4">
+          <span class="balance-badge">Pidoge: <span id="pidogeBalance">0</span></span>
+          <span class="balance-badge">tlk: <span id="tlkBalance">0</span></span>
+        </div>
+        <button
+          id="checkInButton"
+          onclick="checkIn()"
+          class="w-full bg-blue-500 text-white py-2 rounded-lg btn hover:bg-blue-600"
+        >
+          Điểm danh
+        </button>
+      </div>
+
+      <!-- Check-In History Section -->
+      <div class="card shadow-xl rounded-2xl p-6 mb-6">
+        <h3 class="text-lg font-bold mb-4">Lịch sử điểm danh</h3>
+        <ul id="checkInHistory" class="history-list"></ul>
+      </div>
+
       <!-- Chart Section (TradingView Widget) -->
-      <div
-        class="card shadow-xl rounded-2xl p-6 mb-6"
-      >
+      <div class="card shadow-xl rounded-2xl p-6 mb-6">
         <h3 class="text-lg font-bold mb-4">Giá Pi (USD)</h3>
         <div id="tradingview_chart"></div>
       </div>
 
       <!-- Safety Check Section -->
-      <div
-        class="card shadow-xl rounded-2xl p-6 mb-6"
-      >
+      <div class="card shadow-xl rounded-2xl p-6 mb-6">
         <h3 class="text-lg font-bold mb-4">Kiểm tra Web/Ứng dụng</h3>
         <select
           id="checkType"
@@ -488,9 +438,7 @@
       </div>
 
       <!-- Support Section -->
-      <div
-        class="card shadow-xl rounded-2xl p-6"
-      >
+      <div class="card shadow-xl rounded-2xl p-6">
         <h3 class="text-lg font-bold mb-4">Hỗ trợ</h3>
         <p class="text-sm text-gray-600 mb-2">
           Liên hệ:
@@ -515,6 +463,7 @@
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
+            loading="lazy"
           ></iframe>
         </div>
       </div>
@@ -524,9 +473,7 @@
         id="withdrawModal"
         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden modal"
       >
-        <div
-          class="modal-content rounded-lg p-6 w-11/12 max-w-sm"
-        >
+        <div class="modal-content rounded-lg p-6 w-11/12 max-w-sm">
           <h3 class="text-lg font-bold mb-4">Rút Pi</h3>
           <p class="text-sm text-gray-600 mb-4">
             Số dư hiện tại: <span id="withdrawBalance">0 Pi</span>
@@ -561,105 +508,12 @@
           </div>
         </div>
       </div>
-
-      <!-- Chatbox -->
-      <div class="chatbox" id="chatbox">
-        <div class="chat-header" onclick="toggleChat()">Chatbot <span id="chatStatus"> (Đóng)</span></div>
-        <div class="chat-messages" id="chatMessages"></div>
-        <div class="chat-input">
-          <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." />
-          <button onclick="sendMessage()">Gửi</button>
-        </div>
-      </div>
-
-      <!-- Chat Overlay -->
-      <div class="chat-overlay" id="chatOverlay" onclick="hideChat()"></div>
-    </div>
-
-    <!-- Chat Icon -->
-    <div onclick="toggleChat()" class="chat-icon">
-      <div class="chat-icon-tooltip" id="chatTooltip">
-        <span class="line">Bấm vào tôi</span>
-        <span class="line">để đặt câu hỏi!</span>
-      </div>
     </div>
 
     <!-- Inline JavaScript -->
     <script>
-      // Danh sách dữ liệu thành viên
-      const memberData = {
-        "001": {
-          name: "HOÀNG VĂN MINH ",
-          avatar: "https://bom.so/gmB6v2",
-          wallet_address:
-            "GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
-          explorer_link:
-            "https://blockexplorer.minepi.com/mainnet/accounts/GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
-        },
-        "002": {
-          name: "LÊ VĂN HOẰNG",
-          avatar:
-            "https://cdn-ilcbnhb.nitrocdn.com/eyWebYtfntWmnihDSZRZvIqipddxdlOp/assets/images/optimized/rev-0a2b4a3/minepi.com/wp-content/uploads/2022/06/b7-1536x864.jpg",
-          wallet_address:
-            "GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
-          explorer_link:
-            "https://blockexplorer.minepi.com/mainnet/accounts/GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
-        },
-        "003": {
-          name: "PHẠM THỊ XUÂN",
-          avatar:
-            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/333513902_1932195023807300_1163851942859129592_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEHUbUzai7uybMKKCX41vePUHHOaW9qRuVQcc5pb2pG5TMcLbXM7749XtjmZxexAOiueFtBjmWgkEO3QyI37KQg&_nc_ohc=2welsrt2YlMQ7kNvwFOc7hn&_nc_oc=Adk_sEaoXH3oRXMqnoqfoFZUJeW51zk8C1kGlxqHXsw4ssAxOaotBjRCgMthjIawAkRMVzySEDrzJzpaMu857opF&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=fbVmX5ala3m2lS9mp2CWoA&oh=00_AfHdYB0zfaTS4NOm24PhuUW9b6Un0nwF_rlNw0Uz3HPn-w&oe=6810E999",
-          wallet_address:
-            "GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
-          explorer_link:
-            "https://blockexplorer.minepi.com/mainnet/accounts/GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
-        },
-        "004": {
-          name: "LÊ THỊ HƯƠNG",
-          avatar:
-            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/491577955_1189938295959905_8489318223622425228_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeEKaNmN3EMNo5OPTJm-RTXghTawRiFc5_WFNrBGIVzn9Ru16jvb4yNoeTmWk3xiLZ9qkucZiptZAKXVCXh6-qhQ&_nc_ohc=XsGUn2tjS18Q7kNvwGmpi4-&_nc_oc=AdmTx9BTl2UKWp94btd4tMJRKnEbS5WceXszgrJ_EZgbxBXUsFgK8IDuYfMrcCQbyrRhC1MBxsVRSGZA852cw4sz&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=9yomIWlBUAh83U6ENEt4Kw&oh=00_AfFb9s9k0xdsMtfF4H9cXikQXb4JxZlHTA7yZQZsz12g6g&oe=6810B70E",
-          wallet_address:
-            "GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
-          explorer_link:
-            "https://blockexplorer.minepi.com/mainnet/accounts/GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
-        },
-        "005": {
-          name: "LÊ TRỌNG KHOA",
-          avatar:
-            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/493192748_1733657324175687_1257877052875128746_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeH8XsKzNXgL0yj8z53qHIOtaVJWQIRCD6FpUlZAhEIPoWvV_ysyrHvZPL6RcheGuoJ6PVB5QKk-G0NLasDmDZJg&_nc_ohc=7Px-qfQ5lWQQ7kNvwHYVFhk&_nc_oc=AdlpfYi2vi89mFfK7IPldFASnOFj3koz62XDT8UC5Q0xUTR_aY3SwcSCDv5Fup1zqqo_quOvwDEk_C4sHs19Purs&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=exEYcb5mTNsTiCTOXVZr6A&oh=00_AfEs3ZBU6la6YyE0i-PZlOEDbZRw69eU9zOT7VJbJtg3ng&oe=6810F531",
-          wallet_address:
-            "GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
-          explorer_link:
-            "https://blockexplorer.minepi.com/mainnet/accounts/GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
-        },
-        "006": {
-          name: "HOÀNG VĂN TRỤ",
-          avatar:
-            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/493108752_1733753667499386_17622212115165894_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFWkb5oRJIywNLPIbarT4xAsXKWT3Q0IG2xcpZPdDQgbZLWj82Oe1iFMByWKW-T1pN3-jkNFbqcGzuCvZA8kwfw&_nc_ohc=u3JjcYuZ3HUQ7kNvwFpJuhS&_nc_oc=AdnqHLjnrpmTiBtX9uIlyjCnXBRxMsXfixwUT9c2OQBZ65Z53aC8PNtiiKH5fRaiIpOjQLtXWgkDjLJAjvGRde_Uhh&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=PzpxmMuS2kTQyGk6q2qdbA&oh=00_AfHffHzmd2bPGcBrxcl7rtaT_HjpOuDn-SSyVnUYJ2ClXQ&oe=68113600",
-          wallet_address:
-            "GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
-          explorer_link:
-            "https://blockexplorer.minepi.com/mainnet/accounts/GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
-        },
-        "007": {
-          name: "MINH TRANG",
-          avatar:
-            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/459020914_2207803129648889_9083612727790770567_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEJB1D7cb229eMaz1Tnljv37WSJkrt-6NXtZImSu37o1VVf19czvRfBbJtbDj5OR34CVLCU34_-69wPg090ODaa&_nc_ohc=lzre0bmBz-AQ7kNvwE7BfJp&_nc_oc=Adm9GKxGty-0Z42FQwYm0_uwI8Nd409RtQMch6rxOMi7eABoW5Mt6sByJdjrKm7jv_u_o5n4wbAmAZfr__fPcBGs&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=N5PB6m8Jb2AphoVgDZwqCQ&oh=00_AfFrra6S7brzwMX_b23hAUnqPa4gQxdUkMUNMJFz49RlsQ&oe=68126FF6",
-          wallet_address:
-            "GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
-          explorer_link:
-            "https://blockexplorer.minepi.com/mainnet/accounts/GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
-        },
-        "008": {
-          name: "LÊ THỊ HÀ",
-          avatar:
-            "https://scontent.fthd2-4.fna.fbcdn.net/v/t39.30808-6/491397391_122228848976217325_5812334186522958901_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGkgyQ87OtvNEhgg2G8NL2rwhyzNJKY4HbCHLM0kpjgdghCH501spAOZjH5JdhPl-dGkXQHUToUb8AsZm2_pr4h&_nc_ohc=CDt9Dj35ZmEQ7kNvwHzjhmP&_nc_oc=Adk5SG-e19biNbTLAauHy1rlHbBax96hK7tKu4v4hXaNEbwV_vznFKPrRGztEP1t8zDHFjJVjcBmGK3EGKf22QnV&_nc_zt=23&_nc_ht=scontent.fthd2-4.fna&_nc_gid=g6gl2ukwn3CLEAWEJSh_Hw&oh=00_AfE4YYjuD-c8SpfzVNTIwNnF3Cn-6yPM69g9RRmnTrrp1g&oe=6813C792",
-          wallet_address:
-            "GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
-          explorer_link:
-            "https://blockexplorer.minepi.com/mainnet/accounts/GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
-        },
-      };
+      // Base API URL (sẽ thay bằng URL Render)
+      const API_BASE_URL = 'https://pi-wallet.onrender.com'; // THAY BẰNG URL RENDER THẬT
 
       // Show Toast Notification
       function showToast(message, type = "success") {
@@ -676,23 +530,155 @@
         }, 3000);
       }
 
-      // Load user data based on tag_id
-      function loadUserData() {
+      // Load user data from backend
+      async function loadUserData() {
         const urlParams = new URLSearchParams(window.location.search);
         const tagId = urlParams.get("tag_id");
         const userName = document.getElementById("userName");
         const walletAddress = document.getElementById("walletAddress");
         const avatar = document.getElementById("avatar");
+        const pidogeBalance = document.getElementById("pidogeBalance");
+        const tlkBalance = document.getElementById("tlkBalance");
+        const checkInStatus = document.getElementById("checkInStatus");
+        const checkInButton = document.getElementById("checkInButton");
+        const checkInHistory = document.getElementById("checkInHistory");
 
-        if (tagId && memberData[tagId]) {
-          const member = memberData[tagId];
-          userName.textContent = member.name;
-          walletAddress.textContent = member.wallet_address;
-          avatar.src = member.avatar;
-        } else {
+        if (!tagId) {
           userName.textContent = "Không tìm thấy thông tin";
           walletAddress.textContent = "Không tìm thấy địa chỉ ví";
-          avatar.src = "https://via.placeholder.com/80";
+          avatar.src = "https://picsum.photos/80";
+          checkInHistory.innerHTML = '<li class="text-sm text-gray-500">Chưa có lần điểm danh nào</li>';
+          showToast("Tag ID không hợp lệ!", "error");
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/user/${tagId}`);
+          const user = await response.json();
+
+          if (response.ok) {
+            userName.textContent = user.name || "Không tìm thấy thông tin";
+            walletAddress.textContent = user.wallet_address || "Không tìm thấy địa chỉ ví";
+            avatar.src = user.avatar || "https://picsum.photos/80";
+            pidogeBalance.textContent = user.pidoge_balance.toFixed(2);
+            tlkBalance.textContent = user.tlk_balance.toFixed(2);
+
+            // Kiểm tra trạng thái điểm danh
+            const now = new Date();
+            const lastCheckIn = user.last_check_in ? new Date(user.last_check_in) : null;
+            const oneDay = 24 * 60 * 60 * 1000;
+            if (lastCheckIn && now - lastCheckIn < oneDay) {
+              checkInStatus.textContent = "Đã điểm danh hôm nay";
+              checkInButton.disabled = true;
+              checkInButton.classList.add("opacity-50", "cursor-not-allowed");
+            } else {
+              checkInStatus.textContent = "Chưa điểm danh hôm nay";
+              checkInButton.disabled = false;
+              checkInButton.classList.remove("opacity-50", "cursor-not-allowed");
+            }
+
+            // Hiển thị lịch sử điểm danh
+            if (user.check_in_history && user.check_in_history.length > 0) {
+              checkInHistory.innerHTML = user.check_in_history
+                .slice(-10) // Giới hạn 10 lần gần nhất
+                .reverse()
+                .map(
+                  (date) =>
+                    `<li class="history-item">
+                      <span>${new Date(date).toLocaleString("vi-VN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })}</span>
+                      <span class="history-badge">Đã điểm danh</span>
+                    </li>`
+                )
+                .join("");
+            } else {
+              checkInHistory.innerHTML = '<li class="text-sm text-gray-500">Chưa có lần điểm danh nào</li>';
+            }
+          } else {
+            throw new Error(user.error || "Không tìm thấy người dùng");
+          }
+        } catch (err) {
+          userName.textContent = "Không tìm thấy thông tin";
+          walletAddress.textContent = "Không tìm thấy địa chỉ ví";
+          avatar.src = "https://picsum.photos/80";
+          checkInHistory.innerHTML = '<li class="text-sm text-gray-500">Chưa có lần điểm danh nào</li>';
+          showToast(err.message, "error");
+        }
+
+        // Xử lý tải hình ảnh
+        avatar.onload = () => avatar.classList.add("loaded");
+        avatar.onerror = () => {
+          console.warn(`Không thể tải hình ảnh: ${avatar.src}`);
+          if (avatar.src !== "https://picsum.photos/seed/fallback/80") {
+            avatar.src = "https://picsum.photos/seed/fallback/80";
+          } else {
+            showToast("Không thể tải hình ảnh đại diện!", "error");
+            avatar.classList.add("loaded");
+          }
+        };
+      }
+
+      // Daily Check-In
+      async function checkIn() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tagId = urlParams.get("tag_id");
+        const checkInButton = document.getElementById("checkInButton");
+        const checkInStatus = document.getElementById("checkInStatus");
+        const pidogeBalance = document.getElementById("pidogeBalance");
+        const tlkBalance = document.getElementById("tlkBalance");
+        const checkInHistory = document.getElementById("checkInHistory");
+
+        if (!tagId) {
+          showToast("Tag ID không hợp lệ!", "error");
+          return;
+        }
+
+        checkInButton.disabled = true;
+        checkInButton.classList.add("opacity-50", "cursor-not-allowed");
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/checkin/${tagId}`, {
+            method: "POST",
+          });
+          const data = await response.json();
+
+          if (response.ok) {
+            pidogeBalance.textContent = data.pidoge_balance.toFixed(2);
+            tlkBalance.textContent = data.tlk_balance.toFixed(2);
+            checkInStatus.textContent = "Đã điểm danh hôm nay";
+            showToast("Điểm danh thành công! Nhận 10 Pidoge + 5 tlk", "success");
+
+            // Cập nhật lịch sử điểm danh
+            const now = new Date();
+            const historyItem = `
+              <li class="history-item">
+                <span>${now.toLocaleString("vi-VN", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                })}</span>
+                <span class="history-badge">Đã điểm danh</span>
+              </li>`;
+            checkInHistory.innerHTML = historyItem + checkInHistory.innerHTML;
+            if (checkInHistory.children.length > 10) {
+              checkInHistory.removeChild(checkInHistory.lastChild);
+            }
+          } else {
+            throw new Error(data.error || "Không thể điểm danh");
+          }
+        } catch (err) {
+          showToast(err.message, "error");
+          checkInButton.disabled = false;
+          checkInButton.classList.remove("opacity-50", "cursor-not-allowed");
         }
       }
 
@@ -708,16 +694,68 @@
 
       // Check Balance (Redirect to Pi Block Explorer)
       function checkBalance() {
-        const walletAddress =
-          document.getElementById("walletAddress").textContent;
-
+        const walletAddress = document.getElementById("walletAddress").textContent;
         if (!walletAddress || walletAddress === "Không tìm thấy địa chỉ ví") {
           showToast("Không có địa chỉ ví để kiểm tra!", "error");
           return;
         }
-
         const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
         window.location.href = explorerUrl;
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        loadUserData();
+        autoCheckBalanceFromURL();
+
+        const darkModePreference = localStorage.getItem("darkMode");
+        if (darkModePreference === "enabled") {
+          document.body.classList.add("dark-mode");
+          document.getElementById("darkModeToggle").textContent = "Chuyển chế độ sáng";
+        }
+
+        // Lazy load TradingView Widget
+        const tradingViewSection = document.getElementById("tradingview_chart");
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0].isIntersecting) {
+              new TradingView.widget({
+                width: "100%",
+                height: 250,
+                symbol: "OKX:PIUSDT",
+                interval: "D",
+                timezone: "Etc/UTC",
+                theme: "light",
+                style: "1",
+                locale: "en",
+                toolbar_bg: "#f1f3f6",
+                enable_publishing: false,
+                allow_symbol_change: true,
+                container_id: "tradingview_chart",
+              });
+              observer.disconnect();
+            }
+          },
+          { rootMargin: "100px" }
+        );
+        observer.observe(tradingViewSection);
+      });
+
+      // Copy Wallet Address
+      function copyWalletAddress() {
+        const walletAddress = document.getElementById("walletAddress").textContent;
+        if (walletAddress === "Không tìm thấy địa chỉ ví") {
+          showToast("Không có địa chỉ ví để sao chép!", "error");
+          return;
+        }
+        navigator.clipboard
+          .writeText(walletAddress)
+          .then(() => {
+            showToast("Đã sao chép địa chỉ ví!");
+          })
+          .catch(() => {
+            showToast("Không thể sao chép địa chỉ ví!", "error");
+          });
       }
 
       // Show Withdraw Modal
@@ -736,10 +774,9 @@
 
       // Withdraw Pi (Mock)
       function withdrawPi() {
-        const amount = parseFloat(
-          document.getElementById("withdrawAmount").value
-        );
+        const amount = parseFloat(document.getElementById("withdrawAmount").value);
         const password = document.getElementById("withdrawPassword").value;
+        const withdrawStatus = document.getElementById("withdrawStatus");
 
         if (!amount || amount < 0.01) {
           showToast("Số lượng Pi phải lớn hơn 0 và tối thiểu 1$!", "error");
@@ -751,7 +788,10 @@
           return;
         }
 
+        withdrawStatus.textContent = "Đang xử lý...";
+
         setTimeout(() => {
+          withdrawStatus.textContent = "Đã gửi yêu cầu rút Pi";
           showToast("Yêu cầu rút Pi đã được gửi!");
           hideWithdrawModal();
         }, 1500);
@@ -801,216 +841,14 @@
       }
 
       // Dark Mode Toggle
-      document
-        .getElementById("darkModeToggle")
-        .addEventListener("click", () => {
-          document.body.classList.toggle("dark-mode");
-          const isDarkMode = document.body.classList.contains("dark-mode");
-          document.getElementById("darkModeToggle").textContent = isDarkMode
-            ? "Chuyển chế độ sáng"
-            : "Chuyển chế độ tối";
-          localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
-        });
-
-      // Chatbot Functions
-      const chatbox = document.getElementById("chatbox");
-      const chatOverlay = document.getElementById("chatOverlay");
-      const chatMessages = document.getElementById("chatStatus");
-      const chatInput = document.getElementById("chatInput");
-      const chatMessagesDiv = document.getElementById("chatMessages");
-
-      function toggleChat(event) {
-        if (event) event.stopPropagation();
-        const isOpen = chatbox.style.display === "flex";
-        chatbox.style.display = isOpen ? "none" : "flex";
-        chatOverlay.classList.toggle("active", !isOpen);
-        document.getElementById("chatStatus").textContent = chatbox.style.display === "flex" ? " (Mở)" : " (Đóng)";
-      }
-
-      function hideChat() {
-        chatbox.style.display = "none";
-        chatOverlay.classList.remove("active");
-        document.getElementById("chatStatus").textContent = " (Đóng)";
-      }
-
-      function addMessage(message, isUser = false) {
-        const messageDiv = document.createElement("div");
-        messageDiv.className = `message ${isUser ? "user-message" : "bot-message"}`;
-        messageDiv.textContent = message;
-        chatMessagesDiv.appendChild(messageDiv);
-        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
-      }
-
-      // Hàm chọn ngẫu nhiên một phản hồi từ mảng
-      function getRandomResponse(responses) {
-        return responses[Math.floor(Math.random() * responses.length)];
-      }
-
-      async function sendMessage() {
-        const message = chatInput.value.trim();
-        if (!message) return;
-
-        addMessage(message, true);
-        chatInput.value = "";
-
-        try {
-          const response = await fetch(`https://api.wit.ai/message?v=20240504&q=${encodeURIComponent(message)}`, {
-            headers: {
-              'Authorization': 'Bearer YF2TE7V6C3OMXRB5TL6TYCITBKJRCGQY'
-            }
-          });
-
-          // Kiểm tra trạng thái phản hồi từ API
-          if (!response.ok) {
-            const errorData = await response.json();
-            const errorMessage = errorData.error || 'Lỗi không xác định từ API';
-            throw new Error(`Lỗi API: ${response.status} - ${errorMessage}`);
-          }
-
-          const data = await response.json();
-
-          let botResponse = getRandomResponse([
-            "Tôi không hiểu rõ ý bạn, bạn có thể hỏi lại không? Ví dụ: 'Điểm danh', 'Đổi PP', hoặc 'Rút Pi'. Tôi ở đây để giúp bạn!",
-            "Xin lỗi, tôi chưa hiểu câu hỏi của bạn. Bạn có thể thử hỏi về điểm danh, đổi PP, rút Pi, hoặc kiểm tra số dư không?",
-            "Tôi chưa nhận diện được ý bạn. Hãy thử hỏi theo cách khác, ví dụ: 'Tôi muốn điểm danh' hoặc 'Rút Pi như thế nào?'."
-          ]);
-
-          if (data.intents.length > 0 && data.intents[0].confidence > 0.7) {
-            const intent = data.intents[0].name;
-            const urlParams = new URLSearchParams(window.location.search);
-            const tagId = urlParams.get("tag_id");
-
-            switch (intent) {
-              case 'greeting':
-                botResponse = getRandomResponse([
-                  "Chào bạn! Tôi là chatbot của Ví Pi, rất vui được hỗ trợ bạn. Tôi có thể giúp bạn với các tác vụ như điểm danh, đổi PP sang Pi, rút Pi, kiểm tra số dư, hoặc giải đáp các thắc mắc liên quan. Bạn hãy thoải mái hỏi tôi bất cứ điều gì nhé!",
-                  "Xin chào! Tôi là trợ lý chatbot của Ví Pi. Tôi ở đây để giúp bạn với các chức năng như điểm danh, đổi PP, rút Pi, kiểm tra số dư. Bạn cần tôi hỗ trợ gì nào?",
-                  "Chào bạn! Mình là chatbot của Ví Pi, rất vui được gặp bạn. Mình có thể hỗ trợ bạn với nhiều tác vụ như điểm danh, đổi PP, rút Pi, hoặc kiểm tra số dư. Bạn muốn hỏi gì nào?"
-                ]);
-                break;
-              case 'checkin':
-                botResponse = getRandomResponse([
-                  `Để thực hiện điểm danh, bạn có thể làm theo các bước sau:\n1. Kiểm tra xem bạn đã đăng nhập đúng tài khoản với tag_id chưa.\n2. Nếu có nút 'Điểm danh' trên giao diện, hãy nhấn vào đó.\n3. Mỗi ngày bạn sẽ nhận được 5 PP khi điểm danh thành công.\nNếu không thấy nút 'Điểm danh', có thể bạn cần kiểm tra lại tag_id hoặc liên hệ hỗ trợ qua email support@example.com hoặc hotline +84 987 654 321 để được hướng dẫn thêm. Chúc bạn may mắn!`,
-                  `Bạn muốn điểm danh đúng không? Hãy làm theo các bước sau nhé:\n1. Đảm bảo bạn đã đăng nhập với tag_id chính xác.\n2. Tìm và nhấn nút 'Điểm danh' trên giao diện chính.\n3. Bạn sẽ nhận 5 PP mỗi ngày nếu điểm danh thành công.\nNếu gặp vấn đề, hãy liên hệ qua email support@example.com hoặc gọi +84 987 654 321 để được hỗ trợ!`,
-                  `Điểm danh rất đơn giản, bạn làm theo hướng dẫn này nhé:\n1. Kiểm tra tag_id của bạn đã đúng chưa.\n2. Nhấn vào nút 'Điểm danh' nếu có trên giao diện.\n3. Mỗi ngày bạn sẽ được cộng 5 PP khi hoàn thành.\nNếu không thấy nút, hãy kiểm tra tag_id hoặc liên hệ support@example.com để được giúp đỡ!`
-                ]);
-                break;
-              case 'convert_pp':
-                botResponse = getRandomResponse([
-                  "Để đổi PP sang Pi, bạn cần thực hiện các bước sau:\n1. Tích lũy đủ 300 PP, vì đây là tỷ lệ đổi: 300 PP = 1 Pi.\n2. Trên giao diện, nếu bạn thấy nút 'Đổi PP → Pi', hãy nhấn vào đó để tiến hành.\n3. Nếu không thấy nút, có thể bạn chưa đủ PP hoặc cần kiểm tra lại tag_id.\nLưu ý: Hãy đảm bảo tài khoản của bạn đã được xác minh trước khi đổi. Nếu cần hỗ trợ, bạn có thể liên hệ qua email support@example.com.",
-                  "Bạn muốn đổi PP sang Pi đúng không? Đây là cách thực hiện:\n1. Đảm bảo bạn có ít nhất 300 PP (tỷ lệ đổi là 300 PP = 1 Pi).\n2. Tìm nút 'Đổi PP → Pi' trên giao diện và nhấn vào.\n3. Nếu không thấy nút, có thể PP của bạn chưa đủ hoặc tag_id có vấn đề.\nHãy xác minh tài khoản trước khi đổi, và liên hệ support@example.com nếu cần giúp đỡ.",
-                  "Đổi PP sang Pi khá dễ, bạn làm theo nhé:\n1. Cần có 300 PP để đổi được 1 Pi, hãy kiểm tra số dư PP của bạn.\n2. Nhấn vào nút 'Đổi PP → Pi' nếu thấy trên giao diện.\n3. Nếu không thấy nút, kiểm tra PP hoặc tag_id của bạn.\nLưu ý: Tài khoản cần được xác minh trước. Gặp vấn đề thì gửi email đến support@example.com nhé!"
-                ]);
-                break;
-              case 'withdraw_pi':
-                botResponse = getRandomResponse([
-                  `Để rút Pi, bạn cần làm theo các bước chi tiết sau:\n1. Nhấn vào nút 'Rút Pi' trên giao diện chính.\n2. Nhập số lượng Pi bạn muốn rút, lưu ý số lượng tối thiểu là 1$ (tương đương với tỷ giá hiện tại).\n3. Nhập mật khẩu tài khoản của bạn để xác nhận giao dịch.\n4. Sau khi gửi yêu cầu, hệ thống sẽ xử lý trong vòng 24-48 giờ. Bạn sẽ nhận được thông báo qua email hoặc trong ứng dụng.\nLưu ý: Hãy kiểm tra kỹ số dư và đảm bảo mật khẩu chính xác. Nếu gặp vấn đề, liên hệ hỗ trợ qua email support@example.com hoặc hotline +84 987 654 321.`,
-                  `Rút Pi rất đơn giản, bạn làm theo các bước này:\n1. Nhấn nút 'Rút Pi' trên giao diện.\n2. Nhập số lượng Pi cần rút, tối thiểu là 1$ theo tỷ giá hiện tại.\n3. Nhập mật khẩu để xác nhận.\n4. Yêu cầu sẽ được xử lý trong 24-48 giờ, bạn sẽ nhận thông báo qua email.\nLưu ý: Kiểm tra số dư và mật khẩu trước khi rút. Gặp vấn đề thì liên hệ qua support@example.com hoặc +84 987 654 321.`,
-                  `Bạn muốn rút Pi? Hãy làm theo hướng dẫn này:\n1. Tìm và nhấn nút 'Rút Pi' trên giao diện chính.\n2. Nhập số lượng Pi, tối thiểu 1$ (theo tỷ giá hiện tại).\n3. Nhập mật khẩu để xác nhận giao dịch.\n4. Hệ thống sẽ xử lý trong 24-48 giờ, bạn sẽ được thông báo qua email.\nLưu ý: Đảm bảo số dư đủ và mật khẩu đúng. Nếu cần hỗ trợ, gửi email đến support@example.com nhé!`
-                ]);
-                break;
-              case 'help':
-                botResponse = getRandomResponse([
-                  "Tôi ở đây để hỗ trợ bạn với nhiều tác vụ khác nhau! Bạn có thể hỏi tôi về:\n- Điểm danh: Cách nhận 5 PP mỗi ngày.\n- Đổi PP: Hướng dẫn đổi 300 PP thành 1 Pi.\n- Rút Pi: Quy trình rút Pi với số lượng tối thiểu 1$.\n- Kiểm tra số dư: Xem số dư ví của bạn qua tag_id.\nNgoài ra, nếu bạn có thắc mắc khác, hãy thoải mái hỏi tôi, tôi sẽ cố gắng giải đáp một cách chi tiết nhất có thể!",
-                  "Tôi có thể giúp gì cho bạn? Tôi hỗ trợ các tác vụ như:\n- Điểm danh: Nhận 5 PP mỗi ngày.\n- Đổi PP: Đổi 300 PP lấy 1 Pi.\n- Rút Pi: Rút Pi với tối thiểu 1$.\n- Kiểm tra số dư: Xem thông tin ví qua tag_id.\nNếu bạn có câu hỏi khác, cứ hỏi tôi, tôi sẽ giải đáp chi tiết nhé!",
-                  "Bạn cần giúp gì? Tôi hỗ trợ các chức năng sau:\n- Điểm danh: Nhận 5 PP mỗi ngày.\n- Đổi PP: Hướng dẫn đổi 300 PP thành 1 Pi.\n- Rút Pi: Quy trình rút với tối thiểu 1$.\n- Kiểm tra số dư: Xem số dư ví qua tag_id.\nNgoài ra, bạn có thể hỏi bất cứ điều gì, tôi sẽ trả lời chi tiết nhất có thể!"
-                ]);
-                break;
-              case 'check_balance':
-                if (tagId && memberData[tagId]) {
-                  botResponse = getRandomResponse([
-                    `Dưới đây là thông tin số dư của bạn:\n- Địa chỉ ví: ${memberData[tagId].wallet_address}\n- Để kiểm tra số dư chi tiết, bạn có thể truy cập liên kết sau: ${memberData[tagId].explorer_link}\nLưu ý: Hãy đảm bảo bạn sử dụng trình duyệt an toàn để truy cập liên kết. Nếu cần hỗ trợ thêm, bạn có thể liên hệ qua email support@example.com.`,
-                    `Đây là thông tin ví của bạn để kiểm tra số dư:\n- Địa chỉ ví: ${memberData[tagId].wallet_address}\n- Truy cập liên kết này để xem chi tiết: ${memberData[tagId].explorer_link}\nLưu ý: Sử dụng trình duyệt an toàn khi truy cập. Gặp vấn đề thì liên hệ qua support@example.com nhé!`,
-                    `Thông tin số dư của bạn đây:\n- Địa chỉ ví: ${memberData[tagId].wallet_address}\n- Xem chi tiết số dư tại: ${memberData[tagId].explorer_link}\nLưu ý: Hãy dùng trình duyệt an toàn để truy cập liên kết. Nếu cần giúp đỡ, gửi email đến support@example.com.`
-                  ]);
-                } else {
-                  botResponse = getRandomResponse([
-                    "Rất tiếc, tôi không thể kiểm tra số dư vì bạn chưa cung cấp tag_id hợp lệ. Để kiểm tra số dư, bạn cần:\n1. Đảm bảo URL của bạn có tham số tag_id (ví dụ: ?tag_id=001).\n2. Kiểm tra lại tag_id có đúng với danh sách thành viên không.\nNếu cần hỗ trợ, hãy liên hệ qua email support@example.com hoặc hotline +84 987 654 321.",
-                    "Tôi không thấy tag_id hợp lệ để kiểm tra số dư. Bạn cần làm như sau:\n1. Đảm bảo URL có tham số tag_id (ví dụ: ?tag_id=001).\n2. Kiểm tra tag_id có khớp với danh sách thành viên không.\nNếu gặp vấn đề, liên hệ qua email support@example.com hoặc gọi +84 987 654 321 nhé!",
-                    "Không thể kiểm tra số dư vì thiếu tag_id hợp lệ. Hãy làm theo các bước:\n1. Thêm tham số tag_id vào URL (ví dụ: ?tag_id=001).\n2. Đảm bảo tag_id đúng với danh sách thành viên.\nCần hỗ trợ thêm thì gửi email đến support@example.com hoặc gọi +84 987 654 321."
-                  ]);
-                }
-                break;
-              default:
-                botResponse = getRandomResponse([
-                  "Xin lỗi, tôi chưa hiểu rõ ý bạn. Bạn có thể hỏi về các chức năng như điểm danh, đổi PP, rút Pi, hoặc kiểm tra số dư. Ví dụ: 'Tôi muốn điểm danh', 'Rút Pi như thế nào?'. Hãy thử lại nhé, tôi luôn sẵn sàng hỗ trợ!",
-                  "Tôi chưa hiểu câu hỏi của bạn. Bạn có thể hỏi về điểm danh, đổi PP, rút Pi, hoặc kiểm tra số dư không? Ví dụ: 'Điểm danh', 'Rút Pi'. Hãy thử lại nhé!",
-                  "Rất tiếc, tôi chưa nhận diện được ý bạn. Hãy thử hỏi về điểm danh, đổi PP, rút Pi, hoặc kiểm tra số dư. Ví dụ: 'Tôi muốn rút Pi', 'Kiểm tra số dư'. Tôi sẵn sàng hỗ trợ bạn!"
-                ]);
-            }
-          }
-          setTimeout(() => addMessage(botResponse), 500);
-        } catch (error) {
-          addMessage(`Có lỗi xảy ra: ${error.message}\nVui lòng kiểm tra token hoặc kết nối mạng. Nếu vẫn không hoạt động, liên hệ hỗ trợ qua email support@example.com.`, false);
-        }
-      }
-
-      chatInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") sendMessage();
+      document.getElementById("darkModeToggle").addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        const isDarkMode = document.body.classList.contains("dark-mode");
+        document.getElementById("darkModeToggle").textContent = isDarkMode
+          ? "Chuyển chế độ sáng"
+          : "Chuyển chế độ tối";
+        localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
       });
-
-      // Prevent closing when clicking inside chatbox
-      chatbox.addEventListener("click", (event) => {
-        event.stopPropagation();
-      });
-
-      // Initialize on page load
-      document.addEventListener("DOMContentLoaded", () => {
-        loadUserData();
-        autoCheckBalanceFromURL();
-
-        const darkModePreference = localStorage.getItem("darkMode");
-        if (darkModePreference === "enabled") {
-          document.body.classList.add("dark-mode");
-          document.getElementById("darkModeToggle").textContent = "Chuyển chế độ sáng";
-        }
-
-        // Initialize TradingView Widget
-        new TradingView.widget({
-          width: "100%",
-          height: 300,
-          symbol: "OKX:PIUSDT",
-          interval: "D",
-          timezone: "Etc/UTC",
-          theme: "light",
-          style: "1",
-          locale: "en",
-          toolbar_bg: "#f1f3f6",
-          enable_publishing: false,
-          allow_symbol_change: true,
-          container_id: "tradingview_chart",
-        });
-
-        addMessage("Chào bạn! Tôi là chatbot của Ví Pi. Hãy nhắn tin để tôi hỗ trợ bạn với điểm danh, đổi PP, rút Pi, kiểm tra số dư, hoặc bất kỳ thắc mắc nào khác!");
-
-        // Show chat tooltip after 2 seconds, hide after 5 seconds
-        const chatTooltip = document.getElementById("chatTooltip");
-        setTimeout(() => {
-          chatTooltip.classList.add("show");
-          setTimeout(() => {
-            chatTooltip.classList.remove("show");
-            chatTooltip.classList.add("hide");
-          }, 5000);
-        }, 2000);
-      });
-
-      // Copy Wallet Address
-      function copyWalletAddress() {
-        const walletAddress =
-          document.getElementById("walletAddress").textContent;
-        if (walletAddress === "Không tìm thấy địa chỉ ví") {
-          showToast("Không có địa chỉ ví để sao chép!", "error");
-          return;
-        }
-        navigator.clipboard
-          .writeText(walletAddress)
-          .then(() => {
-            showToast("Đã sao chép địa chỉ ví!");
-          })
-          .catch(() => {
-            showToast("Không thể sao chép địa chỉ ví!", "error");
-          });
-      }
     </script>
   </body>
 </html>
