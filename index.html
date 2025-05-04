@@ -238,6 +238,7 @@
         padding: 8px;
         border-radius: 5px;
         max-width: 70%;
+        white-space: pre-wrap; /* Hỗ trợ xuống dòng cho phản hồi dài */
       }
       .user-message {
         background: #e1bee7; /* Tím nhạt cho tin nhắn người dùng */
@@ -840,6 +841,11 @@
         chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
       }
 
+      // Hàm chọn ngẫu nhiên một phản hồi từ mảng
+      function getRandomResponse(responses) {
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+
       async function sendMessage() {
         const message = chatInput.value.trim();
         if (!message) return;
@@ -850,12 +856,25 @@
         try {
           const response = await fetch(`https://api.wit.ai/message?v=20240504&q=${encodeURIComponent(message)}`, {
             headers: {
-              'Authorization': 'YF2TE7V6C3OMXRB5TL6TYCITBKJRCGQY' // Thay YOUR_WIT_AI_SERVER_TOKEN bằng token của bạn
+              'Authorization': 'Bearer YF2TE7V6C3OMXRB5TL6TYCITBKJRCGQY'
             }
           });
+
+          // Kiểm tra trạng thái phản hồi từ API
+          if (!response.ok) {
+            const errorData = await response.json();
+            const errorMessage = errorData.error || 'Lỗi không xác định từ API';
+            throw new Error(`Lỗi API: ${response.status} - ${errorMessage}`);
+          }
+
           const data = await response.json();
 
-          let botResponse = "Tôi không hiểu rõ, bạn có thể hỏi lại không? Ví dụ: 'Điểm danh', 'Đổi PP', hoặc 'Rút Pi'";
+          let botResponse = getRandomResponse([
+            "Tôi không hiểu rõ ý bạn, bạn có thể hỏi lại không? Ví dụ: 'Điểm danh', 'Đổi PP', hoặc 'Rút Pi'. Tôi ở đây để giúp bạn!",
+            "Xin lỗi, tôi chưa hiểu câu hỏi của bạn. Bạn có thể thử hỏi về điểm danh, đổi PP, rút Pi, hoặc kiểm tra số dư không?",
+            "Tôi chưa nhận diện được ý bạn. Hãy thử hỏi theo cách khác, ví dụ: 'Tôi muốn điểm danh' hoặc 'Rút Pi như thế nào?'."
+          ]);
+
           if (data.intents.length > 0 && data.intents[0].confidence > 0.7) {
             const intent = data.intents[0].name;
             const urlParams = new URLSearchParams(window.location.search);
@@ -863,34 +882,66 @@
 
             switch (intent) {
               case 'greeting':
-                botResponse = "Chào bạn! Tôi là chatbot của Ví Pi. Bạn cần giúp gì không?";
+                botResponse = getRandomResponse([
+                  "Chào bạn! Tôi là chatbot của Ví Pi, rất vui được hỗ trợ bạn. Tôi có thể giúp bạn với các tác vụ như điểm danh, đổi PP sang Pi, rút Pi, kiểm tra số dư, hoặc giải đáp các thắc mắc liên quan. Bạn hãy thoải mái hỏi tôi bất cứ điều gì nhé!",
+                  "Xin chào! Tôi là trợ lý chatbot của Ví Pi. Tôi ở đây để giúp bạn với các chức năng như điểm danh, đổi PP, rút Pi, kiểm tra số dư. Bạn cần tôi hỗ trợ gì nào?",
+                  "Chào bạn! Mình là chatbot của Ví Pi, rất vui được gặp bạn. Mình có thể hỗ trợ bạn với nhiều tác vụ như điểm danh, đổi PP, rút Pi, hoặc kiểm tra số dư. Bạn muốn hỏi gì nào?"
+                ]);
                 break;
               case 'checkin':
-                botResponse = "Để điểm danh, nhấn nút 'Điểm danh' (nếu có) hoặc kiểm tra với tag_id của bạn. Bạn nhận 5 PP mỗi ngày!";
+                botResponse = getRandomResponse([
+                  `Để thực hiện điểm danh, bạn có thể làm theo các bước sau:\n1. Kiểm tra xem bạn đã đăng nhập đúng tài khoản với tag_id chưa.\n2. Nếu có nút 'Điểm danh' trên giao diện, hãy nhấn vào đó.\n3. Mỗi ngày bạn sẽ nhận được 5 PP khi điểm danh thành công.\nNếu không thấy nút 'Điểm danh', có thể bạn cần kiểm tra lại tag_id hoặc liên hệ hỗ trợ qua email support@example.com hoặc hotline +84 987 654 321 để được hướng dẫn thêm. Chúc bạn may mắn!`,
+                  `Bạn muốn điểm danh đúng không? Hãy làm theo các bước sau nhé:\n1. Đảm bảo bạn đã đăng nhập với tag_id chính xác.\n2. Tìm và nhấn nút 'Điểm danh' trên giao diện chính.\n3. Bạn sẽ nhận 5 PP mỗi ngày nếu điểm danh thành công.\nNếu gặp vấn đề, hãy liên hệ qua email support@example.com hoặc gọi +84 987 654 321 để được hỗ trợ!`,
+                  `Điểm danh rất đơn giản, bạn làm theo hướng dẫn này nhé:\n1. Kiểm tra tag_id của bạn đã đúng chưa.\n2. Nhấn vào nút 'Điểm danh' nếu có trên giao diện.\n3. Mỗi ngày bạn sẽ được cộng 5 PP khi hoàn thành.\nNếu không thấy nút, hãy kiểm tra tag_id hoặc liên hệ support@example.com để được giúp đỡ!`
+                ]);
                 break;
               case 'convert_pp':
-                botResponse = "Bạn cần 300 PP để đổi 1 Pi. Nhấn 'Đổi PP → Pi' (nếu có) để thực hiện!";
+                botResponse = getRandomResponse([
+                  "Để đổi PP sang Pi, bạn cần thực hiện các bước sau:\n1. Tích lũy đủ 300 PP, vì đây là tỷ lệ đổi: 300 PP = 1 Pi.\n2. Trên giao diện, nếu bạn thấy nút 'Đổi PP → Pi', hãy nhấn vào đó để tiến hành.\n3. Nếu không thấy nút, có thể bạn chưa đủ PP hoặc cần kiểm tra lại tag_id.\nLưu ý: Hãy đảm bảo tài khoản của bạn đã được xác minh trước khi đổi. Nếu cần hỗ trợ, bạn có thể liên hệ qua email support@example.com.",
+                  "Bạn muốn đổi PP sang Pi đúng không? Đây là cách thực hiện:\n1. Đảm bảo bạn có ít nhất 300 PP (tỷ lệ đổi là 300 PP = 1 Pi).\n2. Tìm nút 'Đổi PP → Pi' trên giao diện và nhấn vào.\n3. Nếu không thấy nút, có thể PP của bạn chưa đủ hoặc tag_id có vấn đề.\nHãy xác minh tài khoản trước khi đổi, và liên hệ support@example.com nếu cần giúp đỡ.",
+                  "Đổi PP sang Pi khá dễ, bạn làm theo nhé:\n1. Cần có 300 PP để đổi được 1 Pi, hãy kiểm tra số dư PP của bạn.\n2. Nhấn vào nút 'Đổi PP → Pi' nếu thấy trên giao diện.\n3. Nếu không thấy nút, kiểm tra PP hoặc tag_id của bạn.\nLưu ý: Tài khoản cần được xác minh trước. Gặp vấn đề thì gửi email đến support@example.com nhé!"
+                ]);
                 break;
               case 'withdraw_pi':
-                botResponse = "Để rút Pi, nhấn 'Rút Pi', nhập số lượng (tối thiểu 1$) và mật khẩu. Yêu cầu sẽ được xử lý!";
+                botResponse = getRandomResponse([
+                  `Để rút Pi, bạn cần làm theo các bước chi tiết sau:\n1. Nhấn vào nút 'Rút Pi' trên giao diện chính.\n2. Nhập số lượng Pi bạn muốn rút, lưu ý số lượng tối thiểu là 1$ (tương đương với tỷ giá hiện tại).\n3. Nhập mật khẩu tài khoản của bạn để xác nhận giao dịch.\n4. Sau khi gửi yêu cầu, hệ thống sẽ xử lý trong vòng 24-48 giờ. Bạn sẽ nhận được thông báo qua email hoặc trong ứng dụng.\nLưu ý: Hãy kiểm tra kỹ số dư và đảm bảo mật khẩu chính xác. Nếu gặp vấn đề, liên hệ hỗ trợ qua email support@example.com hoặc hotline +84 987 654 321.`,
+                  `Rút Pi rất đơn giản, bạn làm theo các bước này:\n1. Nhấn nút 'Rút Pi' trên giao diện.\n2. Nhập số lượng Pi cần rút, tối thiểu là 1$ theo tỷ giá hiện tại.\n3. Nhập mật khẩu để xác nhận.\n4. Yêu cầu sẽ được xử lý trong 24-48 giờ, bạn sẽ nhận thông báo qua email.\nLưu ý: Kiểm tra số dư và mật khẩu trước khi rút. Gặp vấn đề thì liên hệ qua support@example.com hoặc +84 987 654 321.`,
+                  `Bạn muốn rút Pi? Hãy làm theo hướng dẫn này:\n1. Tìm và nhấn nút 'Rút Pi' trên giao diện chính.\n2. Nhập số lượng Pi, tối thiểu 1$ (theo tỷ giá hiện tại).\n3. Nhập mật khẩu để xác nhận giao dịch.\n4. Hệ thống sẽ xử lý trong 24-48 giờ, bạn sẽ được thông báo qua email.\nLưu ý: Đảm bảo số dư đủ và mật khẩu đúng. Nếu cần hỗ trợ, gửi email đến support@example.com nhé!`
+                ]);
                 break;
               case 'help':
-                botResponse = "Tôi có thể giúp bạn với: điểm danh, đổi PP, rút Pi. Hãy thử hỏi nhé!";
+                botResponse = getRandomResponse([
+                  "Tôi ở đây để hỗ trợ bạn với nhiều tác vụ khác nhau! Bạn có thể hỏi tôi về:\n- Điểm danh: Cách nhận 5 PP mỗi ngày.\n- Đổi PP: Hướng dẫn đổi 300 PP thành 1 Pi.\n- Rút Pi: Quy trình rút Pi với số lượng tối thiểu 1$.\n- Kiểm tra số dư: Xem số dư ví của bạn qua tag_id.\nNgoài ra, nếu bạn có thắc mắc khác, hãy thoải mái hỏi tôi, tôi sẽ cố gắng giải đáp một cách chi tiết nhất có thể!",
+                  "Tôi có thể giúp gì cho bạn? Tôi hỗ trợ các tác vụ như:\n- Điểm danh: Nhận 5 PP mỗi ngày.\n- Đổi PP: Đổi 300 PP lấy 1 Pi.\n- Rút Pi: Rút Pi với tối thiểu 1$.\n- Kiểm tra số dư: Xem thông tin ví qua tag_id.\nNếu bạn có câu hỏi khác, cứ hỏi tôi, tôi sẽ giải đáp chi tiết nhé!",
+                  "Bạn cần giúp gì? Tôi hỗ trợ các chức năng sau:\n- Điểm danh: Nhận 5 PP mỗi ngày.\n- Đổi PP: Hướng dẫn đổi 300 PP thành 1 Pi.\n- Rút Pi: Quy trình rút với tối thiểu 1$.\n- Kiểm tra số dư: Xem số dư ví qua tag_id.\nNgoài ra, bạn có thể hỏi bất cứ điều gì, tôi sẽ trả lời chi tiết nhất có thể!"
+                ]);
                 break;
               case 'check_balance':
                 if (tagId && memberData[tagId]) {
-                  botResponse = `Địa chỉ ví của bạn là: ${memberData[tagId].wallet_address}. Vui lòng kiểm tra số dư tại ${memberData[tagId].explorer_link}`;
+                  botResponse = getRandomResponse([
+                    `Dưới đây là thông tin số dư của bạn:\n- Địa chỉ ví: ${memberData[tagId].wallet_address}\n- Để kiểm tra số dư chi tiết, bạn có thể truy cập liên kết sau: ${memberData[tagId].explorer_link}\nLưu ý: Hãy đảm bảo bạn sử dụng trình duyệt an toàn để truy cập liên kết. Nếu cần hỗ trợ thêm, bạn có thể liên hệ qua email support@example.com.`,
+                    `Đây là thông tin ví của bạn để kiểm tra số dư:\n- Địa chỉ ví: ${memberData[tagId].wallet_address}\n- Truy cập liên kết này để xem chi tiết: ${memberData[tagId].explorer_link}\nLưu ý: Sử dụng trình duyệt an toàn khi truy cập. Gặp vấn đề thì liên hệ qua support@example.com nhé!`,
+                    `Thông tin số dư của bạn đây:\n- Địa chỉ ví: ${memberData[tagId].wallet_address}\n- Xem chi tiết số dư tại: ${memberData[tagId].explorer_link}\nLưu ý: Hãy dùng trình duyệt an toàn để truy cập liên kết. Nếu cần giúp đỡ, gửi email đến support@example.com.`
+                  ]);
                 } else {
-                  botResponse = "Vui lòng cung cấp tag_id hợp lệ để kiểm tra số dư!";
+                  botResponse = getRandomResponse([
+                    "Rất tiếc, tôi không thể kiểm tra số dư vì bạn chưa cung cấp tag_id hợp lệ. Để kiểm tra số dư, bạn cần:\n1. Đảm bảo URL của bạn có tham số tag_id (ví dụ: ?tag_id=001).\n2. Kiểm tra lại tag_id có đúng với danh sách thành viên không.\nNếu cần hỗ trợ, hãy liên hệ qua email support@example.com hoặc hotline +84 987 654 321.",
+                    "Tôi không thấy tag_id hợp lệ để kiểm tra số dư. Bạn cần làm như sau:\n1. Đảm bảo URL có tham số tag_id (ví dụ: ?tag_id=001).\n2. Kiểm tra tag_id có khớp với danh sách thành viên không.\nNếu gặp vấn đề, liên hệ qua email support@example.com hoặc gọi +84 987 654 321 nhé!",
+                    "Không thể kiểm tra số dư vì thiếu tag_id hợp lệ. Hãy làm theo các bước:\n1. Thêm tham số tag_id vào URL (ví dụ: ?tag_id=001).\n2. Đảm bảo tag_id đúng với danh sách thành viên.\nCần hỗ trợ thêm thì gửi email đến support@example.com hoặc gọi +84 987 654 321."
+                  ]);
                 }
                 break;
               default:
-                botResponse = "Xin lỗi, tôi chưa hiểu. Bạn có thể hỏi về điểm danh, đổi PP, rút Pi, hoặc kiểm tra số dư không?";
+                botResponse = getRandomResponse([
+                  "Xin lỗi, tôi chưa hiểu rõ ý bạn. Bạn có thể hỏi về các chức năng như điểm danh, đổi PP, rút Pi, hoặc kiểm tra số dư. Ví dụ: 'Tôi muốn điểm danh', 'Rút Pi như thế nào?'. Hãy thử lại nhé, tôi luôn sẵn sàng hỗ trợ!",
+                  "Tôi chưa hiểu câu hỏi của bạn. Bạn có thể hỏi về điểm danh, đổi PP, rút Pi, hoặc kiểm tra số dư không? Ví dụ: 'Điểm danh', 'Rút Pi'. Hãy thử lại nhé!",
+                  "Rất tiếc, tôi chưa nhận diện được ý bạn. Hãy thử hỏi về điểm danh, đổi PP, rút Pi, hoặc kiểm tra số dư. Ví dụ: 'Tôi muốn rút Pi', 'Kiểm tra số dư'. Tôi sẵn sàng hỗ trợ bạn!"
+                ]);
             }
           }
           setTimeout(() => addMessage(botResponse), 500);
         } catch (error) {
-          addMessage("Có lỗi xảy ra. Vui lòng thử lại sau.", false);
+          addMessage(`Có lỗi xảy ra: ${error.message}\nVui lòng kiểm tra token hoặc kết nối mạng. Nếu vẫn không hoạt động, liên hệ hỗ trợ qua email support@example.com.`, false);
         }
       }
 
@@ -930,7 +981,7 @@
           container_id: "tradingview_chart",
         });
 
-        addMessage("Chào bạn! Tôi là chatbot của Ví Pi. Hãy nhắn tin để tôi hỗ trợ!");
+        addMessage("Chào bạn! Tôi là chatbot của Ví Pi. Hãy nhắn tin để tôi hỗ trợ bạn với điểm danh, đổi PP, rút Pi, kiểm tra số dư, hoặc bất kỳ thắc mắc nào khác!");
 
         // Show chat tooltip after 2 seconds, hide after 5 seconds
         const chatTooltip = document.getElementById("chatTooltip");
