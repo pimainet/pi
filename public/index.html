@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ví Pi - Đầy đủ</title>
+    <!-- Google Fonts for Inter -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- TradingView Widget -->
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <!-- Local CSS -->
+    <style>
+      /* Smooth Scroll */
+      html {
+        scroll-behavior: smooth;
+        overscroll-behavior: contain;
+      }
+
+      /* Parallax Background */
+      body {
+        background: linear-gradient(135deg, #e0e7ff, #c3dafe, #a5b4fc);
+        position: relative;
+        overflow-x: hidden;
+        animation: gradientShift 10s ease infinite;
+        will-change: background-position;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* Dark Mode */
+      .dark-mode {
+        background: linear-gradient(135deg, #1a202c, #2d3748, #4a5568);
+        color: #e2e8f0;
+      }
+      .dark-mode .bg-white {
+        background: rgba(45, 55, 72, 0.85);
+        backdrop-filter: blur(10px);
+      }
+      .dark-mode .text-gray-800 {
+        color: #ffffff;
+      }
+      .dark-mode .text-gray-500,
+      .dark-mode .text-gray-600 {
+        color: #a0aec0;
+      }
+      .dark-mode .bg-gray-200 {
+        background: #4a5568;
+      }
+      .dark-mode .hover:bg-gray-300 {
+        background: #718096;
+      }
+      .dark-mode .border-gray-300 {
+        border-color: #4a5568;
+      }
+      .dark-mode .btn:hover {
+        filter: brightness(1.2);
+        box-shadow: 0 0 15px rgba(96, 165, 250, 0.5);
+      }
+      .dark-mode #userName,
+      .dark-mode h3,
+      .dark-mode h4 {
+        color: #ffffff;
+        text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+      }
+      .dark-mode #walletAddress,
+      .dark-mode #balanceDisplay,
+      .dark-mode #safetyResult,
+      .dark-mode #safetyStatus,
+      .dark-mode #safetyScore,
+      .dark-mode #safetyWarnings,
+      .dark-mode #pidogeBalance,
+      .dark-mode #tlkBalance,
+      .dark-mode #piBalance,
+      .dark-mode #withdrawStatus,
+      .dark-mode #checkInStatus,
+      .dark-mode .text-sm,
+      .dark-mode .history-item {
+        color: #a0aec0;
+      }
+      .dark-mode a {
+        color: #60a5fa;
+      }
+      .dark-mode .balance-badge,
+      .dark-mode .history-badge {
+        background: rgba(96, 165, 250, 0.2);
+        color: #60a5fa;
+      }
+
+      /* Glassmorphism Effect for Cards */
+      .card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        will-change: transform, box-shadow;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Button Ripple Effect */
+      .btn {
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        will-change: transform;
+      }
+      .btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+      .btn::after {
+        content: "";
+        position: absolute;
+        background: rgba(255, 255, 255, 0.3);
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.4s ease;
+      }
+      .btn:active::after {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+      }
+
+      /* Spinner Animation */
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #60a5fa;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 1s linear infinite;
+        display: none;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Safety Status Colors */
+      .safe {
+        color: #2ecc71;
+        text-shadow: 0 0 8px rgba(46, 204, 113, 0.4);
+      }
+      .unsafe {
+        color: #e74c3c;
+        text-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+      }
+
+      /* Modal Animation */
+      .modal.show {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .modal .modal-content {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        transform: scale(0.8);
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+      .modal.show .modal-content {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      /* Toast Animation */
+      #toast.show {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      #toast {
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      /* Input Focus Animation */
+      input:focus,
+      select:focus {
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+        border-color: #6366f1;
+      }
+
+      /* Avatar Styles */
+      .avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        object-fit: cover;
+        transition: all 0.3s ease;
+        opacity: 0;
+        will-change: transform, box-shadow, border;
+      }
+      .avatar.loaded {
+        opacity: 1;
+      }
+      .avatar:hover {
+        transform: scale(1.1) rotate(3deg);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        border: 2px solid transparent;
+        background: linear-gradient(45deg, #6366f1, #a5b4fc) border-box;
+      }
+      .dark-mode .avatar:hover {
+        background: linear-gradient(45deg, #60a5fa, #a0aec0) border-box;
+      }
+
+      /* Balance Badge */
+      .balance-badge {
+        display: inline-block;
+        background: rgba(79, 70, 229, 0.1);
+        color: #4f46e5;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+      .balance-badge:hover {
+        transform: scale(1.05);
+        background: rgba(79, 70, 229, 0.2);
+      }
+
+      /* History Item */
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 8px;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+      .history-item:hover {
+        transform: translateX(5px);
+        background: rgba(79, 70, 229, 0.1);
+      }
+      .history-badge {
+        display: inline-block;
+        background: rgba(34, 197, 94, 0.1);
+        color: #22c55e;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+      .history-list {
+        max-height: 120px; /* 3 items (~40px each) */
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #a5b4fc #e0e7ff;
+      }
+      .history-list::-webkit-scrollbar {
+        width: 6px;
+      }
+      .history-list::-webkit-scrollbar-track {
+        background: #e0e7ff;
+      }
+      .history-list::-webkit-scrollbar-thumb {
+        background: #a5b4fc;
+        border-radius: 3px;
+      }
+      .dark-mode .history-list::-webkit-scrollbar-track {
+        background: #4a5568;
+      }
+      .dark-mode .history-list::-webkit-scrollbar-thumb {
+        background: #60a5fa;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen font-sans text-gray-800 transition-colors duration-500">
+    <div class="container mx-auto p-4 max-w-md">
+      <!-- Dark Mode Toggle -->
+      <div class="flex justify-end mb-4">
+        <button
+          id="darkModeToggle"
+          class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors btn"
+        >
+          Chuyển chế độ tối
+        </button>
+      </div>
+
+      <!-- Toast Notification -->
+      <div
+        id="toast"
+        class="fixed top-4 right-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg"
+      >
+        <span id="toastMessage"></span>
+      </div>
+
+      <!-- Card Section -->
+      <div class="card shadow-xl rounded-2xl p-6 mb-6">
+        <div class="flex items-center mb-4">
+          <img
+            id="avatar"
+            src="https://picsum.photos/80"
+            alt="Avatar"
+            class="avatar mr-4"
+            loading="lazy"
+          />
+          <div class="flex-1">
+            <h2 id="userName" class="text-xl font-bold">Tên của bạn</h2>
+          </div>
+        </div>
+        <div class="mb-4">
+          <p class="text-sm text-gray-500">
+            Ví: <span id="walletAddress" class="break-words text-sm text-gray-500">Chưa nhập địa chỉ ví</span>
+          </p>
+          <p class="text-sm text-gray-500 mt-1">
+            Số dư Pi: <span id="piBalance">Chưa kiểm tra</span>
+          </p>
+        </div>
+        <div class="flex space-x-2">
+          <button
+            onclick="copyWalletAddress()"
+            class="flex-1 bg-indigo-500 text-white py-2 rounded-lg btn hover:bg-indigo-600"
+          >
+            Sao chép ví
+          </button>
+          <button
+            onclick="checkBalance()"
+            class="flex-1 bg-green-500 text-white py-2 rounded-lg btn hover:bg-green-600"
+          >
+            Kiểm tra số dư
+          </button>
+        </div>
+      </div>
+
+      <!-- Daily Check-In Section -->
+      <div class="card shadow-xl rounded-2xl p-6 mb-6">
+        <h3 class="text-lg font-bold mb-4">Điểm danh mỗi ngày</h3>
+        <p class="text-sm text-gray-500 mb-2">
+          Trạng thái: <span id="checkInStatus">Chưa điểm danh hôm nay</span>
+        </p>
+        <div class="flex space-x-4 mb-4">
+          <span class="balance-badge">Pidoge: <span id="pidogeBalance">0</span></span>
+          <span class="balance-badge">tlk: <span id="tlkBalance">0</span></span>
+        </div>
+        <button
+          id="checkInButton"
+          onclick="checkIn()"
+          class="w-full bg-blue-500 text-white py-2 rounded-lg btn hover:bg-blue-600"
+        >
+          Điểm danh
+        </button>
+      </div>
+
+      <!-- Check-In History Section -->
+      <div class="card shadow-xl rounded-2xl p-6 mb-6">
+        <h3 class="text-lg font-bold mb-4">Lịch sử điểm danh</h3>
+        <ul id="checkInHistory" class="history-list"></ul>
+      </div>
+
+      <!-- Chart Section (TradingView Widget) -->
+      <div class="card shadow-xl rounded-2xl p-6 mb-6">
+        <h3 class="text-lg font-bold mb-4">Giá Pi (USD)</h3>
+        <div id="tradingview_chart"></div>
+      </div>
+
+      <!-- Safety Check Section -->
+      <div class="card shadow-xl rounded-2xl p-6 mb-6">
+        <h3 class="text-lg font-bold mb-4">Kiểm tra Web/Ứng dụng</h3>
+        <select
+          id="checkType"
+          class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
+        >
+          <option value="website">Trang web</option>
+          <option value="app">Ứng dụng</option>
+        </select>
+        <input
+          id="safetyUrl"
+          type="text"
+          class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
+          placeholder="Nhập URL (ví dụ: https://example.com hoặc link Google Play)"
+        />
+        <div class="flex space-x-2">
+          <button
+            onclick="checkSafety()"
+            id="checkButton"
+            class="flex-1 bg-indigo-500 text-white py-2 rounded-lg btn hover:bg-indigo-600"
+          >
+            Kiểm tra
+          </button>
+          <button
+            onclick="clearForm()"
+            class="flex-1 bg-gray-300 text-gray-800 py-2 rounded-lg btn hover:bg-gray-400"
+          >
+            Xóa
+          </button>
+        </div>
+        <div id="loadingSpinner" class="spinner mx-auto mt-4"></div>
+        <div id="safetyResult" class="mt-4 hidden">
+          <p class="text-sm font-bold flex items-center">
+            Kết quả: <span id="safetyStatus" class="ml-2"></span>
+            <svg
+              id="statusIcon"
+              class="w-5 h-5 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </p>
+          <p class="text-sm">
+            Điểm tin cậy: <span id="safetyScore"></span>/100
+          </p>
+          <p class="text-sm">Cảnh báo: <span id="safetyWarnings"></span></p>
+        </div>
+      </div>
+
+      <!-- Support Section -->
+      <div class="card shadow-xl rounded-2xl p-6">
+        <h3 class="text-lg font-bold mb-4">Hỗ trợ</h3>
+        <p class="text-sm text-gray-600 mb-2">
+          Liên hệ:
+          <a
+            href="mailto:support@example.com"
+            class="text-indigo-500 hover:underline"
+            >support@example.com</a
+          >
+        </p>
+        <p class="text-sm text-gray-600 mb-4">
+          Hotline:
+          <a href="tel:+84987654321" class="text-indigo-500 hover:underline"
+            >+84 987 654 321</a
+          >
+        </p>
+        <h4 class="text-md font-bold mb-2">Video hướng dẫn</h4>
+        <div class="relative" style="padding-top: 56.25%">
+          <iframe
+            class="absolute top-0 left-0 w-full h-full rounded-lg"
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+            title="Hướng dẫn sử dụng ví Pi"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+
+      <!-- Withdraw Modal -->
+      <div
+        id="withdrawModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden modal"
+      >
+        <div class="modal-content rounded-lg p-6 w-11/12 max-w-sm">
+          <h3 class="text-lg font-bold mb-4">Rút Pi</h3>
+          <p class="text-sm text-gray-600 mb-4">
+            Số dư hiện tại: <span id="withdrawBalance">0 Pi</span>
+          </p>
+          <input
+            id="withdrawAmount"
+            type="number"
+            step="0.01"
+            min="0"
+            class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
+            placeholder="Số lượng Pi (tối thiểu 1$)"
+          />
+          <input
+            id="withdrawPassword"
+            type="password"
+            class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
+            placeholder="Nhập mật khẩu"
+          />
+          <div class="flex justify-end space-x-2">
+            <button
+              onclick="hideWithdrawModal()"
+              class="bg-gray-300 text-gray-800 py-2 px-4 rounded btn hover:bg-gray-400"
+            >
+              Hủy
+            </button>
+            <button
+              onclick="withdrawPi()"
+              class="bg-red-500 text-white py-2 px-4 rounded btn hover:bg-red-600"
+            >
+              Rút
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inline JavaScript -->
+    <script>
+      // Show Toast Notification
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toast");
+        const toastMessage = document.getElementById("toastMessage");
+        toastMessage.textContent = message;
+        toast.classList.remove("bg-green-500", "bg-red-500");
+        toast.classList.add(type === "success" ? "bg-green-500" : "bg-red-500");
+        toast.classList.remove("hidden");
+        toast.classList.add("show");
+        setTimeout(() => {
+          toast.classList.remove("show");
+          toast.classList.add("hidden");
+        }, 3000);
+      }
+
+      // Load user data from backend
+      async function loadUserData() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tagId = urlParams.get("tag_id");
+        const userName = document.getElementById("userName");
+        const walletAddress = document.getElementById("walletAddress");
+        const avatar = document.getElementById("avatar");
+        const pidogeBalance = document.getElementById("pidogeBalance");
+        const tlkBalance = document.getElementById("tlkBalance");
+        const checkInStatus = document.getElementById("checkInStatus");
+        const checkInButton = document.getElementById("checkInButton");
+        const checkInHistory = document.getElementById("checkInHistory");
+
+        if (!tagId) {
+          userName.textContent = "Không tìm thấy thông tin";
+          walletAddress.textContent = "Không tìm thấy địa chỉ ví";
+          avatar.src = "https://picsum.photos/80";
+          checkInHistory.innerHTML = '<li class="text-sm text-gray-500">Chưa có lần điểm danh nào</li>';
+          showToast("Tag ID không hợp lệ!", "error");
+          return;
+        }
+
+        try {
+          const response = await fetch(`http://localhost:3000/api/user/${tagId}`);
+          const user = await response.json();
+
+          if (response.ok) {
+            userName.textContent = user.name || "Không tìm thấy thông tin";
+            walletAddress.textContent = user.wallet_address || "Không tìm thấy địa chỉ ví";
+            avatar.src = user.avatar || "https://picsum.photos/80";
+            pidogeBalance.textContent = user.pidoge_balance.toFixed(2);
+            tlkBalance.textContent = user.tlk_balance.toFixed(2);
+
+            // Kiểm tra trạng thái điểm danh
+            const now = new Date();
+            const lastCheckIn = user.last_check_in ? new Date(user.last_check_in) : null;
+            const oneDay = 24 * 60 * 60 * 1000;
+            if (lastCheckIn && now - lastCheckIn < oneDay) {
+              checkInStatus.textContent = "Đã điểm danh hôm nay";
+              checkInButton.disabled = true;
+              checkInButton.classList.add("opacity-50", "cursor-not-allowed");
+            } else {
+              checkInStatus.textContent = "Chưa điểm danh hôm nay";
+              checkInButton.disabled = false;
+              checkInButton.classList.remove("opacity-50", "cursor-not-allowed");
+            }
+
+            // Hiển thị lịch sử điểm danh
+            if (user.check_in_history && user.check_in_history.length > 0) {
+              checkInHistory.innerHTML = user.check_in_history
+                .slice(-10) // Giới hạn 10 lần gần nhất
+                .reverse()
+                .map(
+                  (date) =>
+                    `<li class="history-item">
+                      <span>${new Date(date).toLocaleString("vi-VN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })}</span>
+                      <span class="history-badge">Đã điểm danh</span>
+                    </li>`
+                )
+                .join("");
+            } else {
+              checkInHistory.innerHTML = '<li class="text-sm text-gray-500">Chưa có lần điểm danh nào</li>';
+            }
+          } else {
+            throw new Error(user.error || "Không tìm thấy người dùng");
+          }
+        } catch (err) {
+          userName.textContent = "Không tìm thấy thông tin";
+          walletAddress.textContent = "Không tìm thấy địa chỉ ví";
+          avatar.src = "https://picsum.photos/80";
+          checkInHistory.innerHTML = '<li class="text-sm text-gray-500">Chưa có lần điểm danh nào</li>';
+          showToast(err.message, "error");
+        }
+
+        // Xử lý tải hình ảnh
+        avatar.onload = () => avatar.classList.add("loaded");
+        avatar.onerror = () => {
+          console.warn(`Không thể tải hình ảnh: ${avatar.src}`);
+          if (avatar.src !== "https://picsum.photos/seed/fallback/80") {
+            avatar.src = "https://picsum.photos/seed/fallback/80";
+          } else {
+            showToast("Không thể tải hình ảnh đại diện!", "error");
+            avatar.classList.add("loaded");
+          }
+        };
+      }
+
+      // Daily Check-In
+      async function checkIn() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tagId = urlParams.get("tag_id");
+        const checkInButton = document.getElementById("checkInButton");
+        const checkInStatus = document.getElementById("checkInStatus");
+        const pidogeBalance = document.getElementById("pidogeBalance");
+        const tlkBalance = document.getElementById("tlkBalance");
+        const checkInHistory = document.getElementById("checkInHistory");
+
+        if (!tagId) {
+          showToast("Tag ID không hợp lệ!", "error");
+          return;
+        }
+
+        checkInButton.disabled = true;
+        checkInButton.classList.add("opacity-50", "cursor-not-allowed");
+
+        try {
+          const response = await fetch(`http://localhost:3000/api/checkin/${tagId}`, {
+            method: "POST",
+          });
+          const data = await response.json();
+
+          if (response.ok) {
+            pidogeBalance.textContent = data.pidoge_balance.toFixed(2);
+            tlkBalance.textContent = data.tlk_balance.toFixed(2);
+            checkInStatus.textContent = "Đã điểm danh hôm nay";
+            showToast("Điểm danh thành công! Nhận 10 Pidoge + 5 tlk", "success");
+
+            // Cập nhật lịch sử điểm danh
+            const now = new Date();
+            const historyItem = `
+              <li class="history-item">
+                <span>${now.toLocaleString("vi-VN", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                })}</span>
+                <span class="history-badge">Đã điểm danh</span>
+              </li>`;
+            checkInHistory.innerHTML = historyItem + checkInHistory.innerHTML;
+            if (checkInHistory.children.length > 10) {
+              checkInHistory.removeChild(checkInHistory.lastChild);
+            }
+          } else {
+            throw new Error(data.error || "Không thể điểm danh");
+          }
+        } catch (err) {
+          showToast(err.message, "error");
+          checkInButton.disabled = false;
+          checkInButton.classList.remove("opacity-50", "cursor-not-allowed");
+        }
+      }
+
+      // Auto-check balance from URL
+      function autoCheckBalanceFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const walletAddress = urlParams.get("wallet");
+        if (walletAddress) {
+          document.getElementById("walletAddress").textContent = walletAddress;
+          checkBalance();
+        }
+      }
+
+      // Check Balance (Redirect to Pi Block Explorer)
+      function checkBalance() {
+        const walletAddress = document.getElementById("walletAddress").textContent;
+        if (!walletAddress || walletAddress === "Không tìm thấy địa chỉ ví") {
+          showToast("Không có địa chỉ ví để kiểm tra!", "error");
+          return;
+        }
+        const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
+        window.location.href = explorerUrl;
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        loadUserData();
+        autoCheckBalanceFromURL();
+
+        const darkModePreference = localStorage.getItem("darkMode");
+        if (darkModePreference === "enabled") {
+          document.body.classList.add("dark-mode");
+          document.getElementById("darkModeToggle").textContent = "Chuyển chế độ sáng";
+        }
+
+        // Lazy load TradingView Widget
+        const tradingViewSection = document.getElementById("tradingview_chart");
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0].isIntersecting) {
+              new TradingView.widget({
+                width: "100%",
+                height: 250,
+                symbol: "OKX:PIUSDT",
+                interval: "D",
+                timezone: "Etc/UTC",
+                theme: "light",
+                style: "1",
+                locale: "en",
+                toolbar_bg: "#f1f3f6",
+                enable_publishing: false,
+                allow_symbol_change: true,
+                container_id: "tradingview_chart",
+              });
+              observer.disconnect();
+            }
+          },
+          { rootMargin: "100px" }
+        );
+        observer.observe(tradingViewSection);
+      });
+
+      // Copy Wallet Address
+      function copyWalletAddress() {
+        const walletAddress = document.getElementById("walletAddress").textContent;
+        if (walletAddress === "Không tìm thấy địa chỉ ví") {
+          showToast("Không có địa chỉ ví để sao chép!", "error");
+          return;
+        }
+        navigator.clipboard
+          .writeText(walletAddress)
+          .then(() => {
+            showToast("Đã sao chép địa chỉ ví!");
+          })
+          .catch(() => {
+            showToast("Không thể sao chép địa chỉ ví!", "error");
+          });
+      }
+
+      // Show Withdraw Modal
+      function showWithdrawModal() {
+        const withdrawModal = document.getElementById("withdrawModal");
+        withdrawModal.classList.remove("hidden");
+        withdrawModal.classList.add("show");
+      }
+
+      // Hide Withdraw Modal
+      function hideWithdrawModal() {
+        const withdrawModal = document.getElementById("withdrawModal");
+        withdrawModal.classList.remove("show");
+        withdrawModal.classList.add("hidden");
+      }
+
+      // Withdraw Pi (Mock)
+      function withdrawPi() {
+        const amount = parseFloat(document.getElementById("withdrawAmount").value);
+        const password = document.getElementById("withdrawPassword").value;
+        const withdrawStatus = document.getElementById("withdrawStatus");
+
+        if (!amount || amount < 0.01) {
+          showToast("Số lượng Pi phải lớn hơn 0 và tối thiểu 1$!", "error");
+          return;
+        }
+
+        if (!password) {
+          showToast("Vui lòng nhập mật khẩu!", "error");
+          return;
+        }
+
+        withdrawStatus.textContent = "Đang xử lý...";
+
+        setTimeout(() => {
+          withdrawStatus.textContent = "Đã gửi yêu cầu rút Pi";
+          showToast("Yêu cầu rút Pi đã được gửi!");
+          hideWithdrawModal();
+        }, 1500);
+      }
+
+      // Safety Check (Mock)
+      function checkSafety() {
+        const checkButton = document.getElementById("checkButton");
+        const loadingSpinner = document.getElementById("loadingSpinner");
+        const safetyResult = document.getElementById("safetyResult");
+        const safetyStatus = document.getElementById("safetyStatus");
+        const safetyScore = document.getElementById("safetyScore");
+        const safetyWarnings = document.getElementById("safetyWarnings");
+
+        checkButton.disabled = true;
+        loadingSpinner.style.display = "block";
+        safetyResult.classList.add("hidden");
+
+        setTimeout(() => {
+          loadingSpinner.style.display = "none";
+          safetyResult.classList.remove("hidden");
+
+          const isSafe = Math.random() > 0.5;
+          safetyResult.classList.remove("safe", "unsafe");
+          safetyResult.classList.add(isSafe ? "safe" : "unsafe");
+          safetyStatus.textContent = isSafe ? "An toàn" : "Không an toàn";
+          safetyScore.textContent = isSafe ? "85" : "30";
+          safetyWarnings.textContent = isSafe
+            ? "Không có cảnh báo"
+            : "Trang web có thể không đáng tin cậy";
+
+          checkButton.disabled = false;
+          showToast(
+            isSafe
+              ? "Kiểm tra thành công: An toàn!"
+              : "Kiểm tra thành công: Không an toàn!",
+            isSafe ? "success" : "error"
+          );
+        }, 1500);
+      }
+
+      // Clear Safety Check Form
+      function clearForm() {
+        document.getElementById("safetyUrl").value = "";
+        document.getElementById("safetyResult").classList.add("hidden");
+        showToast("Đã xóa biểu mẫu!");
+      }
+
+      // Dark Mode Toggle
+      document.getElementById("darkModeToggle").addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        const isDarkMode = document.body.classList.contains("dark-mode");
+        document.getElementById("darkModeToggle").textContent = isDarkMode
+          ? "Chuyển chế độ sáng"
+          : "Chuyển chế độ tối";
+        localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
+      });
+    </script>
+  </body>
+</html>
