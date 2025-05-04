@@ -295,28 +295,46 @@
       }
       .chat-icon-tooltip {
         position: absolute;
-        bottom: 100%;
+        bottom: calc(100% + 10px);
         right: 0;
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(0, 0, 0, 0.8);
         color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
+        padding: 8px 12px;
+        border-radius: 8px;
         font-size: 12px;
+        line-height: 1.4;
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: opacity 0.5s ease, transform 0.5s ease;
         pointer-events: none;
-        max-width: 150px;
-        text-align: right;
+        max-width: 140px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       }
       .chat-icon-tooltip.show {
         opacity: 1;
+        transform: scale(1.05);
+      }
+      .chat-icon-tooltip.hide {
+        opacity: 0;
+        transform: scale(0.95);
       }
       .chat-icon-tooltip .line {
         display: block;
-        margin-bottom: 3px;
+        margin: 0;
+        padding: 2px 0;
       }
       .chat-icon:hover .chat-icon-tooltip {
         opacity: 1;
+        transform: scale(1.05);
+      }
+      .chat-icon-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        right: 20px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
       }
     </style>
   </head>
@@ -879,14 +897,15 @@
 
         addMessage("Chào bạn! Tôi là chatbot của Ví Pi. Hãy nhắn tin để tôi hỗ trợ!");
 
-        // Show chat tooltip after 5 seconds, hide after 5 more seconds
+        // Show chat tooltip after 2 seconds, hide after 5 seconds
         const chatTooltip = document.getElementById("chatTooltip");
         setTimeout(() => {
           chatTooltip.classList.add("show");
           setTimeout(() => {
             chatTooltip.classList.remove("show");
+            chatTooltip.classList.add("hide");
           }, 5000);
-        }, 5000);
+        }, 2000);
       });
 
       // Copy Wallet Address
