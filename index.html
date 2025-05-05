@@ -129,6 +129,10 @@
       .avatar-3d:hover {
         transform: rotateY(360deg);
       }
+      .user-info {
+        flex: 1;
+        margin-left: 1rem;
+      }
       .tab-content {
         display: none;
         padding: 1rem;
@@ -271,6 +275,9 @@
         .lotus-hologram { width: 80px; }
         .video-container { padding-top: 75%; }
         #tab-bar button { padding: 0.5rem; font-size: 0.9rem; }
+        .user-info { margin-left: 0.5rem; }
+        .user-info h2 { font-size: 1rem; }
+        .user-info span { font-size: 0.9rem; }
       }
     </style>
   </head>
@@ -292,7 +299,7 @@
             loading="lazy"
           />
         </div>
-        <div class="ml-2">
+        <div class="user-info">
           <h2 id="userName" class="text-xl font-bold">Nhà du hành vũ trụ</h2>
           <span id="userLevel" class="text-lg">Level 1: Cosmic Explorer</span>
           <div class="mt-1 balance-container">
