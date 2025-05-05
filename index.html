@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ví Pi - Đầy đủ</title>
+    <title>Ví Pi - Vũ trụ Pi</title>
     <!-- Google Fonts for Inter -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
@@ -11,9 +11,10 @@
     />
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- TradingView Widget -->
-    <script src="https://s3.tradingview.com/tv.js"></script>
-    <!-- Local CSS -->
+    <!-- Three.js -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <style>
       /* Smooth Scroll */
       html {
@@ -21,109 +22,47 @@
         overscroll-behavior: contain;
       }
 
-      /* Parallax Background */
+      /* Starfield Background */
       body {
-        background: linear-gradient(135deg, #e0e7ff, #c3dafe, #a5b4fc);
+        background: #0a0a23;
         position: relative;
         overflow-x: hidden;
-        animation: gradientShift 10s ease infinite;
-        will-change: background-position;
-      }
-
-      @keyframes gradientShift {
-        0% {
-          background-position: 0% 50%;
-        }
-        50% {
-          background-position: 100% 50%;
-        }
-        100% {
-          background-position: 0% 50%;
-        }
-      }
-
-      /* Dark Mode */
-      .dark-mode {
-        background: linear-gradient(135deg, #1a202c, #2d3748, #4a5568);
         color: #e2e8f0;
       }
-      .dark-mode .bg-white {
-        background: rgba(45, 55, 72, 0.85);
-        backdrop-filter: blur(10px);
-      }
-      .dark-mode .text-gray-800 {
-        color: #ffffff;
-      }
-      .dark-mode .text-gray-500,
-      .dark-mode .text-gray-600 {
-        color: #a0aec0;
-      }
-      .dark-mode .bg-gray-200 {
-        background: #4a5568;
-      }
-      .dark-mode .hover:bg-gray-300 {
-        background: #718096;
-      }
-      .dark-mode .border-gray-300 {
-        border-color: #4a5568;
-      }
-      .dark-mode .btn:hover {
-        filter: brightness(1.2);
-        box-shadow: 0 0 15px rgba(96, 165, 250, 0.5);
-      }
-      .dark-mode #userName,
-      .dark-mode h3,
-      .dark-mode h4 {
-        color: #ffffff;
-        text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
-      }
-      .dark-mode #walletAddress,
-      .dark-mode #balanceDisplay,
-      .dark-mode #safetyResult,
-      .dark-mode #safetyStatus,
-      .dark-mode #safetyScore,
-      .dark-mode #safetyWarnings,
-      .dark-mode #pidogeBalance,
-      .dark-mode #tlkBalance,
-      .dark-mode #piBalance,
-      .dark-mode #withdrawStatus,
-      .dark-mode #checkInStatus,
-      .dark-mode .text-sm,
-      .dark-mode .history-item {
-        color: #a0aec0;
-      }
-      .dark-mode a {
-        color: #60a5fa;
-      }
-      .dark-mode .balance-badge,
-      .dark-mode .history-badge {
-        background: rgba(96, 165, 250, 0.2);
-        color: #60a5fa;
+      #starfield {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
       }
 
-      /* Glassmorphism Effect for Cards */
+      /* Glassmorphism Cards */
       .card {
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.2);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        will-change: transform, box-shadow;
+        border-radius: 16px;
+        box-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
       }
       .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px) rotateX(5deg);
+        box-shadow: 0 10px 30px rgba(96, 165, 250, 0.5);
       }
 
-      /* Button Ripple Effect */
+      /* Button with Neon Effect */
       .btn {
         position: relative;
         overflow: hidden;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
-        will-change: transform;
+        background: linear-gradient(45deg, #6366f1, #a5b4fc);
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
       }
       .btn:hover {
         transform: scale(1.05);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.7);
       }
       .btn::after {
         content: "";
@@ -153,12 +92,8 @@
         display: none;
       }
       @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
 
       /* Safety Status Colors */
@@ -196,6 +131,7 @@
         transition: transform 0.3s ease, opacity 0.3s ease;
         transform: translateX(100%);
         opacity: 0;
+        background: linear-gradient(45deg, #6366f1, #a5b4fc);
       }
 
       /* Input Focus Animation */
@@ -205,7 +141,7 @@
         border-color: #6366f1;
       }
 
-      /* Avatar Styles */
+      /* Avatar as Spaceship */
       .avatar {
         width: 64px;
         height: 64px;
@@ -214,26 +150,20 @@
         object-fit: cover;
         transition: all 0.3s ease;
         opacity: 0;
-        will-change: transform, box-shadow, border;
+        filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.5));
       }
       .avatar.loaded {
         opacity: 1;
       }
       .avatar:hover {
-        transform: scale(1.1) rotate(3deg);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        border: 2px solid transparent;
-        background: linear-gradient(45deg, #6366f1, #a5b4fc) border-box;
-      }
-      .dark-mode .avatar:hover {
-        background: linear-gradient(45deg, #60a5fa, #a0aec0) border-box;
+        transform: scale(1.1) rotate(10deg);
+        border: 2px solid #60a5fa;
       }
 
       /* Balance Badge */
       .balance-badge {
-        display: inline-block;
-        background: rgba(79, 70, 229, 0.1);
-        color: #4f46e5;
+        background: rgba(79, 70, 229, 0.2);
+        color: #a5b4fc;
         padding: 4px 12px;
         border-radius: 12px;
         font-size: 0.875rem;
@@ -242,7 +172,7 @@
       }
       .balance-badge:hover {
         transform: scale(1.05);
-        background: rgba(79, 70, 229, 0.2);
+        background: rgba(79, 70, 229, 0.3);
       }
 
       /* History Item */
@@ -252,15 +182,15 @@
         align-items: center;
         padding: 8px 12px;
         border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
         transition: transform 0.2s ease, background 0.2s ease;
       }
       .history-item:hover {
         transform: translateX(5px);
-        background: rgba(79, 70, 229, 0.1);
+        background: rgba(96, 165, 250, 0.2);
       }
       .history-badge {
-        display: inline-block;
-        background: rgba(34, 197, 94, 0.1);
+        background: rgba(34, 197, 94, 0.2);
         color: #22c55e;
         padding: 2px 8px;
         border-radius: 10px;
@@ -271,78 +201,96 @@
         max-height: 120px; /* 3 items (~40px each) */
         overflow-y: auto;
         scrollbar-width: thin;
-        scrollbar-color: #a5b4fc #e0e7ff;
+        scrollbar-color: #60a5fa rgba(255, 255, 255, 0.1);
       }
       .history-list::-webkit-scrollbar {
         width: 6px;
       }
       .history-list::-webkit-scrollbar-track {
-        background: #e0e7ff;
+        background: rgba(255, 255, 255, 0.1);
       }
       .history-list::-webkit-scrollbar-thumb {
-        background: #a5b4fc;
-        border-radius: 3px;
-      }
-      .dark-mode .history-list::-webkit-scrollbar-track {
-        background: #4a5568;
-      }
-      .dark-mode .history-list::-webkit-scrollbar-thumb {
         background: #60a5fa;
+        border-radius: 3px;
+        box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+      }
+
+      /* Level Badge */
+      .level-badge {
+        background: linear-gradient(45deg, #ffd700, #ffaa00);
+        color: #0a0a23;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      }
+
+      /* 3D Planet Canvas */
+      #planet-canvas {
+        width: 100%;
+        height: 150px;
+        margin-bottom: 1rem;
+      }
+
+      /* Crystal Canvas */
+      #crystal-canvas {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80px;
+        height: 80px;
+        pointer-events: none;
       }
     </style>
   </head>
-  <body class="min-h-screen font-sans text-gray-800 transition-colors duration-500">
-    <div class="container mx-auto p-4 max-w-md">
-      <!-- Dark Mode Toggle -->
-      <div class="flex justify-end mb-4">
-        <button
-          id="darkModeToggle"
-          class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors btn"
-        >
-          Chuyển chế độ tối
-        </button>
-      </div>
+  <body class="min-h-screen font-sans">
+    <!-- Starfield Canvas -->
+    <div id="starfield"></div>
 
+    <div class="container mx-auto p-4 max-w-md">
       <!-- Toast Notification -->
       <div
         id="toast"
-        class="fixed top-4 right-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg"
+        class="fixed top-4 right-4 text-white py-2 px-4 rounded-lg shadow-lg"
       >
         <span id="toastMessage"></span>
       </div>
 
-      <!-- Card Section -->
+      <!-- User Info Card -->
       <div class="card shadow-xl rounded-2xl p-6 mb-6">
         <div class="flex items-center mb-4">
           <img
             id="avatar"
             src="https://picsum.photos/80"
-            alt="Avatar"
+            alt="Phi thuyền"
             class="avatar mr-4"
             loading="lazy"
           />
           <div class="flex-1">
-            <h2 id="userName" class="text-xl font-bold">Tên của bạn</h2>
+            <h2 id="userName" class="text-xl font-bold">Nhà du hành</h2>
+            <span id="userLevel" class="level-badge">Level 1: New Explorer</span>
           </div>
         </div>
         <div class="mb-4">
-          <p class="text-sm text-gray-500">
-            Ví: <span id="walletAddress" class="break-words text-sm text-gray-500">Chưa nhập địa chỉ ví</span>
+          <p class="text-sm text-gray-300">
+            Mã ví: <span id="walletAddress" class="break-words text-sm">Chưa nhập</span>
           </p>
-          <p class="text-sm text-gray-500 mt-1">
+          <p class="text-sm text-gray-300 mt-1">
             Số dư Pi: <span id="piBalance">Chưa kiểm tra</span>
           </p>
         </div>
         <div class="flex space-x-2">
           <button
             onclick="copyWalletAddress()"
-            class="flex-1 bg-indigo-500 text-white py-2 rounded-lg btn hover:bg-indigo-600"
+            class="flex-1 text-white py-2 rounded-lg btn"
           >
-            Sao chép ví
+            Sao chép mã ví
           </button>
           <button
             onclick="checkBalance()"
-            class="flex-1 bg-green-500 text-white py-2 rounded-lg btn hover:bg-green-600"
+            class="flex-1 text-white py-2 rounded-lg btn"
           >
             Kiểm tra số dư
           </button>
@@ -351,30 +299,34 @@
 
       <!-- Daily Check-In Section -->
       <div class="card shadow-xl rounded-2xl p-6 mb-6">
-        <h3 class="text-lg font-bold mb-4">Điểm danh mỗi ngày</h3>
-        <p class="text-sm text-gray-500 mb-2">
-          Trạng thái: <span id="checkInStatus">Chưa điểm danh hôm nay</span>
+        <h3 class="text-lg font-bold mb-4">Khám phá hành tinh Pi</h3>
+        <div id="planet-canvas"></div>
+        <p class="text-sm text-gray-300 mb-2">
+          Trạng thái: <span id="checkInStatus">Chưa khám phá hôm nay</span>
         </p>
         <div class="flex space-x-4 mb-4">
           <span class="balance-badge">Pidoge: <span id="pidogeBalance">0</span></span>
           <span class="balance-badge">tlk: <span id="tlkBalance">0</span></span>
         </div>
-        <button
-          id="checkInButton"
-          onclick="checkIn()"
-          class="w-full bg-blue-500 text-white py-2 rounded-lg btn hover:bg-blue-600"
-        >
-          Điểm danh
-        </button>
+        <div class="relative">
+          <button
+            id="checkInButton"
+            onclick="checkIn()"
+            class="w-full text-white py-2 rounded-lg btn"
+          >
+            Khám phá
+          </button>
+          <canvas id="crystal-canvas"></canvas>
+        </div>
       </div>
 
       <!-- Check-In History Section -->
       <div class="card shadow-xl rounded-2xl p-6 mb-6">
-        <h3 class="text-lg font-bold mb-4">Lịch sử điểm danh</h3>
+        <h3 class="text-lg font-bold mb-4">Nhật ký du hành</h3>
         <ul id="checkInHistory" class="history-list"></ul>
       </div>
 
-      <!-- Chart Section (TradingView Widget) -->
+      <!-- Chart Section -->
       <div class="card shadow-xl rounded-2xl p-6 mb-6">
         <h3 class="text-lg font-bold mb-4">Giá Pi (USD)</h3>
         <div id="tradingview_chart"></div>
@@ -385,7 +337,7 @@
         <h3 class="text-lg font-bold mb-4">Kiểm tra Web/Ứng dụng</h3>
         <select
           id="checkType"
-          class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
+          class="w-full p-2 border rounded mb-4 bg-gray-800 text-white focus:ring-2 focus:ring-indigo-300"
         >
           <option value="website">Trang web</option>
           <option value="app">Ứng dụng</option>
@@ -393,20 +345,20 @@
         <input
           id="safetyUrl"
           type="text"
-          class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
-          placeholder="Nhập URL (ví dụ: https://example.com hoặc link Google Play)"
+          class="w-full p-2 border rounded mb-4 bg-gray-800 text-white focus:ring-2 focus:ring-indigo-300"
+          placeholder="Nhập URL"
         />
         <div class="flex space-x-2">
           <button
             onclick="checkSafety()"
             id="checkButton"
-            class="flex-1 bg-indigo-500 text-white py-2 rounded-lg btn hover:bg-indigo-600"
+            class="flex-1 text-white py-2 rounded-lg btn"
           >
             Kiểm tra
           </button>
           <button
             onclick="clearForm()"
-            class="flex-1 bg-gray-300 text-gray-800 py-2 rounded-lg btn hover:bg-gray-400"
+            class="flex-1 bg-gray-600 text-white py-2 rounded-lg btn"
           >
             Xóa
           </button>
@@ -439,27 +391,19 @@
 
       <!-- Support Section -->
       <div class="card shadow-xl rounded-2xl p-6">
-        <h3 class="text-lg font-bold mb-4">Hỗ trợ</h3>
-        <p class="text-sm text-gray-600 mb-2">
-          Liên hệ:
-          <a
-            href="mailto:support@example.com"
-            class="text-indigo-500 hover:underline"
-            >support@example.com</a
-          >
+        <h3 class="text-lg font-bold mb-4">Hỗ trợ từ Grok</h3>
+        <p class="text-sm text-gray-300 mb-2">
+          Hỏi Grok: <button onclick="openChatbot()" class="text-indigo-400 hover:underline">Chat ngay</button>
         </p>
-        <p class="text-sm text-gray-600 mb-4">
-          Hotline:
-          <a href="tel:+84987654321" class="text-indigo-500 hover:underline"
-            >+84 987 654 321</a
-          >
+        <p class="text-sm text-gray-300 mb-4">
+          Hotline: <a href="tel:+84987654321" class="text-indigo-400 hover:underline">+84 987 654 321</a>
         </p>
         <h4 class="text-md font-bold mb-2">Video hướng dẫn</h4>
         <div class="relative" style="padding-top: 56.25%">
           <iframe
             class="absolute top-0 left-0 w-full h-full rounded-lg"
             src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-            title="Hướng dẫn sử dụng ví Pi"
+            title="Hướng dẫn Vũ trụ Pi"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
@@ -467,88 +411,160 @@
           ></iframe>
         </div>
       </div>
-
-      <!-- Withdraw Modal -->
-      <div
-        id="withdrawModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden modal"
-      >
-        <div class="modal-content rounded-lg p-6 w-11/12 max-w-sm">
-          <h3 class="text-lg font-bold mb-4">Rút Pi</h3>
-          <p class="text-sm text-gray-600 mb-4">
-            Số dư hiện tại: <span id="withdrawBalance">0 Pi</span>
-          </p>
-          <input
-            id="withdrawAmount"
-            type="number"
-            step="0.01"
-            min="0"
-            class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
-            placeholder="Số lượng Pi (tối thiểu 1$)"
-          />
-          <input
-            id="withdrawPassword"
-            type="password"
-            class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
-            placeholder="Nhập mật khẩu"
-          />
-          <div class="flex justify-end space-x-2">
-            <button
-              onclick="hideWithdrawModal()"
-              class="bg-gray-300 text-gray-800 py-2 px-4 rounded btn hover:bg-gray-400"
-            >
-              Hủy
-            </button>
-            <button
-              onclick="withdrawPi()"
-              class="bg-red-500 text-white py-2 px-4 rounded btn hover:bg-red-600"
-            >
-              Rút
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <!-- Inline JavaScript -->
+    <!-- Audio Element -->
+    <audio id="checkInSound" src="https://cdn.freesound.org/previews/612/612087_5674468-lq.mp3"></audio>
+
     <script>
-      // Base API URL (sẽ thay bằng URL Render)
+      // Base API URL
       const API_BASE_URL = 'https://pi-wallet.onrender.com'; // THAY BẰNG URL RENDER THẬT
 
+      // Initialize Starfield
+      particlesJS('starfield', {
+        particles: {
+          number: { value: 100, density: { enable: true, value_area: 800 } },
+          color: { value: '#ffffff' },
+          shape: { type: 'circle' },
+          opacity: { value: 0.5, random: true },
+          size: { value: 2, random: true },
+          line_linked: { enable: false },
+          move: {
+            enable: true,
+            speed: 1,
+            direction: 'none',
+            random: true,
+            straight: false,
+            out_mode: 'out',
+            bounce: false,
+          },
+        },
+        interactivity: {
+          detect_on: 'canvas',
+          events: {
+            onhover: { enable: false },
+            onclick: { enable: false },
+            resize: true,
+          },
+        },
+        retina_detect: true,
+      });
+
+      // Initialize Planet
+      let planetScene, planetCamera, planetRenderer, planetMesh;
+      function initPlanet() {
+        const canvas = document.getElementById('planet-canvas');
+        planetScene = new THREE.Scene();
+        planetCamera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+        planetRenderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+        planetRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+        const geometry = new THREE.SphereGeometry(1, 32, 32);
+        const material = new THREE.MeshStandardMaterial({
+          color: 0x6366f1,
+          roughness: 0.5,
+          metalness: 0.5,
+          emissive: 0x000000,
+        });
+        planetMesh = new THREE.Mesh(geometry, material);
+        planetScene.add(planetMesh);
+
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(5, 5, 5);
+        planetScene.add(light);
+        planetScene.add(new THREE.AmbientLight(0x404040));
+
+        planetCamera.position.z = 3;
+
+        function animatePlanet() {
+          requestAnimationFrame(animatePlanet);
+          planetMesh.rotation.y += 0.01;
+          planetRenderer.render(planetScene, planetCamera);
+        }
+        animatePlanet();
+      }
+
+      // Initialize Crystal
+      let crystalScene, crystalCamera, crystalRenderer, crystalMesh;
+      function initCrystal() {
+        const canvas = document.getElementById('crystal-canvas');
+        crystalScene = new THREE.Scene();
+        crystalCamera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+        crystalRenderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+        crystalRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+        const geometry = new THREE.IcosahedronGeometry(0.5, 0);
+        const material = new THREE.MeshStandardMaterial({
+          color: 0x60a5fa,
+          roughness: 0.2,
+          metalness: 0.8,
+          emissive: 0x000000,
+          transparent: true,
+          opacity: 0.9,
+        });
+        crystalMesh = new THREE.Mesh(geometry, material);
+        crystalScene.add(crystalMesh);
+
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(5, 5, 5);
+        crystalScene.add(light);
+        crystalScene.add(new THREE.AmbientLight(0x404040));
+
+        crystalCamera.position.z = 2;
+
+        function animateCrystal() {
+          requestAnimationFrame(animateCrystal);
+          crystalMesh.rotation.x += 0.02;
+          crystalMesh.rotation.y += 0.02;
+          crystalRenderer.render(crystalScene, crystalCamera);
+        }
+        animateCrystal();
+
+        // Hover Effect
+        const checkInButton = document.getElementById('checkInButton');
+        checkInButton.addEventListener('mouseenter', () => {
+          material.emissive.setHex(0x60a5fa);
+        });
+        checkInButton.addEventListener('mouseleave', () => {
+          material.emissive.setHex(0x000000);
+        });
+      }
+
       // Show Toast Notification
-      function showToast(message, type = "success") {
-        const toast = document.getElementById("toast");
-        const toastMessage = document.getElementById("toastMessage");
+      function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
         toastMessage.textContent = message;
-        toast.classList.remove("bg-green-500", "bg-red-500");
-        toast.classList.add(type === "success" ? "bg-green-500" : "bg-red-500");
-        toast.classList.remove("hidden");
-        toast.classList.add("show");
+        toast.classList.remove('bg-green-500', 'bg-red-500');
+        toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
+        toast.classList.remove('hidden');
+        toast.classList.add('show');
         setTimeout(() => {
-          toast.classList.remove("show");
-          toast.classList.add("hidden");
+          toast.classList.remove('show');
+          toast.classList.add('hidden');
         }, 3000);
       }
 
-      // Load user data from backend
+      // Load User Data
       async function loadUserData() {
         const urlParams = new URLSearchParams(window.location.search);
-        const tagId = urlParams.get("tag_id");
-        const userName = document.getElementById("userName");
-        const walletAddress = document.getElementById("walletAddress");
-        const avatar = document.getElementById("avatar");
-        const pidogeBalance = document.getElementById("pidogeBalance");
-        const tlkBalance = document.getElementById("tlkBalance");
-        const checkInStatus = document.getElementById("checkInStatus");
-        const checkInButton = document.getElementById("checkInButton");
-        const checkInHistory = document.getElementById("checkInHistory");
+        const tagId = urlParams.get('tag_id');
+        const userName = document.getElementById('userName');
+        const walletAddress = document.getElementById('walletAddress');
+        const avatar = document.getElementById('avatar');
+        const pidogeBalance = document.getElementById('pidogeBalance');
+        const tlkBalance = document.getElementById('tlkBalance');
+        const checkInStatus = document.getElementById('checkInStatus');
+        const checkInButton = document.getElementById('checkInButton');
+        const checkInHistory = document.getElementById('checkInHistory');
+        const userLevel = document.getElementById('userLevel');
 
         if (!tagId) {
-          userName.textContent = "Không tìm thấy thông tin";
-          walletAddress.textContent = "Không tìm thấy địa chỉ ví";
-          avatar.src = "https://picsum.photos/80";
-          checkInHistory.innerHTML = '<li class="text-sm text-gray-500">Chưa có lần điểm danh nào</li>';
-          showToast("Tag ID không hợp lệ!", "error");
+          userName.textContent = 'Không tìm thấy thông tin';
+          walletAddress.textContent = 'Không tìm thấy mã ví';
+          avatar.src = 'https://picsum.photos/80';
+          checkInHistory.innerHTML = '<li class="text-sm text-gray-300">Chưa khám phá hành tinh nào</li>';
+          showToast('Tag ID không hợp lệ!', 'error');
           return;
         }
 
@@ -557,298 +573,268 @@
           const user = await response.json();
 
           if (response.ok) {
-            userName.textContent = user.name || "Không tìm thấy thông tin";
-            walletAddress.textContent = user.wallet_address || "Không tìm thấy địa chỉ ví";
-            avatar.src = user.avatar || "https://picsum.photos/80";
+            userName.textContent = user.name || 'Nhà du hành';
+            walletAddress.textContent = user.wallet_address || 'Không tìm thấy mã ví';
+            avatar.src = user.avatar || 'https://picsum.photos/80';
             pidogeBalance.textContent = user.pidoge_balance.toFixed(2);
             tlkBalance.textContent = user.tlk_balance.toFixed(2);
 
-            // Kiểm tra trạng thái điểm danh
+            // Display User Level
+            const checkInCount = user.check_in_history.length;
+            let level = 'Level 1: New Explorer';
+            if (checkInCount >= 30) level = 'Level 3: Galaxy Master';
+            else if (checkInCount >= 10) level = 'Level 2: Star Navigator';
+            userLevel.textContent = level;
+
+            // Check-In Status
             const now = new Date();
             const lastCheckIn = user.last_check_in ? new Date(user.last_check_in) : null;
             const oneDay = 24 * 60 * 60 * 1000;
             if (lastCheckIn && now - lastCheckIn < oneDay) {
-              checkInStatus.textContent = "Đã điểm danh hôm nay";
+              checkInStatus.textContent = 'Đã khám phá hôm nay';
               checkInButton.disabled = true;
-              checkInButton.classList.add("opacity-50", "cursor-not-allowed");
+              checkInButton.classList.add('opacity-50', 'cursor-not-allowed');
             } else {
-              checkInStatus.textContent = "Chưa điểm danh hôm nay";
+              checkInStatus.textContent = 'Chưa khám phá hôm nay';
               checkInButton.disabled = false;
-              checkInButton.classList.remove("opacity-50", "cursor-not-allowed");
+              checkInButton.classList.remove('opacity-50', 'cursor-not-allowed');
             }
 
-            // Hiển thị lịch sử điểm danh
+            // Check-In History
             if (user.check_in_history && user.check_in_history.length > 0) {
               checkInHistory.innerHTML = user.check_in_history
-                .slice(-10) // Giới hạn 10 lần gần nhất
+                .slice(-10)
                 .reverse()
                 .map(
                   (date) =>
                     `<li class="history-item">
-                      <span>${new Date(date).toLocaleString("vi-VN", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
+                      <span>${new Date(date).toLocaleString('vi-VN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
                       })}</span>
-                      <span class="history-badge">Đã điểm danh</span>
+                      <span class="history-badge">Đã khám phá</span>
                     </li>`
                 )
-                .join("");
+                .join('');
             } else {
-              checkInHistory.innerHTML = '<li class="text-sm text-gray-500">Chưa có lần điểm danh nào</li>';
+              checkInHistory.innerHTML = '<li class="text-sm text-gray-300">Chưa khám phá hành tinh nào</li>';
             }
           } else {
-            throw new Error(user.error || "Không tìm thấy người dùng");
+            throw new Error(user.error || 'Không tìm thấy người dùng');
           }
         } catch (err) {
-          userName.textContent = "Không tìm thấy thông tin";
-          walletAddress.textContent = "Không tìm thấy địa chỉ ví";
-          avatar.src = "https://picsum.photos/80";
-          checkInHistory.innerHTML = '<li class="text-sm text-gray-500">Chưa có lần điểm danh nào</li>';
-          showToast(err.message, "error");
+          userName.textContent = 'Không tìm thấy thông tin';
+          walletAddress.textContent = 'Không tìm thấy mã ví';
+          avatar.src = 'https://picsum.photos/80';
+          checkInHistory.innerHTML = '<li class="text-sm text-gray-300">Chưa khám phá hành tinh nào</li>';
+          showToast(err.message, 'error');
         }
 
-        // Xử lý tải hình ảnh
-        avatar.onload = () => avatar.classList.add("loaded");
+        // Handle Avatar Loading
+        avatar.onload = () => avatar.classList.add('loaded');
         avatar.onerror = () => {
-          console.warn(`Không thể tải hình ảnh: ${avatar.src}`);
-          if (avatar.src !== "https://picsum.photos/seed/fallback/80") {
-            avatar.src = "https://picsum.photos/seed/fallback/80";
-          } else {
-            showToast("Không thể tải hình ảnh đại diện!", "error");
-            avatar.classList.add("loaded");
-          }
+          avatar.src = 'https://picsum.photos/seed/fallback/80';
+          showToast('Không thể tải phi thuyền!', 'error');
+          avatar.classList.add('loaded');
         };
       }
 
       // Daily Check-In
       async function checkIn() {
         const urlParams = new URLSearchParams(window.location.search);
-        const tagId = urlParams.get("tag_id");
-        const checkInButton = document.getElementById("checkInButton");
-        const checkInStatus = document.getElementById("checkInStatus");
-        const pidogeBalance = document.getElementById("pidogeBalance");
-        const tlkBalance = document.getElementById("tlkBalance");
-        const checkInHistory = document.getElementById("checkInHistory");
+        const tagId = urlParams.get('tag_id');
+        const checkInButton = document.getElementById('checkInButton');
+        const checkInStatus = document.getElementById('checkInStatus');
+        const pidogeBalance = document.getElementById('pidogeBalance');
+        const tlkBalance = document.getElementById('tlkBalance');
+        const checkInHistory = document.getElementById('checkInHistory');
+        const userLevel = document.getElementById('userLevel');
+        const checkInSound = document.getElementById('checkInSound');
 
         if (!tagId) {
-          showToast("Tag ID không hợp lệ!", "error");
+          showToast('Tag ID không hợp lệ!', 'error');
           return;
         }
 
         checkInButton.disabled = true;
-        checkInButton.classList.add("opacity-50", "cursor-not-allowed");
+        checkInButton.classList.add('opacity-50', 'cursor-not-allowed');
 
         try {
           const response = await fetch(`${API_BASE_URL}/api/checkin/${tagId}`, {
-            method: "POST",
+            method: 'POST',
           });
           const data = await response.json();
 
           if (response.ok) {
             pidogeBalance.textContent = data.pidoge_balance.toFixed(2);
             tlkBalance.textContent = data.tlk_balance.toFixed(2);
-            checkInStatus.textContent = "Đã điểm danh hôm nay";
-            showToast("Điểm danh thành công! Nhận 10 Pidoge + 5 tlk", "success");
+            checkInStatus.textContent = 'Đã khám phá hôm nay';
+            showToast(
+              `Khám phá thành công! Nhận ${data.pidoge_reward || 10} Pidoge + ${data.tlk_reward || 5} tlk`,
+              'success'
+            );
 
-            // Cập nhật lịch sử điểm danh
+            // Play Sound
+            checkInSound.play().catch(() => console.warn('Cannot play sound'));
+
+            // Planet Glow
+            planetMesh.material.emissive.setHex(0x60a5fa);
+            setTimeout(() => {
+              planetMesh.material.emissive.setHex(0x000000);
+            }, 1000);
+
+            // Update History
             const now = new Date();
             const historyItem = `
               <li class="history-item">
-                <span>${now.toLocaleString("vi-VN", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
+                <span>${now.toLocaleString('vi-VN', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
                 })}</span>
-                <span class="history-badge">Đã điểm danh</span>
+                <span class="history-badge">Đã khám phá</span>
               </li>`;
             checkInHistory.innerHTML = historyItem + checkInHistory.innerHTML;
             if (checkInHistory.children.length > 10) {
               checkInHistory.removeChild(checkInHistory.lastChild);
             }
+
+            // Update Level
+            const checkInCount = checkInHistory.children.length;
+            let level = 'Level 1: New Explorer';
+            if (checkInCount >= 30) level = 'Level 3: Galaxy Master';
+            else if (checkInCount >= 10) level = 'Level 2: Star Navigator';
+            userLevel.textContent = level;
           } else {
-            throw new Error(data.error || "Không thể điểm danh");
+            throw new Error(data.error || 'Không thể khám phá');
           }
         } catch (err) {
-          showToast(err.message, "error");
+          showToast(err.message, 'error');
           checkInButton.disabled = false;
-          checkInButton.classList.remove("opacity-50", "cursor-not-allowed");
+          checkInButton.classList.remove('opacity-50', 'cursor-not-allowed');
         }
       }
 
-      // Auto-check balance from URL
+      // Auto-check Balance
       function autoCheckBalanceFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
-        const walletAddress = urlParams.get("wallet");
+        const walletAddress = urlParams.get('wallet');
         if (walletAddress) {
-          document.getElementById("walletAddress").textContent = walletAddress;
+          document.getElementById('walletAddress').textContent = walletAddress;
           checkBalance();
         }
       }
 
-      // Check Balance (Redirect to Pi Block Explorer)
+      // Check Balance
       function checkBalance() {
-        const walletAddress = document.getElementById("walletAddress").textContent;
-        if (!walletAddress || walletAddress === "Không tìm thấy địa chỉ ví") {
-          showToast("Không có địa chỉ ví để kiểm tra!", "error");
+        const walletAddress = document.getElementById('walletAddress').textContent;
+        if (!walletAddress || walletAddress === 'Không tìm thấy mã ví') {
+          showToast('Không có mã ví để kiểm tra!', 'error');
           return;
         }
         const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
         window.location.href = explorerUrl;
       }
 
-      // Initialize on page load
-      document.addEventListener("DOMContentLoaded", () => {
+      // Initialize
+      document.addEventListener('DOMContentLoaded', () => {
         loadUserData();
         autoCheckBalanceFromURL();
+        initPlanet();
+        initCrystal();
 
-        const darkModePreference = localStorage.getItem("darkMode");
-        if (darkModePreference === "enabled") {
-          document.body.classList.add("dark-mode");
-          document.getElementById("darkModeToggle").textContent = "Chuyển chế độ sáng";
-        }
-
-        // Lazy load TradingView Widget
-        const tradingViewSection = document.getElementById("tradingview_chart");
+        // Lazy Load TradingView
+        const tradingViewSection = document.getElementById('tradingview_chart');
         const observer = new IntersectionObserver(
           (entries) => {
             if (entries[0].isIntersecting) {
               new TradingView.widget({
-                width: "100%",
+                width: '100%',
                 height: 250,
-                symbol: "OKX:PIUSDT",
-                interval: "D",
-                timezone: "Etc/UTC",
-                theme: "light",
-                style: "1",
-                locale: "en",
-                toolbar_bg: "#f1f3f6",
+                symbol: 'OKX:PIUSDT',
+                interval: 'D',
+                timezone: 'Etc/UTC',
+                theme: 'dark',
+                style: '1',
+                locale: 'en',
+                toolbar_bg: '#1a202c',
                 enable_publishing: false,
                 allow_symbol_change: true,
-                container_id: "tradingview_chart",
+                container_id: 'tradingview_chart',
               });
               observer.disconnect();
             }
           },
-          { rootMargin: "100px" }
+          { rootMargin: '100px' }
         );
         observer.observe(tradingViewSection);
       });
 
       // Copy Wallet Address
       function copyWalletAddress() {
-        const walletAddress = document.getElementById("walletAddress").textContent;
-        if (walletAddress === "Không tìm thấy địa chỉ ví") {
-          showToast("Không có địa chỉ ví để sao chép!", "error");
+        const walletAddress = document.getElementById('walletAddress').textContent;
+        if (walletAddress === 'Không tìm thấy mã ví') {
+          showToast('Không có mã ví để sao chép!', 'error');
           return;
         }
         navigator.clipboard
           .writeText(walletAddress)
-          .then(() => {
-            showToast("Đã sao chép địa chỉ ví!");
-          })
-          .catch(() => {
-            showToast("Không thể sao chép địa chỉ ví!", "error");
-          });
-      }
-
-      // Show Withdraw Modal
-      function showWithdrawModal() {
-        const withdrawModal = document.getElementById("withdrawModal");
-        withdrawModal.classList.remove("hidden");
-        withdrawModal.classList.add("show");
-      }
-
-      // Hide Withdraw Modal
-      function hideWithdrawModal() {
-        const withdrawModal = document.getElementById("withdrawModal");
-        withdrawModal.classList.remove("show");
-        withdrawModal.classList.add("hidden");
-      }
-
-      // Withdraw Pi (Mock)
-      function withdrawPi() {
-        const amount = parseFloat(document.getElementById("withdrawAmount").value);
-        const password = document.getElementById("withdrawPassword").value;
-        const withdrawStatus = document.getElementById("withdrawStatus");
-
-        if (!amount || amount < 0.01) {
-          showToast("Số lượng Pi phải lớn hơn 0 và tối thiểu 1$!", "error");
-          return;
-        }
-
-        if (!password) {
-          showToast("Vui lòng nhập mật khẩu!", "error");
-          return;
-        }
-
-        withdrawStatus.textContent = "Đang xử lý...";
-
-        setTimeout(() => {
-          withdrawStatus.textContent = "Đã gửi yêu cầu rút Pi";
-          showToast("Yêu cầu rút Pi đã được gửi!");
-          hideWithdrawModal();
-        }, 1500);
+          .then(() => showToast('Đã sao chép mã ví!'))
+          .catch(() => showToast('Không thể sao chép mã ví!', 'error'));
       }
 
       // Safety Check (Mock)
       function checkSafety() {
-        const checkButton = document.getElementById("checkButton");
-        const loadingSpinner = document.getElementById("loadingSpinner");
-        const safetyResult = document.getElementById("safetyResult");
-        const safetyStatus = document.getElementById("safetyStatus");
-        const safetyScore = document.getElementById("safetyScore");
-        const safetyWarnings = document.getElementById("safetyWarnings");
+        const checkButton = document.getElementById('checkButton');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const safetyResult = document.getElementById('safetyResult');
+        const safetyStatus = document.getElementById('safetyStatus');
+        const safetyScore = document.getElementById('safetyScore');
+        const safetyWarnings = document.getElementById('safetyWarnings');
 
         checkButton.disabled = true;
-        loadingSpinner.style.display = "block";
-        safetyResult.classList.add("hidden");
+        loadingSpinner.style.display = 'block';
+        safetyResult.classList.add('hidden');
 
         setTimeout(() => {
-          loadingSpinner.style.display = "none";
-          safetyResult.classList.remove("hidden");
+          loadingSpinner.style.display = 'none';
+          safetyResult.classList.remove('hidden');
 
           const isSafe = Math.random() > 0.5;
-          safetyResult.classList.remove("safe", "unsafe");
-          safetyResult.classList.add(isSafe ? "safe" : "unsafe");
-          safetyStatus.textContent = isSafe ? "An toàn" : "Không an toàn";
-          safetyScore.textContent = isSafe ? "85" : "30";
+          safetyResult.classList.remove('safe', 'unsafe');
+          safetyResult.classList.add(isSafe ? 'safe' : 'unsafe');
+          safetyStatus.textContent = isSafe ? 'An toàn' : 'Không an toàn';
+          safetyScore.textContent = isSafe ? '85' : '30';
           safetyWarnings.textContent = isSafe
-            ? "Không có cảnh báo"
-            : "Trang web có thể không đáng tin cậy";
+            ? 'Không có cảnh báo'
+            : 'Trang web có thể không đáng tin cậy';
 
           checkButton.disabled = false;
           showToast(
-            isSafe
-              ? "Kiểm tra thành công: An toàn!"
-              : "Kiểm tra thành công: Không an toàn!",
-            isSafe ? "success" : "error"
+            isSafe ? 'Kiểm tra thành công: An toàn!' : 'Kiểm tra thành công: Không an toàn!',
+            isSafe ? 'success' : 'error'
           );
         }, 1500);
       }
 
-      // Clear Safety Check Form
+      // Clear Form
       function clearForm() {
-        document.getElementById("safetyUrl").value = "";
-        document.getElementById("safetyResult").classList.add("hidden");
-        showToast("Đã xóa biểu mẫu!");
+        document.getElementById('safetyUrl').value = '';
+        document.getElementById('safetyResult').classList.add('hidden');
+        showToast('Đã xóa biểu mẫu!');
       }
 
-      // Dark Mode Toggle
-      document.getElementById("darkModeToggle").addEventListener("click", () => {
-        document.body.classList.toggle("dark-mode");
-        const isDarkMode = document.body.classList.contains("dark-mode");
-        document.getElementById("darkModeToggle").textContent = isDarkMode
-          ? "Chuyển chế độ sáng"
-          : "Chuyển chế độ tối";
-        localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
-      });
+      // Mock Chatbot
+      function openChatbot() {
+        showToast('Grok: Xin chào! Hỏi tôi về Pi Network hoặc bất cứ điều gì bạn muốn!', 'success');
+      }
     </script>
   </body>
 </html>
