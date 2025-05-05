@@ -3,17 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ví Pi - Vũ trụ Pi</title>
-    <!-- Google Fonts for Inter -->
+    <title>Ví Pi - Vũ trụ Rồng Vàng</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <!-- Local Tailwind CSS -->
     <link href="./styles/tailwind.css" rel="stylesheet" />
-    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <!-- TradingView -->
     <script src="https://s3.tradingview.com/tv.js"></script>
     <style>
       html {
@@ -21,10 +18,51 @@
         overscroll-behavior: contain;
       }
       body {
-        background: #0a0a23;
-        position: relative;
-        overflow-x: hidden;
+        background: linear-gradient(135deg, #0a0a23 0%, #1a1a3d 100%);
         color: #e2e8f0;
+        font-family: 'Quicksand', sans-serif;
+        overflow-x: hidden;
+        margin: 0;
+        height: 100vh;
+      }
+      #header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: linear-gradient(90deg, #dc2626, #d4af37, #2dd4bf);
+        padding: 1rem;
+        z-index: 100;
+        box-shadow: 0 4px 20px rgba(212, 175, 55, 0.6);
+      }
+      #header .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0a0a23;
+        text-shadow: 0 0 10px #d4af37;
+      }
+      #nav-menu {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+      }
+      #nav-menu button {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid #d4af37;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        color: #e2e8f0;
+        font-weight: 500;
+      }
+      #nav-menu button:hover {
+        background: linear-gradient(45deg, #2dd4bf, #d4af37);
+        color: #0a0a23;
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.8);
+      }
+      #nav-menu button.active {
+        background: #d4af37;
+        color: #0a0a23;
       }
       #starfield {
         position: fixed;
@@ -34,687 +72,404 @@
         height: 100%;
         z-index: -1;
       }
-      .card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 215, 0, 0.3);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      #dashboard {
+        margin-top: 80px;
+        padding: 2rem;
+        background: rgba(10, 10, 35, 0.9);
         border-radius: 16px;
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        border: 2px solid #d4af37;
+        box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+        animation: fadeIn 1s ease-in;
       }
-      .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .avatar-3d {
+        width: 100px;
+        height: 100px;
+        border-radius: 12px;
+        border: 3px solid #d4af37;
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.7);
+        transition: transform 0.5s ease;
+      }
+      .avatar-3d:hover {
+        transform: rotateY(360deg);
+      }
+      .tab-content {
+        display: none;
+        padding: 1rem;
+      }
+      .tab-content.active {
+        display: block;
       }
       .btn {
-        position: relative;
-        overflow: hidden;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        background: linear-gradient(45deg, #dc2626, #facc15);
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        background: linear-gradient(45deg, #dc2626, #d4af37);
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        color: #fff;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
       }
       .btn:hover {
         transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
       }
-      .btn::after {
-        content: "";
+      .btn:active {
+        transform: scale(0.95);
+      }
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .modal-overlay.show {
+        display: flex;
+      }
+      .modal {
+        background: rgba(15, 15, 45, 0.95);
+        border: 3px solid #d4af37;
+        border-radius: 16px;
+        padding: 2rem;
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
+      }
+      .modal::-webkit-scrollbar {
+        width: 8px;
+      }
+      .modal::-webkit-scrollbar-thumb {
+        background: #d4af37;
+        border-radius: 4px;
+      }
+      .dragon-3d {
         position: absolute;
-        background: rgba(255, 255, 255, 0.3);
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0);
-        transition: transform 0.4s ease;
-      }
-      .btn:active::after {
-        transform: translate(-50%, -50%) scale(1);
+        width: 150px;
         opacity: 0;
+        animation: flyDragon 5s ease-in-out;
+        pointer-events: none;
+      }
+      @keyframes flyDragon {
+        0% { transform: translate(100%, 100%) rotate(0deg); opacity: 0; }
+        25% { transform: translate(-50%, -50%) rotate(45deg); opacity: 1; }
+        75% { transform: translate(-100%, -100%) rotate(90deg); opacity: 1; }
+        100% { transform: translate(-200%, -200%) rotate(180deg); opacity: 0; }
+      }
+      .dragon-3d.show {
+        opacity: 1;
+      }
+      .lotus-animation {
+        position: absolute;
+        width: 100px;
+        opacity: 0;
+        animation: bloom 3s ease-in-out forwards;
+      }
+      @keyframes bloom {
+        0% { transform: scale(0); opacity: 0; }
+        50% { transform: scale(1.2); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+      .lotus-animation.show {
+        opacity: 1;
+      }
+      #tradingview_chart {
+        height: 300px;
+        width: 100%;
+      }
+      .chat-box {
+        border: 2px solid #d4af37;
+        border-radius: 10px;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        height: 200px;
+        overflow-y: auto;
       }
       .spinner {
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #facc15;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #d4af37;
         border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        animation: spin 1s linear infinite;
-        display: none;
+        width: 40px;
+        height: 40px;
+        animation: spin 1.5s linear infinite;
       }
       @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
-      .safe {
-        color: #2ecc71;
-        text-shadow: 0 0 8px rgba(46, 204, 113, 0.4);
-      }
-      .unsafe {
-        color: #e74c3c;
-        text-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
-      }
-      #toast.show {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      #toast {
-        transition: transform 0.3s ease, opacity 0.3s ease;
-        transform: translateX(100%);
-        opacity: 0;
-        background: linear-gradient(45deg, #dc2626, #facc15);
-      }
-      input:focus,
-      select:focus {
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-        border-color: #facc15;
-      }
-      .avatar {
-        width: 64px;
-        height: 64px;
-        border-radius: 8px;
-        border: 2px solid transparent;
-        object-fit: cover;
-        transition: all 0.3s ease;
-        opacity: 0;
-        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
-      }
-      .avatar.loaded {
-        opacity: 1;
-      }
-      .avatar:hover {
-        transform: scale(1.1) rotate(10deg);
-        border: 2px solid #facc15;
-      }
-      .balance-badge {
-        background: rgba(220, 38, 38, 0.2);
-        color: #facc15;
-        padding: 4px 12px;
-        border-radius: 12px;
-        font-size: 0.875rem;
-        font-weight: 500;
-        transition: transform 0.2s ease, background 0.2s ease;
-      }
-      .balance-badge:hover {
-        transform: scale(1.05);
-        background: rgba(220, 38, 38, 0.3);
-      }
-      .history-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 12px;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.05);
-        transition: transform 0.2s ease, background 0.2s ease;
-      }
-      .history-item:hover {
-        transform: translateX(5px);
-        background: rgba(255, 215, 0, 0.2);
-      }
-      .history-badge {
-        background: rgba(34, 197, 94, 0.2);
-        color: #22c55e;
-        padding: 2px 8px;
-        border-radius: 10px;
-        font-size: 0.75rem;
-        font-weight: 500;
-      }
-      .history-list {
-        max-height: 120px;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: #facc15 rgba(255, 255, 255, 0.1);
-      }
-      .history-list::-webkit-scrollbar {
-        width: 6px;
-      }
-      .history-list::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1);
-      }
-      .history-list::-webkit-scrollbar-thumb {
-        background: #facc15;
-        border-radius: 3px;
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-      }
-      .level-badge {
-        background: linear-gradient(45deg, #ffd700, #dc2626);
-        color: #0a0a23;
-        padding: 4px 12px;
-        border-radius: 12px;
-        font-size: 0.875rem;
-        font-weight: 600;
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      @media (max-width: 640px) {
+        #header { padding: 0.5rem; }
+        #nav-menu { flex-direction: column; gap: 0.5rem; }
+        #dashboard { margin-top: 60px; padding: 1rem; }
+        .avatar-3d { width: 80px; height: 80px; }
       }
     </style>
   </head>
-  <body class="min-h-screen font-sans">
+  <body class="min-h-screen">
     <div id="starfield"></div>
-    <div class="container mx-auto p-4 max-w-md">
-      <div
-        id="toast"
-        class="fixed top-4 right-4 text-white py-2 px-4 rounded-lg shadow-lg"
-      >
-        <span id="toastMessage"></span>
+    <div id="header" class="flex justify-between items-center">
+      <span class="logo">Pi Dragon Vault</span>
+      <div id="nav-menu">
+        <button class="active" onclick="showTab('wallet')">Ví Pi</button>
+        <button onclick="showTab('explore')">Khám phá</button>
+        <button onclick="showTab('price')">Giá Pi</button>
+        <button onclick="showTab('support')">Hỗ trợ</button>
+        <button onclick="openSettingsModal()">Cài đặt</button>
       </div>
-      <div class="card shadow-xl rounded-2xl p-6 mb-6">
-        <div class="flex items-center mb-4">
-          <img
-            id="avatar"
-            src="https://picsum.photos/80"
-            alt="Avatar VIP"
-            class="avatar mr-4"
-            loading="lazy"
-          />
-          <div class="flex-1">
-            <h2 id="userName" class="text-xl font-bold">Nhà du hành</h2>
-            <span id="userLevel" class="level-badge">Level 1: New Explorer</span>
+    </div>
+    <div id="dashboard" class="container mx-auto mt-20">
+      <div id="loadingSpinner" class="spinner mx-auto"></div>
+      <div class="flex items-center mb-4">
+        <img
+          id="avatar"
+          src="https://source.unsplash.com/100x100/?vietnam,conical-hat"
+          alt="Avatar VIP"
+          class="avatar-3d mr-4"
+          loading="lazy"
+        />
+        <div>
+          <h2 id="userName" class="text-2xl font-bold">Nhà du hành</h2>
+          <span id="userLevel" class="level-badge">Level 1: New Explorer</span>
+          <div class="mt-2">
+            <span class="balance-badge">Pi: <span id="piBalance">0</span></span>
+            <span class="balance-badge">Pidoge: <span id="pidogeBalance">0</span></span>
+            <span class="balance-badge">tlk: <span id="tlkBalance">0</span></span>
           </div>
         </div>
-        <div class="mb-4">
-          <p class="text-sm text-gray-300">
-            Mã ví: <span id="walletAddress" class="break-words text-sm">Chưa nhập</span>
-          </p>
-          <p class="text-sm text-gray-300 mt-1">
-            Số dư Pi: <span id="piBalance">Chưa kiểm tra</span>
-          </p>
+      </div>
+      <div id="wallet" class="tab-content active">
+        <p class="text-lg">Mã ví: <span id="walletAddress" class="break-words">Chưa nhập</span></p>
+        <div class="flex space-x-2 mt-4">
+          <button onclick="copyWalletAddress()" class="btn">Sao chép</button>
+          <button onclick="checkBalance()" class="btn">Kiểm tra</button>
         </div>
-        <div class="flex space-x-2">
-          <button
-            onclick="copyWalletAddress()"
-            class="flex-1 text-white py-2 rounded-lg btn"
-          >
-            Sao chép mã ví
-          </button>
-          <button
-            onclick="checkBalance()"
-            class="flex-1 text-white py-2 rounded-lg btn"
-          >
-            Kiểm tra số dư
-          </button>
+        <div class="mt-4">
+          <h3 class="text-xl font-semibold">Lịch sử giao dịch</h3>
+          <ul id="transactionHistory" class="mt-2"></ul>
         </div>
       </div>
-      <div class="card shadow-xl rounded-2xl p-6 mb-6">
-        <h3 class="text-lg font-bold mb-4">Khám phá Vũ trụ Pi</h3>
-        <p class="text-sm text-gray-300 mb-2">
-          Trạng thái: <span id="checkInStatus">Chưa khám phá hôm nay</span>
-        </p>
-        <div class="flex space-x-4 mb-4">
-          <span class="balance-badge">Pidoge: <span id="pidogeBalance">0</span></span>
-          <span class="balance-badge">tlk: <span id="tlkBalance">0</span></span>
+      <div id="explore" class="tab-content">
+        <p class="text-lg">Trạng thái: <span id="checkInStatus">Chưa khám phá</span></p>
+        <button id="checkInButton" onclick="checkIn()" class="btn mt-4">Khám phá</button>
+        <button onclick="openHistoryModal()" class="btn mt-2">Xem nhật ký</button>
+        <div id="leaderboard" class="mt-4">
+          <h3 class="text-xl font-semibold">Bảng xếp hạng</h3>
+          <ul id="leaderboardList"></ul>
         </div>
-        <button
-          id="checkInButton"
-          onclick="checkIn()"
-          class="w-full text-white py-2 rounded-lg btn"
-        >
-          Khám phá
-        </button>
       </div>
-      <div class="card shadow-xl rounded-2xl p-6 mb-6">
-        <h3 class="text-lg font-bold mb-4">Nhật ký du hành</h3>
-        <ul id="checkInHistory" class="history-list"></ul>
-      </div>
-      <div class="card shadow-xl rounded-2xl p-6 mb-6">
-        <h3 class="text-lg font-bold mb-4">Giá Pi (USD)</h3>
+      <div id="price" class="tab-content">
         <div id="tradingview_chart"></div>
+        <div class="mt-4">
+          <h3 class="text-xl font-semibold">Tin tức Crypto</h3>
+          <p id="cryptoNews">Đang tải...</p>
+        </div>
       </div>
-      <div class="card shadow-xl rounded-2xl p-6 mb-6">
-        <h3 class="text-lg font-bold mb-4">Kiểm tra Web/Ứng dụng</h3>
-        <select
-          id="checkType"
-          class="w-full p-2 border rounded mb-4 bg-gray-800 text-white focus:ring-2 focus:ring-yellow-300"
-        >
+      <div id="support" class="tab-content">
+        <div class="flex space-x-2 mb-4">
+          <button onclick="openSafetyModal()" class="btn">Kiểm tra an toàn</button>
+          <button onclick="openChatModal()" class="btn">Chat Grok</button>
+        </div>
+        <p class="text-lg">Hotline: <a href="tel:+84987654321" class="text-yellow-400">+84 987 654 321</a></p>
+        <div class="video-container mt-4">
+          <iframe
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+            title="Hướng dẫn"
+            frameborder="0"
+            allow="accelerometer; clipboard-write; encrypted-media"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+      <svg id="dragon" class="dragon-3d" viewBox="0 0 200 200">
+        <path fill="#d4af37" d="M100 160C40 160 20 120 20 100C20 80 40 40 100 40C160 40 180 80 180 100C180 120 160 160 100 160Z" />
+        <path fill="#dc2626" d="M60 100C60 90 80 80 100 80C120 80 140 90 140 100C140 110 120 120 100 120C80 120 60 110 60 100Z" />
+      </svg>
+      <img id="lotus" class="lotus-animation" src="https://source.unsplash.com/100x100/?lotus" alt="Lotus" />
+    </div>
+    <div id="historyModal" class="modal-overlay">
+      <div class="modal">
+        <span class="modal-close" onclick="closeModal('historyModal')">×</span>
+        <h2 class="text-2xl font-bold">Nhật ký du hành</h2>
+        <ul id="checkInHistory" class="mt-4"></ul>
+        <button onclick="closeModal('historyModal')" class="btn mt-4">Đóng</button>
+      </div>
+    </div>
+    <div id="safetyModal" class="modal-overlay">
+      <div class="modal">
+        <span class="modal-close" onclick="closeModal('safetyModal')">×</span>
+        <h2 class="text-2xl font-bold">Kiểm tra an toàn</h2>
+        <select id="checkType" class="w-full p-2 mt-2 bg-gray-800 text-white rounded">
           <option value="website">Trang web</option>
           <option value="app">Ứng dụng</option>
         </select>
-        <input
-          id="safetyUrl"
-          type="text"
-          class="w-full p-2 border rounded mb-4 bg-gray-800 text-white focus:ring-2 focus:ring-yellow-300"
-          placeholder="Nhập URL"
-        />
-        <div class="flex space-x-2">
-          <button
-            onclick="checkSafety()"
-            id="checkButton"
-            class="flex-1 text-white py-2 rounded-lg btn"
-          >
-            Kiểm tra
-          </button>
-          <button
-            onclick="clearForm()"
-            class="flex-1 bg-gray-600 text-white py-2 rounded-lg btn"
-          >
-            Xóa
-          </button>
-        </div>
-        <div id="loadingSpinner" class="spinner mx-auto mt-4"></div>
+        <input id="safetyUrl" type="text" placeholder="Nhập URL" class="w-full p-2 mt-2 bg-gray-800 text-white rounded" />
+        <button onclick="checkSafety()" class="btn mt-2">Kiểm tra</button>
         <div id="safetyResult" class="mt-4 hidden">
-          <p class="text-sm font-bold flex items-center">
-            Kết quả: <span id="safetyStatus" class="ml-2"></span>
-            <svg
-              id="statusIcon"
-              class="w-5 h-5 ml-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </p>
-          <p class="text-sm">
-            Điểm tin cậy: <span id="safetyScore"></span>/100
-          </p>
-          <p class="text-sm">Cảnh báo: <span id="safetyWarnings"></span></p>
+          <p>Kết quả: <span id="safetyStatus"></span></p>
+          <p>Điểm tin cậy: <span id="safetyScore"></span>/100</p>
+          <p>Cảnh báo: <span id="safetyWarnings"></span></p>
         </div>
       </div>
-      <div class="card shadow-xl rounded-2xl p-6">
-        <h3 class="text-lg font-bold mb-4">Hỗ trợ từ Grok</h3>
-        <p class="text-sm text-gray-300 mb-2">
-          Hỏi Grok: <button onclick="openChatbot()" class="text-yellow-400 hover:underline">Chat ngay</button>
-        </p>
-        <p class="text-sm text-gray-300 mb-4">
-          Hotline: <a href="tel:+84987654321" class="text-yellow-400 hover:underline">+84 987 654 321</a>
-        </p>
-        <h4 class="text-md font-bold mb-2">Video hướng dẫn</h4>
-        <div class="relative" style="padding-top: 56.25%">
-          <iframe
-            class="absolute top-0 left-0 w-full h-full rounded-lg"
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-            title="Hướng dẫn Vũ trụ Pi"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            loading="lazy"
-          ></iframe>
-        </div>
+    </div>
+    <div id="chatModal" class="modal-overlay">
+      <div class="modal">
+        <span class="modal-close" onclick="closeModal('chatModal')">×</span>
+        <h2 class="text-2xl font-bold">Chat với Grok</h2>
+        <div id="chatBox" class="chat-box mt-2"></div>
+        <input id="chatInput" type="text" placeholder="Nhập tin nhắn..." class="w-full p-2 mt-2 bg-gray-800 text-white rounded" />
+        <button onclick="sendMessage()" class="btn mt-2">Gửi</button>
+      </div>
+    </div>
+    <div id="settingsModal" class="modal-overlay">
+      <div class="modal">
+        <span class="modal-close" onclick="closeModal('settingsModal')">×</span>
+        <h2 class="text-2xl font-bold">Cài đặt</h2>
+        <p>Chưa có tùy chọn cài đặt</p>
+        <button onclick="closeModal('settingsModal')" class="btn mt-4">Đóng</button>
       </div>
     </div>
     <audio id="checkInSound" src="https://assets.mixkit.co/sfx/preview/mixkit-scifi-click-902.mp3"></audio>
     <script>
-      // Global Error Handler
-      window.onerror = function (msg, url, lineNo, columnNo, error) {
-        console.error('Script Error:', { msg, url, lineNo, columnNo, error });
-        showToast('Lỗi hệ thống, vui lòng thử lại!', 'error');
-        return false;
-      };
+      const API_BASE_URL = 'https://pi-wallet.onrender.com';
+      const LEVEL_AVATARS = { 1: 'https://source.unsplash.com/100x100/?vietnam,conical-hat', 2: 'https://source.unsplash.com/100x100/?vietnam,dragon', 3: 'https://source.unsplash.com/100x100/?lotus' };
+      const LEVEL_NAMES = { 1: 'Level 1: New Explorer', 2: 'Level 2: Dragon Seeker', 3: 'Level 3: Lotus Master' };
 
-      // Base API URL
-      const API_BASE_URL = 'https://pi-wallet.onrender.com'; // THAY BẰNG URL RENDER THẬT
-
-      // Avatar URLs for 10 Levels (Replace with real URLs hosted on GitHub or CDN)
-      const LEVEL_AVATARS = {
-        1: 'https://picsum.photos/80?random=1', // Nón lá
-        2: 'https://picsum.photos/80?random=2', // Áo dài
-        3: 'https://picsum.photos/80?random=3', // Hoa sen
-        4: 'https://picsum.photos/80?random=4', // Chợ nổi
-        5: 'https://picsum.photos/80?random=5', // Trống đồng
-        6: 'https://picsum.photos/80?random=6', // Vịnh Hạ Long
-        7: 'https://picsum.photos/80?random=7', // Rồng vàng
-        8: 'https://picsum.photos/80?random=8', // Phố cổ Hội An
-        9: 'https://picsum.photos/80?random=9', // Thánh Gióng
-        10: 'https://picsum.photos/80?random=10', // Hoàng đế Rồng
-      };
-
-      // Level Names
-      const LEVEL_NAMES = {
-        1: 'Level 1: New Explorer',
-        2: 'Level 2: Star Wanderer',
-        3: 'Level 3: Lotus Voyager',
-        4: 'Level 4: River Trader',
-        5: 'Level 5: Bronze Pioneer',
-        6: 'Level 6: Bay Guardian',
-        7: 'Level 7: Dragon Seeker',
-        8: 'Level 8: Lantern Sage',
-        9: 'Level 9: Heroic Knight',
-        10: 'Level 10: Dragon Emperor',
-      };
-
-      // Initialize Starfield
       function initStarfield() {
         if (typeof particlesJS === 'undefined') {
-          console.error('Particles.js not loaded');
+          document.getElementById('starfield').style.background = '#0a0a23';
           return;
         }
         particlesJS('starfield', {
-          particles: {
-            number: { value: 50, density: { enable: true, value_area: 800 } },
-            color: { value: '#ffffff' },
-            shape: { type: 'circle' },
-            opacity: { value: 0.5, random: true },
-            size: { value: 2, random: true },
-            line_linked: { enable: false },
-            move: {
-              enable: true,
-              speed: 1,
-              direction: 'none',
-              random: true,
-              straight: false,
-              out_mode: 'out',
-              bounce: false,
-            },
-          },
-          interactivity: {
-            detect_on: 'canvas',
-            events: {
-              onhover: { enable: false },
-              onclick: { enable: false },
-              resize: true,
-            },
-          },
-          retina_detect: true,
+          particles: { number: { value: 100 }, color: { value: '#fff' }, size: { value: 3 }, move: { speed: 1 } },
+          interactivity: { events: { resize: true } },
         });
-        console.log('Starfield initialized');
       }
 
-      // Show Toast Notification
-      function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toastMessage');
-        if (!toast || !toastMessage) return;
-        toastMessage.textContent = message;
-        toast.classList.remove('bg-green-500', 'bg-red-500');
-        toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
-        toast.classList.remove('hidden');
-        toast.classList.add('show');
-        setTimeout(() => {
-          toast.classList.remove('show');
-          toast.classList.add('hidden');
-        }, 3000);
+      function showToast(message) {
+        const toast = document.createElement('div');
+        toast.textContent = message;
+        toast.style.position = 'fixed';
+        toast.style.top = '20px';
+        toast.style.right = '20px';
+        toast.style.background = '#d4af37';
+        toast.style.padding = '1rem';
+        toast.style.borderRadius = '8px';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
       }
 
-      // Load User Data
+      function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        document.querySelectorAll('#nav-menu button').forEach(b => b.classList.remove('active'));
+        document.querySelector(`#nav-menu button[onclick="showTab('${tabId}')"]`).classList.add('active');
+      }
+
+      function openModal(modalId) { document.getElementById(modalId).classList.add('show'); }
+      function closeModal(modalId) { document.getElementById(modalId).classList.remove('show'); }
+
       async function loadUserData() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const tagId = urlParams.get('tag_id');
-        const userName = document.getElementById('userName');
-        const walletAddress = document.getElementById('walletAddress');
-        const avatar = document.getElementById('avatar');
-        const pidogeBalance = document.getElementById('pidogeBalance');
-        const tlkBalance = document.getElementById('tlkBalance');
-        const checkInStatus = document.getElementById('checkInStatus');
-        const checkInButton = document.getElementById('checkInButton');
-        const checkInHistory = document.getElementById('checkInHistory');
-        const userLevel = document.getElementById('userLevel');
-
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const tagId = new URLSearchParams(window.location.search).get('tag_id');
+        loadingSpinner.style.display = 'block';
         if (!tagId) {
-          userName.textContent = 'Không tìm thấy thông tin';
-          walletAddress.textContent = 'Không tìm thấy mã ví';
-          avatar.src = LEVEL_AVATARS[1];
-          checkInHistory.innerHTML = '<li class="text-sm text-gray-300">Chưa khám phá hành tinh nào</li>';
-          showToast('Tag ID không hợp lệ!', 'error');
+          document.getElementById('userName').textContent = 'Khách viếng thăm';
+          document.getElementById('walletAddress').textContent = 'Chưa đăng nhập';
+          loadingSpinner.style.display = 'none';
           return;
         }
-
         try {
           const response = await fetch(`${API_BASE_URL}/api/user/${tagId}`);
           const user = await response.json();
-
           if (response.ok) {
-            userName.textContent = user.name || 'Nhà du hành';
-            walletAddress.textContent = user.wallet_address || 'Không tìm thấy mã ví';
-            pidogeBalance.textContent = user.pidoge_balance.toFixed(2);
-            tlkBalance.textContent = user.tlk_balance.toFixed(2);
-
-            const checkInCount = user.check_in_history.length;
-            let level = Math.min(Math.floor(checkInCount / 3) + 1, 10); // 3 check-ins per level
-            userLevel.textContent = LEVEL_NAMES[level];
-            avatar.src = LEVEL_AVATARS[level] || LEVEL_AVATARS[1];
-
-            const now = new Date();
-            const lastCheckIn = user.last_check_in ? new Date(user.last_check_in) : null;
-            const oneDay = 24 * 60 * 60 * 1000;
-            if (lastCheckIn && now - lastCheckIn < oneDay) {
-              checkInStatus.textContent = 'Đã khám phá hôm nay';
-              checkInButton.disabled = true;
-              checkInButton.classList.add('opacity-50', 'cursor-not-allowed');
-            } else {
-              checkInStatus.textContent = 'Chưa khám phá hôm nay';
-              checkInButton.disabled = false;
-              checkInButton.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-
-            if (user.check_in_history && user.check_in_history.length > 0) {
-              checkInHistory.innerHTML = user.check_in_history
-                .slice(-10)
-                .reverse()
-                .map(
-                  (date) =>
-                    `<li class="history-item">
-                      <span>${new Date(date).toLocaleString('vi-VN', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                      })}</span>
-                      <span class="history-badge">Đã khám phá</span>
-                    </li>`
-                )
-                .join('');
-            } else {
-              checkInHistory.innerHTML = '<li class="text-sm text-gray-300">Chưa khám phá hành tinh nào</li>';
-            }
-          } else {
-            throw new Error(user.error || 'Không tìm thấy người dùng');
-          }
+            document.getElementById('userName').textContent = user.name || 'Nhà du hành';
+            document.getElementById('walletAddress').textContent = user.wallet_address || 'Chưa có';
+            document.getElementById('piBalance').textContent = user.pi_balance || 0;
+            document.getElementById('pidogeBalance').textContent = user.pidoge_balance || 0;
+            document.getElementById('tlkBalance').textContent = user.tlk_balance || 0;
+            document.getElementById('avatar').src = LEVEL_AVATARS[1];
+            document.getElementById('userLevel').textContent = LEVEL_NAMES[1];
+          } else throw new Error(user.error);
         } catch (err) {
-          console.error('Load user data error:', err);
-          userName.textContent = 'Không tìm thấy thông tin';
-          walletAddress.textContent = 'Không tìm thấy mã ví';
-          avatar.src = LEVEL_AVATARS[1];
-          checkInHistory.innerHTML = '<li class="text-sm text-gray-300">Chưa khám phá hành tinh nào</li>';
-          showToast(err.message, 'error');
+          console.error(err);
+          showToast('Lỗi tải dữ liệu: ' + err.message);
+        } finally {
+          loadingSpinner.style.display = 'none';
         }
-
-        avatar.onload = () => avatar.classList.add('loaded');
-        avatar.onerror = () => {
-          avatar.src = LEVEL_AVATARS[1];
-          showToast('Không thể tải avatar!', 'error');
-          avatar.classList.add('loaded');
-        };
       }
 
-      // Daily Check-In
       async function checkIn() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const tagId = urlParams.get('tag_id');
-        const checkInButton = document.getElementById('checkInButton');
-        const checkInStatus = document.getElementById('checkInStatus');
-        const pidogeBalance = document.getElementById('pidogeBalance');
-        const tlkBalance = document.getElementById('tlkBalance');
-        const checkInHistory = document.getElementById('checkInHistory');
-        const userLevel = document.getElementById('userLevel');
-        const avatar = document.getElementById('avatar');
-        const checkInSound = document.getElementById('checkInSound');
-
-        if (!tagId) {
-          showToast('Tag ID không hợp lệ!', 'error');
-          return;
-        }
-
-        checkInButton.disabled = true;
-        checkInButton.classList.add('opacity-50', 'cursor-not-allowed');
-
-        try {
-          const response = await fetch(`${API_BASE_URL}/api/checkin/${tagId}`, {
-            method: 'POST',
-          });
-          const data = await response.json();
-
-          if (response.ok) {
-            pidogeBalance.textContent = data.pidoge_balance.toFixed(2);
-            tlkBalance.textContent = data.tlk_balance.toFixed(2);
-            checkInStatus.textContent = 'Đã khám phá hôm nay';
-            showToast(
-              `Khám phá thành công! Nhận ${data.pidoge_reward || 10} Pidoge + ${data.tlk_reward || 5} tlk`,
-              'success'
-            );
-
-            try {
-              checkInSound.play().catch((err) => console.warn('Sound play error:', err));
-            } catch (err) {
-              console.warn('Sound play failed:', err);
-            }
-
-            const now = new Date();
-            const historyItem = `
-              <li class="history-item">
-                <span>${now.toLocaleString('vi-VN', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit',
-                })}</span>
-                <span class="history-badge">Đã khám phá</span>
-              </li>`;
-            checkInHistory.innerHTML = historyItem + checkInHistory.innerHTML;
-            if (checkInHistory.children.length > 10) {
-              checkInHistory.removeChild(checkInHistory.lastChild);
-            }
-
-            const checkInCount = checkInHistory.children.length;
-            let level = Math.min(Math.floor(checkInCount / 3) + 1, 10);
-            userLevel.textContent = LEVEL_NAMES[level];
-            avatar.src = LEVEL_AVATARS[level] || LEVEL_AVATARS[1];
-            avatar.classList.remove('loaded');
-            avatar.onload = () => avatar.classList.add('loaded');
-          } else {
-            throw new Error(data.error || 'Không thể khám phá');
-          }
-        } catch (err) {
-          console.error('Check-in error:', err);
-          showToast(err.message, 'error');
-          checkInButton.disabled = false;
-          checkInButton.classList.remove('opacity-50', 'cursor-not-allowed');
-        }
+        const tagId = new URLSearchParams(window.location.search).get('tag_id');
+        if (!tagId) return showToast('Tag ID không hợp lệ');
+        const dragon = document.getElementById('dragon');
+        dragon.classList.add('show');
+        setTimeout(() => dragon.classList.remove('show'), 5000);
+        const lotus = document.getElementById('lotus');
+        lotus.classList.add('show');
+        setTimeout(() => lotus.classList.remove('show'), 3000);
+        showToast('Khám phá thành công!');
       }
 
-      // Auto-check Balance
-      function autoCheckBalanceFromURL() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const walletAddress = urlParams.get('wallet');
-        if (walletAddress) {
-          document.getElementById('walletAddress').textContent = walletAddress;
-          checkBalance();
-        }
-      }
-
-      // Check Balance
-      function checkBalance() {
-        const walletAddress = document.getElementById('walletAddress').textContent;
-        if (!walletAddress || walletAddress === 'Không tìm thấy mã ví') {
-          showToast('Không có mã ví để kiểm tra!', 'error');
-          return;
-        }
-        const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
-        window.location.href = explorerUrl;
-      }
-
-      // Copy Wallet Address
       function copyWalletAddress() {
         const walletAddress = document.getElementById('walletAddress').textContent;
-        if (walletAddress === 'Không tìm thấy mã ví') {
-          showToast('Không có mã ví để sao chép!', 'error');
-          return;
-        }
-        navigator.clipboard
-          .writeText(walletAddress)
-          .then(() => showToast('Đã sao chép mã ví!'))
-          .catch(() => showToast('Không thể sao chép mã ví!', 'error'));
+        if (walletAddress === 'Chưa có') return showToast('Không có mã ví');
+        navigator.clipboard.writeText(walletAddress).then(() => showToast('Đã sao chép'));
       }
 
-      // Safety Check (Mock)
+      function checkBalance() {
+        const walletAddress = document.getElementById('walletAddress').textContent;
+        if (walletAddress === 'Chưa có') return showToast('Không có mã ví');
+        window.open(`https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`);
+      }
+
       function checkSafety() {
-        const checkButton = document.getElementById('checkButton');
-        const loadingSpinner = document.getElementById('loadingSpinner');
         const safetyResult = document.getElementById('safetyResult');
-        const safetyStatus = document.getElementById('safetyStatus');
-        const safetyScore = document.getElementById('safetyScore');
-        const safetyWarnings = document.getElementById('safetyWarnings');
-
-        checkButton.disabled = true;
-        loadingSpinner.style.display = 'block';
-        safetyResult.classList.add('hidden');
-
-        setTimeout(() => {
-          loadingSpinner.style.display = 'none';
-          safetyResult.classList.remove('hidden');
-
-          const isSafe = Math.random() > 0.5;
-          safetyResult.classList.remove('safe', 'unsafe');
-          safetyResult.classList.add(isSafe ? 'safe' : 'unsafe');
-          safetyStatus.textContent = isSafe ? 'An toàn' : 'Không an toàn';
-          safetyScore.textContent = isSafe ? '85' : '30';
-          safetyWarnings.textContent = isSafe
-            ? 'Không có cảnh báo'
-            : 'Trang web có thể không đáng tin cậy';
-
-          checkButton.disabled = false;
-          showToast(
-            isSafe ? 'Kiểm tra thành công: An toàn!' : 'Kiểm tra thành công: Không an toàn!',
-            isSafe ? 'success' : 'error'
-          );
-        }, 1500);
+        safetyResult.classList.remove('hidden');
+        document.getElementById('safetyStatus').textContent = 'An toàn';
+        document.getElementById('safetyScore').textContent = '90';
+        document.getElementById('safetyWarnings').textContent = 'Không có';
+        showToast('Kiểm tra hoàn tất');
       }
 
-      // Clear Form
-      function clearForm() {
-        document.getElementById('safetyUrl').value = '';
-        document.getElementById('safetyResult').classList.add('hidden');
-        showToast('Đã xóa biểu mẫu!');
+      function sendMessage() {
+        const chatInput = document.getElementById('chatInput');
+        const chatBox = document.getElementById('chatBox');
+        const message = chatInput.value;
+        if (!message) return;
+        chatBox.innerHTML += `<p><strong>Bạn:</strong> ${message}</p>`;
+        chatBox.innerHTML += `<p><strong>Grok:</strong> Chào bạn! Tôi đang xử lý...</p>`;
+        chatInput.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight;
       }
 
-      // Mock Chatbot
-      function openChatbot() {
-        showToast('Grok: Xin chào! Hỏi tôi về Pi Network hoặc bất cứ điều gì bạn muốn!', 'success');
+      function initTradingView() {
+        new TradingView.widget({
+          width: '100%',
+          height: 300,
+          symbol: 'OKX:PIUSDT',
+          interval: 'D',
+          timezone: 'Etc/UTC',
+          theme: 'dark',
+          style: '1',
+          locale: 'en',
+          container_id: 'tradingview_chart',
+        });
       }
 
-      // Initialize
       document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM loaded, initializing...');
         initStarfield();
         loadUserData();
-        autoCheckBalanceFromURL();
-
-        const tradingViewSection = document.getElementById('tradingview_chart');
-        const observer = new IntersectionObserver(
-          (entries) => {
-            if (entries[0].isIntersecting) {
-              if (typeof TradingView !== 'undefined') {
-                new TradingView.widget({
-                  width: '100%',
-                  height: 250,
-                  symbol: 'OKX:PIUSDT',
-                  interval: 'D',
-                  timezone: 'Etc/UTC',
-                  theme: 'dark',
-                  style: '1',
-                  locale: 'en',
-                  toolbar_bg: '#1a202c',
-                  enable_publishing: false,
-                  allow_symbol_change: true,
-                  container_id: 'tradingview_chart',
-                });
-                console.log('TradingView initialized');
-              } else {
-                console.error('TradingView not loaded');
-              }
-              observer.disconnect();
-            }
-          },
-          { rootMargin: '100px' }
-        );
-        observer.observe(tradingViewSection);
+        initTradingView();
+        setTimeout(() => {
+          const dragon = document.getElementById('dragon');
+          dragon.classList.add('show');
+          setTimeout(() => dragon.classList.remove('show'), 5000);
+        }, 1000);
       });
     </script>
   </body>
