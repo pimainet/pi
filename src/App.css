@@ -28,14 +28,25 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, opacity 0.3s;
 }
 
 button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+  background-color: #cccccc; /* Ghi đè Tailwind disabled:bg-gray-400 */
 }
 
 button:hover:not(:disabled) {
   opacity: 0.9;
+  background-color: inherit; /* Giữ màu gốc từ Tailwind */
+}
+
+/* Ngăn container sáng lên khi hover */
+.bg-gray-800 {
+  background-color: #1f2937; /* Màu của Tailwind bg-gray-800 */
+}
+
+.bg-gray-800:hover {
+  background-color: #1f2937; /* Giữ nguyên màu */
 }
