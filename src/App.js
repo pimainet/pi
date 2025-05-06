@@ -18,18 +18,18 @@ function App() {
       localStorage.setItem("tagId", tag);
       fetchUser(tag);
     }
-    // Cleanup để tránh memory leak
+    // Cleanup để tránh request bị hủy gây treo
     return () => {
-      setLoading(false); // Đặt lại loading khi component unmount
+      console.log("Component unmounting, setting loading to false");
+      setLoading(false);
     };
   }, []);
 
   const fetchUser = async (tag) => {
     console.log("Fetching user for tag:", tag);
     setLoading(true);
-    let response;
     try {
-      response = await axios.get(`https://pibackend-ptko.onrender.com/api/user/${tag}`, {
+      const response = await axios.get(`https://pibackend-ptko.onrender.com/api/user/${tag}`, {
         timeout: 5000,
       });
       console.log("User data:", response.data);
@@ -42,7 +42,6 @@ function App() {
       console.log("Loading set to false");
       setLoading(false);
     }
-    return response; // Trả về response để debug
   };
 
   const handleCheckIn = async () => {
