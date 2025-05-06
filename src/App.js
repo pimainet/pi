@@ -9,77 +9,89 @@ function App() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Load tagId từ URL hoặc localStorage khi ứng dụng khởi động
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search); // Đảm bảo khai báo đúng
+    const urlParams = new URLSearchParams(window.location.search);
     const tag = urlParams.get("tag_id") || localStorage.getItem("tagId");
+    console.log("Tag from URL or localStorage:", tag);
     if (tag) {
       setTagId(tag);
       localStorage.setItem("tagId", tag);
-      fetchUser(tag); // Gọi API ngay khi có tag_id
+      fetchUser(tag);
     }
+    // Cleanup để tránh memory leak
+    return () => {
+      setLoading(false); // Đặt lại loading khi component unmount
+    };
   }, []);
 
-  // Hàm gọi API để lấy thông tin người dùng
   const fetchUser = async (tag) => {
+    console.log("Fetching user for tag:", tag);
     setLoading(true);
+    let response;
     try {
-      const response = await axios.get(
-        `https://pibackend-ptko.onrender.com/api/user/${tag}`
-      );
+      response = await axios.get(`https://pibackend-ptko.onrender.com/api/user/${tag}`, {
+        timeout: 5000,
+      });
+      console.log("User data:", response.data);
       setUser(response.data);
-      setMessage(""); // Xóa thông báo lỗi nếu thành công
+      setMessage("");
     } catch (error) {
+      console.error("Fetch user error:", error.message);
       setMessage(`Error fetching user data: ${error.message}`);
     } finally {
+      console.log("Loading set to false");
       setLoading(false);
     }
+    return response; // Trả về response để debug
   };
 
-  // Hàm xử lý check-in
   const handleCheckIn = async () => {
     if (!tagId) {
       setMessage("Please enter a Tag ID");
       setTimeout(() => setMessage(""), 3000);
       return;
     }
+    console.log("Starting check-in for tagId:", tagId);
     setLoading(true);
     try {
-      const response = await axios.post(
-        `https://pibackend-ptko.onrender.com/api/check-in`,
-        { tagId }
-      );
-      setUser(response.data); // Cập nhật dữ liệu người dùng
+      const response = await axios.post(`https://pibackend-ptko.onrender.com/api/check-in`, { tagId }, {
+        timeout: 5000,
+      });
+      console.log("Check-in response:", response.data);
+      setUser(response.data);
       setMessage("Check-in successful!");
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
+      console.error("Check-in error:", error.message);
       setMessage(`Error checking in: ${error.message}`);
       setTimeout(() => setMessage(""), 3000);
     } finally {
+      console.log("Loading set to false");
       setLoading(false);
     }
   };
 
-  // Hàm đặt referrer
   const handleSetReferrer = async () => {
     if (!tagId || !referrer) {
       setMessage("Please enter Tag ID and Referrer ID");
       setTimeout(() => setMessage(""), 3000);
       return;
     }
+    console.log("Setting referrer for tagId:", tagId, "referrer:", referrer);
     setLoading(true);
     try {
-      await axios.post(`https://pibackend-ptko.onrender.com/api/set-referrer`, {
-        tagId,
-        referrer,
+      await axios.post(`https://pibackend-ptko.onrender.com/api/set-referrer`, { tagId, referrer }, {
+        timeout: 5000,
       });
       setMessage("Referrer set successfully!");
       setTimeout(() => setMessage(""), 3000);
-      fetchUser(tagId); // Cập nhật dữ liệu người dùng
+      fetchUser(tagId);
     } catch (error) {
+      console.error("Set referrer error:", error.message);
       setMessage(`Error setting referrer: ${error.message}`);
       setTimeout(() => setMessage(""), 3000);
     } finally {
+      console.log("Loading set to false");
       setLoading(false);
     }
   };
