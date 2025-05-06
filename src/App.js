@@ -18,7 +18,6 @@ function App() {
       localStorage.setItem("tagId", tag);
       fetchUser(tag);
     }
-    // Cleanup để tránh request bị hủy gây treo
     return () => {
       console.log("Component unmounting, setting loading to false");
       setLoading(false);
