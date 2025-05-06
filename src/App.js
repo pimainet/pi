@@ -3,12 +3,11 @@ import axios from "axios";
 import "./App.css";
 
 function App() {
-  // Trạng thái (state) của ứng dụng
-  const [tagId, setTagId] = useState(""); // Lưu tagId của người dùng
-  const [referrer, setReferrer] = useState(""); // Lưu referrer (mã giới thiệu)
-  const [user, setUser] = useState(null); // Lưu thông tin người dùng từ API
-  const [message, setMessage] = useState(""); // Hiển thị thông báo (thành công/lỗi)
-  const [loading, setLoading] = useState(false); // Trạng thái loading khi gọi API
+  const [tagId, setTagId] = useState("");
+  const [referrer, setReferrer] = useState("");
+  const [user, setUser] = useState(null);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Load tagId từ URL hoặc localStorage khi ứng dụng khởi động
   useEffect(() => {
@@ -17,33 +16,44 @@ function App() {
     if (tag) {
       setTagId(tag);
       localStorage.setItem("tagId", tag);
-      fetchUser(tag);
+      fetchUser(tag); // Gọi API ngay khi có tag_id
     }
   }, []);
 
   // Hàm gọi API để lấy thông tin người dùng
   const fetchUser = async (tag) => {
-    setLoading(true); // Bật trạng thái loading
+    setLoading(true);
     try {
-      const response = await axios.get(`/api/user/${tag}`);
-      setUser(response.data); // Lưu dữ liệu người dùng
+      const response = await axios.get(
+        `https://backend-fmji.onrender.com/api/user/${tag}`
+      );
+      setUser(response.data);
+      setMessage(""); // Xóa thông báo lỗi nếu thành công
     } catch (error) {
-      setMessage("Error fetching user data"); // Hiển thị lỗi nếu có
+      setMessage(`Error fetching user data: ${error.message}`);
     } finally {
-      setLoading(false); // Tắt trạng thái loading
+      setLoading(false);
     }
   };
 
   // Hàm xử lý check-in
   const handleCheckIn = async () => {
+    if (!tagId) {
+      setMessage("Please enter a Tag ID");
+      setTimeout(() => setMessage(""), 3000);
+      return;
+    }
     setLoading(true);
     try {
-      const response = await axios.post("/api/check-in", { tagId });
-      setUser(response.data); // Cập nhật dữ liệu người dùng sau khi check-in
+      const response = await axios.post(
+        `https://backend-fmji.onrender.com/api/check-in`,
+        { tagId }
+      );
+      setUser(response.data); // Cập nhật dữ liệu người dùng
       setMessage("Check-in successful!");
-      setTimeout(() => setMessage(""), 3000); // Xóa thông báo sau 3 giây
+      setTimeout(() => setMessage(""), 3000);
     } catch (error) {
-      setMessage("Error checking in");
+      setMessage(`Error checking in: ${error.message}`);
       setTimeout(() => setMessage(""), 3000);
     } finally {
       setLoading(false);
@@ -52,26 +62,32 @@ function App() {
 
   // Hàm đặt referrer
   const handleSetReferrer = async () => {
+    if (!tagId || !referrer) {
+      setMessage("Please enter Tag ID and Referrer ID");
+      setTimeout(() => setMessage(""), 3000);
+      return;
+    }
     setLoading(true);
     try {
-      await axios.post("/api/set-referrer", { tagId, referrer });
+      await axios.post(`https://backend-fmji.onrender.com/api/set-referrer`, {
+        tagId,
+        referrer,
+      });
       setMessage("Referrer set successfully!");
       setTimeout(() => setMessage(""), 3000);
-      fetchUser(tagId); // Cập nhật dữ liệu người dùng sau khi đặt referrer
+      fetchUser(tagId); // Cập nhật dữ liệu người dùng
     } catch (error) {
-      setMessage("Error setting referrer");
+      setMessage(`Error setting referrer: ${error.message}`);
       setTimeout(() => setMessage(""), 3000);
     } finally {
       setLoading(false);
     }
   };
 
-  // Giao diện người dùng
   return (
     <div className="App">
       <h1 className="text-2xl font-bold mb-4">Pi Referral App</h1>
 
-      {/* Nếu chưa có tagId, hiển thị form nhập tagId và referrer */}
       {!tagId && (
         <div className="p-4 bg-gray-800 rounded-lg">
           <input
@@ -98,7 +114,6 @@ function App() {
         </div>
       )}
 
-      {/* Nếu đã có tagId, hiển thị thông tin người dùng */}
       {tagId && (
         <div className="p-4 bg-gray-800 rounded-lg">
           <h2 className="text-xl mb-2">Welcome, User {tagId}</h2>
@@ -109,8 +124,8 @@ function App() {
               <p>Pidoge: {user.pidoge || 0}</p>
               <p>TT: {user.tt || 0}</p>
               <p>
-                Referral Rewards: {user.referralRewards.pidoge || 0} Pidoge |{" "}
-                {user.referralRewards.tt || 0} TT
+                Referral Rewards: {user.referralRewards?.pidoge || 0} Pidoge |{" "}
+                {user.referralRewards?.tt || 0} TT
               </p>
               <p>Check-ins: {user.checkInCount || 0}</p>
               <button
