@@ -1,59 +1,69 @@
-.App {
+.app {
   text-align: center;
   padding: 20px;
   background: #1a1a3d;
   color: #e0e0e0;
   min-height: 100vh;
   font-family: Arial, sans-serif;
-  pointer-events: auto; /* Đảm bảo không chặn tương tác */
+  pointer-events: auto;
+}
+
+.container {
+  padding: 20px;
+  background: #2d2d44;
+  border-radius: 5px;
+  margin: 10px auto;
+  max-width: 400px;
+  pointer-events: auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
 }
 
 input {
   padding: 8px;
-  margin: 5px;
+  margin: 5px 0;
   border: 1px solid #4c1d95;
   border-radius: 5px;
   background: #2d2d44;
   color: #e0e0e0;
-  pointer-events: auto; /* Đảm bảo input có thể nhập */
-}
-
-input:focus {
-  outline: none;
-  border-color: #6b00ff;
-  box-shadow: 0 0 5px #6b00ff;
+  width: 100%;
+  box-sizing: border-box;
+  pointer-events: auto;
 }
 
 button {
   padding: 8px 16px;
-  margin: 5px;
+  margin: 5px 0;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s, opacity 0.3s;
-  pointer-events: auto; /* Đảm bảo button có thể bấm */
+  background: #4c1d95;
+  color: #e0e0e0;
+  width: 100%;
+  pointer-events: auto;
 }
 
 button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
-  background-color: #cccccc; /* Ghi đè Tailwind disabled:bg-gray-400 */
-}
-
-button:hover:not(:disabled) {
-  opacity: 0.9;
-  background-color: inherit; /* Giữ màu gốc từ Tailwind */
-}
-
-/* Ngăn container sáng lên khi hover */
-.bg-gray-800 {
-  background-color: #1f2937; /* Màu của Tailwind bg-gray-800 */
-}
-
-.bg-gray-800:hover {
-  background-color: #1f2937; /* Giữ nguyên màu */
+  background: #cccccc;
 }
 
 p {
-  pointer-events: none; /* Ngăn Loading hoặc message chặn tương tác */
+  margin: 5px 0;
+  pointer-events: none;
+}
+
+.message {
+  color: #ff4444;
+  margin-top: 10px;
 }
