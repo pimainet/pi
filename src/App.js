@@ -10,15 +10,15 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   // Load tagId từ URL hoặc localStorage khi ứng dụng khởi động
-useEffect(() => {
-  const urlParams = new URLSearchParams(window.location.search); // Đảm bảo khai báo đúng
-  const tag = urlParams.get("tag_id") || localStorage.getItem("tagId");
-  if (tag) {
-    setTagId(tag);
-    localStorage.setItem("tagId", tag);
-    fetchUser(tag); // Gọi API ngay khi có tag_id
-  }
-}, []);
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search); // Đảm bảo khai báo đúng
+    const tag = urlParams.get("tag_id") || localStorage.getItem("tagId");
+    if (tag) {
+      setTagId(tag);
+      localStorage.setItem("tagId", tag);
+      fetchUser(tag); // Gọi API ngay khi có tag_id
+    }
+  }, []);
 
   // Hàm gọi API để lấy thông tin người dùng
   const fetchUser = async (tag) => {
@@ -46,7 +46,7 @@ useEffect(() => {
     setLoading(true);
     try {
       const response = await axios.post(
-        `https://backend-fmji.onrender.com/api/check-in`,
+        `https://pibackend-ptko.onrender.com/api/check-in`,
         { tagId }
       );
       setUser(response.data); // Cập nhật dữ liệu người dùng
