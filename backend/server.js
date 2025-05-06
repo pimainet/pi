@@ -33,8 +33,6 @@ if (!process.env.MONGODB_URI) {
 // Kết nối MongoDB Atlas
 mongoose
   .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000,
     maxPoolSize: 10,
   })
@@ -65,7 +63,7 @@ const Referral = mongoose.model("Referral", referralSchema);
 app.post("/api/check-in", async (req, res) => {
   try {
     const { tagId } = req.body;
-    console.log("Received check-in request:", req.body); // Debug
+    console.log("Received check-in request:", req.body);
 
     if (!tagId) {
       return res.status(400).json({ message: "Tag ID is required" });
@@ -125,7 +123,7 @@ app.post("/api/check-in", async (req, res) => {
       checkInCount: user.checkInCount,
     });
   } catch (error) {
-    console.error("Check-in error:", error);
+    console.error("Check-in error:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
@@ -138,7 +136,7 @@ app.get("/api/user/:tagId", async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
   } catch (error) {
-    console.error("Get user error:", error);
+    console.error("Get user error:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
@@ -147,7 +145,7 @@ app.get("/api/user/:tagId", async (req, res) => {
 app.post("/api/set-referrer", async (req, res) => {
   try {
     const { tagId, referrer } = req.body;
-    console.log("Received set-referrer request:", req.body); // Debug
+    console.log("Received set-referrer request:", req.body);
 
     if (!tagId || !referrer) {
       return res
@@ -175,7 +173,7 @@ app.post("/api/set-referrer", async (req, res) => {
     await user.save();
     res.json({ message: "Referrer set successfully", user });
   } catch (error) {
-    console.error("Set referrer error:", error);
+    console.error("Set referrer error:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
