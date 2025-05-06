@@ -25,7 +25,7 @@ function App() {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://backend-fmji.onrender.com/api/user/${tag}`
+        `https://pibackend-ptko.onrender.com/api/user/${tag}`
       );
       setUser(response.data);
       setMessage(""); // Xóa thông báo lỗi nếu thành công
@@ -69,7 +69,7 @@ function App() {
     }
     setLoading(true);
     try {
-      await axios.post(`https://backend-fmji.onrender.com/api/set-referrer`, {
+      await axios.post(`https://pibackend-ptko.onrender.com/api/set-referrer`, {
         tagId,
         referrer,
       });
