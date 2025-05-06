@@ -1065,12 +1065,18 @@
 
         try {
           // Lấy dữ liệu từ backend
-          const response = await fetch(`${API_URL}/api/checkin/${currentUserTagId}`);
+          const response = await fetch(
+            `${API_URL}/api/checkin/${currentUserTagId}`
+          );
           if (response.ok) {
             checkInData = await response.json();
           } else if (response.status === 404) {
             // Nếu người dùng chưa có dữ liệu, khởi tạo với referrer từ URL
-            if (referrer && memberData[referrer] && referrer !== currentUserTagId) {
+            if (
+              referrer &&
+              memberData[referrer] &&
+              referrer !== currentUserTagId
+            ) {
               checkInData.referrer = referrer;
               await saveCheckInData(); // Lưu dữ liệu mới vào backend
             }
