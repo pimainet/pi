@@ -13,6 +13,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- TradingView Widget -->
     <script src="https://s3.tradingview.com/tv.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
     <!-- Local CSS -->
     <style>
       /* Smooth Scroll */
@@ -567,6 +570,22 @@
         <p class="text-sm mb-4">
           Số dư: <span id="pidogeBalance">0</span> PiDoge, <span id="ttBalance">0</span> TT
         </p>
+        <!-- Referral Section -->
+        <div class="mb-4">
+          <h4 class="text-md font-bold mb-2">Giới thiệu bạn bè</h4>
+          <input
+            id="referralCodeInput"
+            type="text"
+            class="w-full p-2 border rounded mb-2 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
+            placeholder="Nhập mã mời (VD: 002)"
+          />
+          <button
+            onclick="submitReferral()"
+            class="w-full bg-indigo-500 text-white py-2 rounded-lg btn hover:bg-indigo-600"
+          >
+            Gửi mã mời
+          </button>
+        </div>
         <div class="sound-toggle-container mb-4">
           <p class="text-sm timer" id="gameTimer">Thời gian: 10s</p>
           <button id="soundToggle" class="btn" aria-label="Bật/tắt âm thanh">
@@ -602,7 +621,7 @@
           <option value="app">Ứng dụng</option>
         </select>
         <input
-          id="safetyUrl"
+          id="safetyUrlInput"
           type="text"
           class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
           placeholder="Nhập URL (ví dụ: https://example.com hoặc link Google Play)"
@@ -677,7 +696,7 @@
             placeholder="Số lượng Pi (tối thiểu 1$)"
           />
           <input
-            id="withdrawPassword"
+            id="withdrawPasswordInput"
             type="password"
             class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
             placeholder="Nhập mật khẩu"
@@ -702,582 +721,684 @@
 
     <!-- Inline JavaScript -->
     <script>
-      // Member Data
-      const memberData = {
-        "001": {
-          name: "HOÀNG VĂN MINH",
-          avatar: "https://i.imgur.com/6ceGYoC.jpeg",
-          wallet_address: "GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ"
-        },
-        "002": {
-          name: "LÊ VĂN HOẰNG",
-          avatar: "https://i.imgur.com/bacHB3U.jpeg",
-          wallet_address: "GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP"
-        },
-        "003": {
-          name: "PHẠM THỊ XUÂN",
-          avatar: "https://i.imgur.com/FgV7fRT.jpeg",
-          wallet_address: "GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4"
-        },
-        "004": {
-          name: "LÊ THỊ HƯƠNG",
-          avatar: "https://i.imgur.com/qPmerTD.jpeg",
-          wallet_address: "GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3"
-        },
-        "005": {
-          name: "LÊ TRỌNG KHOA",
-          avatar: "https://i.imgur.com/h2G4JTA.jpeg",
-          wallet_address: "GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ"
-        },
-        "006": {
-          name: "HOÀNG VĂN TRỤ",
-          avatar: "https://i.imgur.com/wNUTVEz.jpeg",
-          wallet_address: "GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN"
-        },
-        "007": {
-          name: "MINH TRANG",
-          avatar: "https://i.imgur.com/HskgNhC.jpeg",
-          wallet_address: "GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6"
-        },
-        "008": {
-          name: "LÊ THỊ HÀ",
-          avatar: "https://i.imgur.com/zAX7aF4.jpeg",
-          wallet_address: "GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS"
-        },
-        "009": {
-          name: "LÊ THỊ HỒNG",
-          avatar: "https://i.imgur.com/E44n0YR.jpeg",
-          wallet_address: "GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC"
-        }
-      };
+      (function () {
+        // Firebase Configuration
+        const firebaseConfig = YOUR_FIREBASE_CONFIG; // Thay bằng firebaseConfig từ Firebase Console
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-      // Planet Data
-      const planets = [
-        {
-          level: 0,
-          name: "Chưa khám phá",
-          image: "https://i.imgur.com/xLt0X9f.jpeg",
-          description: "Bắn thiên thạch để tích lũy năng lượng và khám phá vũ trụ!"
-        },
-        {
-          level: 1,
-          name: "Hành tinh PiDoge",
-          image: "https://i.imgur.com/8gDHqeY.jpeg",
-          description: "Nơi cư dân đào PiDoge với niềm vui và năng lượng tích cực."
-        },
-        {
-          level: 2,
-          name: "Hành tinh TT",
-          image: "https://i.imgur.com/27lNYa5.jpeg",
-          description: "Một hành tinh bí ẩn, nơi TT là nguồn năng lượng chính."
-        },
-        {
-          level: 3,
-          name: "Hành tinh Nova",
-          image: "https://i.imgur.com/ccV8NTe.jpeg",
-          description: "Hành tinh rực rỡ với những ngôi sao sáng dẫn lối."
-        },
-        {
-          level: 4,
-          name: "Hành tinh Nebula",
-          image: "https://i.imgur.com/CJCOZtV.jpeg",
-          description: "Vùng không gian đầy sương mù và bí ẩn vũ trụ."
-        },
-        {
-          level: 5,
-          name: "Hành tinh Quasar",
-          image: "https://i.imgur.com/LnO70Wb.jpeg",
-          description: "Nguồn năng lượng mạnh mẽ, tỏa sáng khắp thiên hà."
-        },
-        {
-          level: 6,
-          name: "Hành tinh Pulsar",
-          image: "https://images.unsplash.com/photo-1614314069749-7c2603923c3a?auto=format&fit=crop&w=80",
-          description: "Hành tinh nhấp nháy với nhịp điệu của vũ trụ."
-        },
-        {
-          level: 7,
-          name: "Hành tinh Genesis",
-          image: "https://images.unsplash.com/photo-1614732621357-6b6e47e9a2f8?auto=format&fit=crop&w=80",
-          description: "Cội nguồn của Vũ trụ Pi, nơi mọi thứ bắt đầu."
-        }
-      ];
-
-      // Mini-Game Logic
-      let energyLevel = 0;
-      let gameActive = false;
-      let timeLeft = 10;
-      let timerInterval = null;
-      let soundEnabled = true;
-
-      // Audio (Placeholder URLs, replace with actual MP3 files)
-      const shootSound = new Audio('https://cdn.pixabay.com/audio/2023/08/08/audio_123.mp3'); // Placeholder
-      const explodeSound = new Audio('https://cdn.pixabay.com/audio/2023/08/08/audio_456.mp3'); // Placeholder
-
-      // Canvas Setup
-      const canvas = document.getElementById("gameCanvas");
-      const ctx = canvas.getContext("2d");
-      const asteroid = {
-        x: 100,
-        y: 100,
-        radius: 20,
-        image: new Image()
-      };
-      asteroid.image.src = 'https://i.imgur.com/ccV8NTe.jpeg'; // Asteroid image
-
-      function drawGame() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(asteroid.image, asteroid.x - asteroid.radius, asteroid.y - asteroid.radius, asteroid.radius * 2, asteroid.radius * 2);
-      }
-
-      function resetAsteroid() {
-        asteroid.x = Math.random() * (canvas.width - 2 * asteroid.radius) + asteroid.radius;
-        asteroid.y = Math.random() * (canvas.height - 2 * asteroid.radius) + asteroid.radius;
-      }
-
-      function startGame() {
-        if (gameActive) return;
-        const lastCheckIn = localStorage.getItem("lastCheckIn");
-        const now = new Date().getTime();
-        const oneDay = 24 * 60 * 60 * 1000;
-
-        if (lastCheckIn && now - lastCheckIn < oneDay) {
-          showToast("Bạn chỉ có thể điểm danh mỗi 24 giờ!", "error");
-          return;
+        // Member Data
+        if (!window.memberData) {
+          window.memberData = {
+            "001": {
+              name: "HOÀNG VĂN MINH",
+              avatar: "https://i.imgur.com/6ceGYoC.jpeg",
+              wallet_address: "GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
+              explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ"
+            },
+            "002": {
+              name: "LÊ VĂN HOẰNG",
+              avatar: "https://i.imgur.com/bacHB3U.jpeg",
+              wallet_address: "GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
+              explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP"
+            },
+            "003": {
+              name: "PHẠM THỊ XUÂN",
+              avatar: "https://i.imgur.com/FgV7fRT.jpeg",
+              wallet_address: "GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
+              explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4"
+            },
+            "004": {
+              name: "LÊ THỊ HƯƠNG",
+              avatar: "https://i.imgur.com/qPmerTD.jpeg",
+              wallet_address: "GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
+              explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3"
+            },
+            "005": {
+              name: "LÊ TRỌNG KHOA",
+              avatar: "https://i.imgur.com/h2G4JTA.jpeg",
+              wallet_address: "GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
+              explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ"
+            },
+            "006": {
+              name: "HOÀNG VĂN TRỤ",
+              avatar: "https://i.imgur.com/wNUTVEz.jpeg",
+              wallet_address: "GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
+              explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN"
+            },
+            "007": {
+              name: "MINH TRANG",
+              avatar: "https://i.imgur.com/HskgNhC.jpeg",
+              wallet_address: "GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
+              explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6"
+            },
+            "008": {
+              name: "LÊ THỊ HÀ",
+              avatar: "https://i.imgur.com/zAX7aF4.jpeg",
+              wallet_address: "GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
+              explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS"
+            },
+            "009": {
+              name: "LÊ THỊ HỒNG",
+              avatar: "https://i.imgur.com/E44n0YR.jpeg",
+              wallet_address: "GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC",
+              explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC"
+            }
+          };
         }
 
-        gameActive = true;
-        timeLeft = 10;
-        energyLevel = 0;
-        document.getElementById("energyBar").style.width = "0%";
-        document.getElementById("energyPercentage").textContent = "0%";
-        document.getElementById("gameTimer").textContent = `Thời gian: ${timeLeft}s`;
-        timerInterval = setInterval(updateTimer, 1000);
-        resetAsteroid();
-        drawGame();
-      }
+        // Planet Data
+        const planets = [
+          {
+            level: 0,
+            name: "Chưa khám phá",
+            image: "https://i.imgur.com/xLt0X9f.jpeg",
+            description: "Bắn thiên thạch để tích lũy năng lượng và khám phá vũ trụ!"
+          },
+          {
+            level: 1,
+            name: "Hành tinh PiDoge",
+            image: "https://i.imgur.com/8gDHqeY.jpeg",
+            description: "Nơi cư dân đào PiDoge với niềm vui và năng lượng tích cực."
+          },
+          {
+            level: 2,
+            name: "Hành tinh TT",
+            image: "https://i.imgur.com/27lNYa5.jpeg",
+            description: "Một hành tinh bí ẩn, nơi TT là nguồn năng lượng chính."
+          },
+          {
+            level: 3,
+            name: "Hành tinh Nova",
+            image: "https://i.imgur.com/ccV8NTe.jpeg",
+            description: "Hành tinh rực rỡ với những ngôi sao sáng dẫn lối."
+          },
+          {
+            level: 4,
+            name: "Hành tinh Nebula",
+            image: "https://i.imgur.com/CJCOZtV.jpeg",
+            description: "Vùng không gian đầy sương mù và bí ẩn vũ trụ."
+          },
+          {
+            level: 5,
+            name: "Hành tinh Quasar",
+            image: "https://i.imgur.com/LnO70Wb.jpeg",
+            description: "Nguồn năng lượng mạnh mẽ, tỏa sáng khắp thiên hà."
+          },
+          {
+            level: 6,
+            name: "Hành tinh Pulsar",
+            image: "https://images.unsplash.com/photo-1614314069749-7c2603923c3a?auto=format&fit=crop&w=80",
+            description: "Hành tinh nhấp nháy với nhịp điệu của vũ trụ."
+          },
+          {
+            level: 7,
+            name: "Hành tinh Genesis",
+            image: "https://images.unsplash.com/photo-1614732621357-6b6e47e9a2f8?auto=format&fit=crop&w=80",
+            description: "Cội nguồn của Vũ trụ Pi, nơi mọi thứ bắt đầu."
+          }
+        ];
 
-      function updateTimer() {
-        timeLeft--;
-        document.getElementById("gameTimer").textContent = `Thời gian: ${timeLeft}s`;
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          gameActive = false;
-          showToast("Hết thời gian, thử lại sau 5 giây!", "error");
-          resetEnergyBar();
-          setTimeout(() => {
-            document.getElementById("gameTimer").textContent = "Thời gian: 10s";
-          }, 5000);
-        }
-      }
+        // Mini-Game Logic
+        let energyLevel = 0;
+        let gameActive = false;
+        let timeLeft = 10;
+        let timerInterval = null;
+        let soundEnabled = true;
+        let currentUserId = null;
 
-      canvas.addEventListener("click", (event) => {
-        if (!gameActive) {
-          startGame();
-          return;
+        // Audio
+        const shootSound = new Audio('/assets/audio/shoot.mp3');
+        const explodeSound = new Audio('/assets/audio/explode.mp3');
+
+        // Canvas Setup
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const asteroid = {
+          x: 100,
+          y: 100,
+          radius: 20,
+          image: new Image()
+        };
+        asteroid.image.src = 'https://i.imgur.com/ccV8NTe.jpeg'; // Asteroid image
+
+        function drawGame() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(asteroid.image, asteroid.x - asteroid.radius, asteroid.y - asteroid.radius, asteroid.radius * 2, asteroid.radius * 2);
         }
-        const rect = canvas.getBoundingClientRect();
-        const clickX = event.clientX - rect.left;
-        const clickY = event.clientY - rect.top;
-        const distance = Math.sqrt((clickX - asteroid.x) ** 2 + (clickY - asteroid.y) ** 2);
-        if (distance < asteroid.radius) {
-          chargeEnergy();
+
+        function resetAsteroid() {
+          asteroid.x = Math.random() * (canvas.width - 2 * asteroid.radius) + asteroid.radius;
+          asteroid.y = Math.random() * (canvas.height - 2 * asteroid.radius) + asteroid.radius;
+        }
+
+        async function startGame() {
+          if (gameActive) return;
+          const userDoc = await db.collection("users").doc(currentUserId).get();
+          const userData = userDoc.data();
+          const lastCheckIn = userData.lastCheckIn ? userData.lastCheckIn.toDate().getTime() : 0;
+          const now = new Date().getTime();
+          const oneDay = 24 * 60 * 60 * 1000;
+
+          if (lastCheckIn && now - lastCheckIn < oneDay) {
+            showToast("Bạn chỉ có thể điểm danh mỗi 24 giờ!", "error");
+            return;
+          }
+
+          gameActive = true;
+          timeLeft = 10;
+          energyLevel = 0;
+          document.getElementById("energyBar").style.width = "0%";
+          document.getElementById("energyPercentage").textContent = "0%";
+          document.getElementById("gameTimer").textContent = `Thời gian: ${timeLeft}s`;
+          timerInterval = setInterval(updateTimer, 1000);
           resetAsteroid();
           drawGame();
         }
-      });
 
-      function chargeEnergy() {
-        const energyBar = document.getElementById("energyBar");
-        const energyPercentage = document.getElementById("energyPercentage");
-        const planetImage = document.getElementById("planetImage");
-
-        energyLevel += 5;
-        if (energyLevel > 100) energyLevel = 100;
-
-        energyBar.style.width = `${energyLevel}%`;
-        energyPercentage.textContent = `${energyLevel}%`;
-
-        // Planet Interaction
-        planetImage.classList.add("shake");
-        setTimeout(() => planetImage.classList.remove("shake"), 200);
-        if (energyLevel >= 50) {
-          planetImage.classList.add("glow");
-        } else {
-          planetImage.classList.remove("glow");
-        }
-
-        // Play Sound
-        if (soundEnabled) {
-          shootSound.currentTime = 0;
-          shootSound.play().catch(() => console.warn("Không thể phát âm thanh bắn"));
-        }
-
-        if (energyLevel >= 100) {
-          energyBar.classList.add("full");
-          completeCheckIn();
-        }
-      }
-
-      function completeCheckIn() {
-        clearInterval(timerInterval);
-        gameActive = false;
-
-        // Create explosion effect
-        const explosion = document.createElement("div");
-        explosion.className = "explosion";
-        document.body.appendChild(explosion);
-        setTimeout(() => explosion.remove(), 500);
-
-        // Play explosion sound
-        if (soundEnabled) {
-          explodeSound.currentTime = 0;
-          explodeSound.play().catch(() => console.warn("Không thể phát âm thanh nổ"));
-        }
-
-        // Original check-in logic
-        const now = new Date().getTime();
-        const pidogeReward = Math.floor(Math.random() * (100 - 50 + 1)) + 50;
-        const ttReward = 0.7;
-
-        let pidogeBalance = parseFloat(localStorage.getItem("pidogeBalance") || "0") + pidogeReward;
-        let ttBalance = parseFloat(localStorage.getItem("ttBalance") || "0") + ttReward;
-        localStorage.setItem("pidogeBalance", pidogeBalance);
-        localStorage.setItem("ttBalance", ttBalance);
-
-        let checkInHistory = JSON.parse(localStorage.getItem("checkInHistory") || "[]");
-        const checkInDate = new Date().toLocaleString("vi-VN");
-        checkInHistory.push({ date: checkInDate, pidoge: pidogeReward, tt: ttReward });
-        localStorage.setItem("checkInHistory", JSON.stringify(checkInHistory));
-
-        let checkInCount = parseInt(localStorage.getItem("checkInCount") || "0") + 1;
-        localStorage.setItem("checkInCount", checkInCount);
-        localStorage.setItem("lastCheckIn", now);
-
-        const levelMilestones = [0, 15, 35, 60, 100, 160, 220, 300];
-        let userLevel = 0;
-        for (let i = 0; i < levelMilestones.length; i++) {
-          if (checkInCount >= levelMilestones[i]) {
-            userLevel = i;
-          } else {
-            break;
+        function updateTimer() {
+          timeLeft--;
+          document.getElementById("gameTimer").textContent = `Thời gian: ${timeLeft}s`;
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            gameActive = false;
+            showToast("Hết thời gian, thử lại sau 5 giây!", "error");
+            resetEnergyBar();
+            setTimeout(() => {
+              document.getElementById("gameTimer").textContent = "Thời gian: 10s";
+            }, 5000);
           }
         }
 
-        document.getElementById("pidogeBalance").textContent = pidogeBalance;
-        document.getElementById("ttBalance").textContent = ttBalance;
-        document.getElementById("userLevel").textContent = userLevel;
-        document.getElementById("checkInProgress").textContent = `${checkInCount}/${levelMilestones[userLevel + 1] || 300} ngày để lên cấp ${userLevel + 1}`;
-
-        const currentPlanet = planets[userLevel];
-        document.getElementById("planetName").textContent = currentPlanet.name;
-        document.getElementById("planetDescription").textContent = currentPlanet.description;
-        document.getElementById("planetImage").src = currentPlanet.image;
-
-        updateCheckInHistory();
-        showToast(`Điểm danh thành công! Nhận ${pidogeReward} PiDoge và ${ttReward} TT`);
-        resetEnergyBar();
-      }
-
-      function resetEnergyBar() {
-        energyLevel = 0;
-        gameActive = false;
-        clearInterval(timerInterval);
-        const energyBar = document.getElementById("energyBar");
-        const energyPercentage = document.getElementById("energyPercentage");
-        const planetImage = document.getElementById("planetImage");
-        energyBar.style.width = "0%";
-        energyPercentage.textContent = "0%";
-        energyBar.classList.remove("full");
-        planetImage.classList.remove("glow");
-        document.getElementById("gameTimer").textContent = "Thời gian: 10s";
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
-
-      // Sound Toggle
-      function initializeSoundToggle() {
-        const soundToggle = document.getElementById("soundToggle");
-        if (!soundToggle) {
-          console.error("Không tìm thấy nút #soundToggle!");
-          return;
-        }
-        console.log("Đã tìm thấy #soundToggle, khởi tạo sự kiện");
-        function toggleSound() {
-          console.log("Nút #soundToggle được chạm, soundEnabled:", soundEnabled);
-          soundEnabled = !soundEnabled;
-          const soundIcon = document.getElementById("soundIcon");
-          soundIcon.innerHTML = soundEnabled
-            ? '<path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77z"/>'
-            : '<path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm7.5 3c0-1.67-1.33-3-3-3v6c1.67 0 3-1.33 3-3zm3.5-8.77v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77zM15 12l5-5m0 5l-5-5"/>';
-        }
-        soundToggle.addEventListener("click", toggleSound);
-        soundToggle.addEventListener("touchstart", (e) => {
-          e.preventDefault();
-          toggleSound();
+        canvas.addEventListener("click", (event) => {
+          if (!gameActive) {
+            startGame();
+            return;
+          }
+          const rect = canvas.getBoundingClientRect();
+          const clickX = event.clientX - rect.left;
+          const clickY = event.clientY - rect.top;
+          const distance = Math.sqrt((clickX - asteroid.x) ** 2 + (clickY - asteroid.y) ** 2);
+          if (distance < asteroid.radius) {
+            chargeEnergy();
+            resetAsteroid();
+            drawGame();
+          }
         });
-        // Đảm bảo nút hiển thị ngay
-        soundToggle.style.display = "flex";
-        soundToggle.style.opacity = "1";
-        soundToggle.style.visibility = "visible";
-      }
 
-      // Update Check-in History
-      function updateCheckInHistory() {
-        const historyDiv = document.getElementById("checkInHistory");
-        const checkInHistory = JSON.parse(localStorage.getItem("checkInHistory") || "[]");
-        historyDiv.innerHTML = checkInHistory.length
-          ? checkInHistory
-              .map((entry) => `<p>${entry.date}: ${entry.pidoge} PiDoge, ${entry.tt} TT</p>`)
-              .join("")
-          : "Chưa có lịch sử điểm danh.";
-      }
+        function chargeEnergy() {
+          const energyBar = document.getElementById("energyBar");
+          const energyPercentage = document.getElementById("energyPercentage");
+          const planetImage = document.getElementById("planetImage");
 
-      // Initialize Check-in
-      function initCheckIn() {
-        const planetImage = document.getElementById("planetImage");
-        planetImage.onerror = () => {
-          planetImage.src = "https://i.imgur.com/ccV8NTe.jpeg";
-        };
-        const pidogeBalance = localStorage.getItem("pidogeBalance") || "0";
-        const ttBalance = localStorage.getItem("ttBalance") || "0";
-        const checkInCount = parseInt(localStorage.getItem("checkInCount") || "0");
-        const levelMilestones = [0, 15, 35, 60, 100, 160, 220, 300];
-        let userLevel = 0;
-        for (let i = 0; i < levelMilestones.length; i++) {
-          if (checkInCount >= levelMilestones[i]) {
-            userLevel = i;
+          energyLevel += 5;
+          if (energyLevel > 100) energyLevel = 100;
+
+          energyBar.style.width = `${energyLevel}%`;
+          energyPercentage.textContent = `${energyLevel}%`;
+
+          // Planet Interaction
+          planetImage.classList.add("shake");
+          setTimeout(() => planetImage.classList.remove("shake"), 200);
+          if (energyLevel >= 50) {
+            planetImage.classList.add("glow");
           } else {
-            break;
+            planetImage.classList.remove("glow");
+          }
+
+          // Play Sound
+          if (soundEnabled) {
+            shootSound.currentTime = 0;
+            shootSound.play().catch(() => console.warn("Không thể phát âm thanh bắn"));
+          }
+
+          if (energyLevel >= 100) {
+            energyBar.classList.add("full");
+            completeCheckIn();
           }
         }
 
-        document.getElementById("pidogeBalance").textContent = pidogeBalance;
-        document.getElementById("ttBalance").textContent = ttBalance;
-        document.getElementById("userLevel").textContent = userLevel;
-        document.getElementById("checkInProgress").textContent = `${checkInCount}/${levelMilestones[userLevel + 1] || 300} ngày để lên cấp ${userLevel + 1}`;
+        async function completeCheckIn() {
+          clearInterval(timerInterval);
+          gameActive = false;
 
-        const currentPlanet = planets[userLevel];
-        document.getElementById("planetName").textContent = currentPlanet.name;
-        document.getElementById("planetDescription").textContent = currentPlanet.description;
-        document.getElementById("planetImage").src = currentPlanet.image;
+          // Create explosion effect
+          const explosion = document.createElement("div");
+          explosion.className = "explosion";
+          document.body.appendChild(explosion);
+          setTimeout(() => explosion.remove(), 500);
 
-        updateCheckInHistory();
-
-        // Preload asteroid image
-        asteroid.image.onload = () => {
-          drawGame();
-        };
-      }
-
-      // Show Toast Notification
-      function showToast(message, type = "success") {
-        const toast = document.getElementById("toast");
-        const toastMessage = document.getElementById("toastMessage");
-        toastMessage.textContent = message;
-        toast.classList.remove("bg-green-500", "bg-red-500");
-        toast.classList.add(type === "success" ? "bg-green-500" : "bg-red-500");
-        toast.classList.remove("hidden");
-        toast.classList.add("show");
-        setTimeout(() => {
-          toast.classList.remove("show");
-          toast.classList.add("hidden");
-        }, 3000);
-      }
-
-      // Load User Data
-      function loadUserData() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const tagId = urlParams.get("tag_id");
-        const userName = document.getElementById("userName");
-        const walletAddress = document.getElementById("walletAddress");
-        const avatar = document.getElementById("avatar");
-
-        if (tagId && memberData[tagId]) {
-          const member = memberData[tagId];
-          userName.textContent = member.name;
-          walletAddress.textContent = member.wallet_address;
-          avatar.src = member.avatar;
-        } else {
-          userName.textContent = "Không tìm thấy thông tin";
-          walletAddress.textContent = "Không tìm thấy địa chỉ ví";
-          avatar.src = "https://picsum.photos/80";
-          showToast("Tag ID không hợp lệ!", "error");
-        }
-
-        avatar.onload = () => {
-          avatar.classList.add("loaded");
-        };
-        avatar.onerror = () => {
-          console.warn(`Không thể tải hình ảnh: ${avatar.src}`);
-          if (avatar.src !== "https://picsum.photos/seed/fallback/80") {
-            avatar.src = "https://picsum.photos/seed/fallback/80";
-          } else {
-            showToast("Không thể tải hình ảnh đại diện!", "error");
-            avatar.classList.add("loaded");
+          // Play explosion sound
+          if (soundEnabled) {
+            explodeSound.currentTime = 0;
+            explodeSound.play().catch(() => console.warn("Không thể phát âm thanh nổ"));
           }
-        };
-      }
 
-      // Auto-check Balance from URL
-      function autoCheckBalanceFromURL() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const walletAddress = urlParams.get("wallet");
-        if (walletAddress) {
-          document.getElementById("walletAddress").textContent = walletAddress;
-          checkBalance();
-        }
-      }
+          // Check-in logic
+          const now = new Date();
+          let pidogeReward = Math.floor(Math.random() * (100 - 50 + 1)) + 50;
+          let ttReward = 0.7;
 
-      // Check Balance
-      function checkBalance() {
-        const walletAddress = document.getElementById("walletAddress").textContent;
-        if (!walletAddress || walletAddress === "Không tìm thấy địa chỉ ví") {
-          showToast("Không có địa chỉ ví để kiểm tra!", "error");
-          return;
-        }
-        const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
-        window.location.href = explorerUrl;
-      }
+          // Update user data
+          const userRef = db.collection("users").doc(currentUserId);
+          const userDoc = await userRef.get();
+          let userData = userDoc.data();
+          const pidogeBalance = (userData.pidogeBalance || 0) + pidogeReward;
+          const ttBalance = (userData.ttBalance || 0) + ttReward;
+          const checkInCount = (userData.checkInCount || 0) + 1;
+          const checkInHistory = userData.checkInHistory || [];
+          checkInHistory.push({ date: now.toLocaleString("vi-VN"), pidoge: pidogeReward, tt: ttReward });
 
-      // Copy Wallet Address
-      function copyWalletAddress() {
-        const walletAddress = document.getElementById("walletAddress").textContent;
-        if (walletAddress === "Không tìm thấy địa chỉ ví") {
-          showToast("Không có địa chỉ ví để sao chép!", "error");
-          return;
-        }
-        navigator.clipboard
-          .writeText(walletAddress)
-          .then(() => {
-            showToast("Đã sao chép địa chỉ ví!");
-          })
-          .catch(() => {
-            showToast("Không thể sao chép địa chỉ ví!", "error");
-          });
-      }
+          // Referral bonus
+          let referralBonusMessage = "";
+          if (userData.referredBy) {
+            const referrerId = userData.referredBy;
+            const referrerRef = db.collection("users").doc(referrerId);
+            const referrerDoc = await referrerRef.get();
+            if (referrerDoc.exists) {
+              const referrerData = referrerDoc.data();
+              const referrerLastCheckIn = referrerData.lastCheckIn ? referrerData.lastCheckIn.toDate() : null;
+              const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+              const referrerCheckInDate = referrerLastCheckIn ? new Date(referrerLastCheckIn.getFullYear(), referrerLastCheckIn.getMonth(), referrerLastCheckIn.getDate()) : null;
 
-      // Show Withdraw Modal
-      function showWithdrawModal() {
-        const withdrawModal = document.getElementById("withdrawModal");
-        withdrawModal.classList.remove("hidden");
-        withdrawModal.classList.add("show");
-      }
+              if (referrerCheckInDate && referrerCheckInDate.getTime() === today.getTime()) {
+                const bonusPidoge = Math.floor(pidogeReward * 0.11);
+                const bonusTT = ttReward * 0.11;
+                pidogeReward += bonusPidoge;
+                ttReward += bonusTT;
 
-      // Hide Withdraw Modal
-      function hideWithdrawModal() {
-        const withdrawModal = document.getElementById("withdrawModal");
-        withdrawModal.classList.remove("show");
-        withdrawModal.classList.add("hidden");
-      }
+                // Update referrer
+                await referrerRef.update({
+                  pidogeBalance: (referrerData.pidogeBalance || 0) + bonusPidoge,
+                  ttBalance: (referrerData.ttBalance || 0) + bonusTT,
+                  checkInHistory: [...referrerData.checkInHistory, {
+                    date: now.toLocaleString("vi-VN"),
+                    pidoge: bonusPidoge,
+                    tt: bonusTT,
+                    note: "Thưởng giới thiệu"
+                  }]
+                });
 
-      // Withdraw Pi
-      function withdrawPi() {
-        const amount = parseFloat(document.getElementById("withdrawAmount").value);
-        const password = document.getElementById("withdrawPassword").value;
-        const withdrawStatus = document.getElementById("withdrawStatus");
-
-        if (!amount || amount < 0.01) {
-          showToast("Số lượng Pi phải lớn hơn 0 và tối thiểu 1$!", "error");
-          return;
-        }
-
-        if (!password) {
-          showToast("Vui lòng nhập mật khẩu!", "error");
-          return;
-        }
-
-        withdrawStatus.textContent = "Đang xử lý...";
-
-        setTimeout(() => {
-          withdrawStatus.textContent = "Đã gửi yêu cầu rút Pi";
-          showToast("Yêu cầu rút Pi đã được gửi!");
-          hideWithdrawModal();
-        }, 1500);
-      }
-
-      // Safety Check
-      function checkSafety() {
-        const checkButton = document.getElementById("checkButton");
-        const loadingSpinner = document.getElementById("loadingSpinner");
-        const safetyResult = document.getElementById("safetyResult");
-        const safetyStatus = document.getElementById("safetyStatus");
-        const safetyScore = document.getElementById("safetyScore");
-        const safetyWarnings = document.getElementById("safetyWarnings");
-
-        checkButton.disabled = true;
-        loadingSpinner.style.display = "block";
-        safetyResult.classList.add("hidden");
-
-        setTimeout(() => {
-          loadingSpinner.style.display = "none";
-          safetyResult.classList.remove("hidden");
-
-          const isSafe = Math.random() > 0.5;
-          safetyResult.classList.remove("safe", "unsafe");
-          safetyResult.classList.add(isSafe ? "safe" : "unsafe");
-          safetyStatus.textContent = isSafe ? "An toàn" : "Không an toàn";
-          safetyScore.textContent = isSafe ? "85" : "30";
-          safetyWarnings.textContent = isSafe
-            ? "Không có cảnh báo"
-            : "Trang web có thể không đáng tin cậy";
-
-          checkButton.disabled = false;
-          showToast(
-            isSafe ? "Kiểm tra thành công: An toàn!" : "Kiểm tra thành công: Không an toàn!",
-            isSafe ? "success" : "error"
-          );
-        }, 1500);
-      }
-
-      // Clear Safety Check Form
-      function clearForm() {
-        document.getElementById("safetyUrl").value = "";
-        document.getElementById("safetyResult").classList.add("hidden");
-        showToast("Đã xóa biểu mẫu!");
-      }
-
-      // Initialize on Page Load
-      document.addEventListener("DOMContentLoaded", () => {
-        loadUserData();
-        initCheckIn();
-        initializeSoundToggle();
-        autoCheckBalanceFromURL();
-
-        // Lazy load TradingView Widget
-        const tradingViewSection = document.getElementById("tradingview_chart");
-        const observer = new IntersectionObserver(
-          (entries) => {
-            if (entries[0].isIntersecting) {
-              new TradingView.widget({
-                width: "100%",
-                height: 250,
-                symbol: "OKX:PIUSDT",
-                interval: "D",
-                timezone: "Etc/UTC",
-                theme: "light",
-                style: "1",
-                locale: "en",
-                toolbar_bg: "#f1f3f6",
-                enable_publishing: false,
-                allow_symbol_change: true,
-                container_id: "tradingview_chart"
-              });
-              observer.disconnect();
+                referralBonusMessage = ` +${bonusPidoge} PiDoge, +${bonusTT} TT (thưởng giới thiệu)`;
+              }
             }
-          },
-          { rootMargin: "100px" }
-        );
-        observer.observe(tradingViewSection);
-      });
+          }
+
+          // Save to Firestore
+          await userRef.set({
+            pidogeBalance,
+            ttBalance,
+            checkInCount,
+            checkInHistory,
+            lastCheckIn: now,
+            referredBy: userData.referredBy || null
+          }, { merge: true });
+
+          // Update UI
+          const levelMilestones = [0, 15, 35, 60, 100, 160, 220, 300];
+          let userLevel = 0;
+          for (let i = 0; i < levelMilestones.length; i++) {
+            if (checkInCount >= levelMilestones[i]) {
+              userLevel = i;
+            } else {
+              break;
+            }
+          }
+
+          document.getElementById("pidogeBalance").textContent = pidogeBalance;
+          document.getElementById("ttBalance").textContent = ttBalance;
+          document.getElementById("userLevel").textContent = userLevel;
+          document.getElementById("checkInProgress").textContent = `${checkInCount}/${levelMilestones[userLevel + 1] || 300} ngày để lên cấp ${userLevel + 1}`;
+
+          const currentPlanet = planets[userLevel];
+          document.getElementById("planetName").textContent = currentPlanet.name;
+          document.getElementById("planetDescription").textContent = currentPlanet.description;
+          document.getElementById("planetImage").src = currentPlanet.image;
+
+          updateCheckInHistory();
+          showToast(`Điểm danh thành công! Nhận ${pidogeReward} PiDoge, ${ttReward} TT${referralBonusMessage}`);
+          resetEnergyBar();
+        }
+
+        function resetEnergyBar() {
+          energyLevel = 0;
+          gameActive = false;
+          clearInterval(timerInterval);
+          const energyBar = document.getElementById("energyBar");
+          const energyPercentage = document.getElementById("energyPercentage");
+          const planetImage = document.getElementById("planetImage");
+          energyBar.style.width = "0%";
+          energyPercentage.textContent = "0%";
+          energyBar.classList.remove("full");
+          planetImage.classList.remove("glow");
+          document.getElementById("gameTimer").textContent = "Thời gian: 10s";
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Referral Submission
+        async function submitReferral() {
+          const referralCode = document.getElementById("referralCodeInput").value.trim();
+          if (!referralCode) {
+            showToast("Vui lòng nhập mã mời!", "error");
+            return;
+          }
+          if (!window.memberData[referralCode]) {
+            showToast("Mã mời không hợp lệ!", "error");
+            return;
+          }
+          if (referralCode === currentUserId) {
+            showToast("Bạn không thể tự mời chính mình!", "error");
+            return;
+          }
+
+          try {
+            await db.collection("users").doc(currentUserId).update({
+              referredBy: referralCode
+            });
+            showToast("Đã gửi mã mời thành công!");
+            document.getElementById("referralCodeInput").value = "";
+          } catch (error) {
+            showToast("Lỗi khi gửi mã mời!", "error");
+            console.error("Referral error:", error);
+          }
+        }
+
+        // Sound Toggle
+        function initializeSoundToggle() {
+          const soundToggle = document.getElementById("soundToggle");
+          if (!soundToggle) {
+            console.error("Không tìm thấy nút #soundToggle! Kiểm tra HTML đảm bảo phần tử tồn tại.");
+            return;
+          }
+          console.log("Đã tìm thấy #soundToggle, khởi tạo sự kiện");
+          function toggleSound() {
+            console.log("Nút #soundToggle được chạm, soundEnabled:", soundEnabled);
+            soundEnabled = !soundEnabled;
+            const soundIcon = document.getElementById("soundIcon");
+            soundIcon.innerHTML = soundEnabled
+              ? '<path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77z"/>'
+              : '<path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm7.5 3c0-1.67-1.33-3-3-3v6c1.67 0 3-1.33 3-3zm3.5-8.77v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77 0-4.28-2.99-7.86-7-8.77zM15 12l5-5m0 5l-5-5"/>';
+          }
+          soundToggle.addEventListener("click", toggleSound);
+          soundToggle.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            toggleSound();
+          });
+          soundToggle.style.display = "flex";
+          soundToggle.style.opacity = "1";
+          soundToggle.style.visibility = "visible";
+          console.log("Đã hiển thị #soundToggle với display: flex, opacity: 1");
+        }
+
+        // Update Check-in History
+        async function updateCheckInHistory() {
+          const historyDiv = document.getElementById("checkInHistory");
+          const userDoc = await db.collection("users").doc(currentUserId).get();
+          const checkInHistory = userDoc.data().checkInHistory || [];
+          historyDiv.innerHTML = checkInHistory.length
+            ? checkInHistory
+                .map((entry) => `<p>${entry.date}: ${entry.pidoge} PiDoge, ${entry.tt} TT ${entry.note || ""}</p>`)
+                .join("")
+            : "Chưa có lịch sử điểm danh.";
+        }
+
+        // Initialize Check-in
+        async function initCheckIn() {
+          const planetImage = document.getElementById("planetImage");
+          planetImage.onerror = () => {
+            planetImage.src = "https://i.imgur.com/ccV8NTe.jpeg";
+          };
+          const userDoc = await db.collection("users").doc(currentUserId).get();
+          let userData = userDoc.data() || {
+            pidogeBalance: 0,
+            ttBalance: 0,
+            checkInCount: 0,
+            checkInHistory: [],
+            lastCheckIn: null,
+            referredBy: null
+          };
+
+          // Initialize user if not exists
+          if (!userDoc.exists) {
+            await db.collection("users").doc(currentUserId).set(userData);
+          }
+
+          const pidogeBalance = userData.pidogeBalance || 0;
+          const ttBalance = userData.ttBalance || 0;
+          const checkInCount = userData.checkInCount || 0;
+          const levelMilestones = [0, 15, 35, 60, 100, 160, 220, 300];
+          let userLevel = 0;
+          for (let i = 0; i < levelMilestones.length; i++) {
+            if (checkInCount >= levelMilestones[i]) {
+              userLevel = i;
+            } else {
+              break;
+            }
+          }
+
+          document.getElementById("pidogeBalance").textContent = pidogeBalance;
+          document.getElementById("ttBalance").textContent = ttBalance;
+          document.getElementById("userLevel").textContent = userLevel;
+          document.getElementById("checkInProgress").textContent = `${checkInCount}/${levelMilestones[userLevel + 1] || 300} ngày để lên cấp ${userLevel + 1}`;
+
+          const currentPlanet = planets[userLevel];
+          document.getElementById("planetName").textContent = currentPlanet.name;
+          document.getElementById("planetDescription").textContent = currentPlanet.description;
+          document.getElementById("planetImage").src = currentPlanet.image;
+
+          updateCheckInHistory();
+
+          // Preload asteroid image
+          asteroid.image.onload = () => {
+            drawGame();
+          };
+        }
+
+        // Show Toast Notification
+        function showToast(message, type = "success") {
+          const toast = document.getElementById("toast");
+          const toastMessage = document.getElementById("toastMessage");
+          toastMessage.textContent = message;
+          toast.classList.remove("bg-green-500", "bg-red-500");
+          toast.classList.add(type === "success" ? "bg-green-500" : "bg-red-500");
+          toast.classList.remove("hidden");
+          toast.classList.add("show");
+          setTimeout(() => {
+            toast.classList.remove("show");
+            toast.classList.add("hidden");
+          }, 3000);
+        }
+
+        // Load User Data
+        async function loadUserData() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const tagId = urlParams.get("tag_id");
+          currentUserId = tagId;
+          const userName = document.getElementById("userName");
+          const walletAddress = document.getElementById("walletAddress");
+          const avatar = document.getElementById("avatar");
+
+          if (tagId && window.memberData[tagId]) {
+            const member = window.memberData[tagId];
+            userName.textContent = member.name;
+            walletAddress.textContent = member.wallet_address;
+            avatar.src = member.avatar;
+          } else {
+            userName.textContent = "Không tìm thấy thông tin";
+            walletAddress.textContent = "Không tìm thấy địa chỉ ví";
+            avatar.src = "https://picsum.photos/80";
+            showToast("Tag ID không hợp lệ!", "error");
+          }
+
+          avatar.onload = () => {
+            avatar.classList.add("loaded");
+          };
+          avatar.onerror = () => {
+            console.warn(`Không thể tải hình ảnh: ${avatar.src}`);
+            if (avatar.src !== "https://picsum.photos/seed/fallback/80") {
+              avatar.src = "https://picsum.photos/seed/fallback/80";
+            } else {
+              showToast("Không thể tải hình ảnh đại diện!", "error");
+              avatar.classList.add("loaded");
+            }
+          };
+        }
+
+        // Auto-check Balance from URL
+        function autoCheckBalanceFromURL() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const walletAddress = urlParams.get("wallet");
+          if (walletAddress) {
+            document.getElementById("walletAddress").textContent = walletAddress;
+            checkBalance();
+          }
+        }
+
+        // Check Balance
+        function checkBalance() {
+          const walletAddress = document.getElementById("walletAddress").textContent;
+          if (!walletAddress || walletAddress === "Không tìm thấy địa chỉ ví") {
+            showToast("Không có địa chỉ ví để kiểm tra!", "error");
+            return;
+          }
+          const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
+          window.location.href = explorerUrl;
+        }
+
+        // Copy Wallet Address
+        function copyWalletAddress() {
+          const walletAddress = document.getElementById("walletAddress").textContent;
+          if (walletAddress === "Không tìm thấy địa chỉ ví") {
+            showToast("Không có địa chỉ ví để sao chép!", "error");
+            return;
+          }
+          navigator.clipboard
+            .writeText(walletAddress)
+            .then(() => {
+              showToast("Đã sao chép địa chỉ ví!");
+            })
+            .catch(() => {
+              showToast("Không thể sao chép địa chỉ ví!", "error");
+            });
+        }
+
+        // Show Withdraw Modal
+        function showWithdrawModal() {
+          const withdrawModal = document.getElementById("withdrawModal");
+          withdrawModal.classList.remove("hidden");
+          withdrawModal.classList.add("show");
+        }
+
+        // Hide Withdraw Modal
+        function hideWithdrawModal() {
+          const withdrawModal = document.getElementById("withdrawModal");
+          withdrawModal.classList.remove("show");
+          withdrawModal.classList.add("hidden");
+        }
+
+        // Withdraw Pi
+        function withdrawPi() {
+          const amount = parseFloat(document.getElementById("withdrawAmount").value);
+          const password = document.getElementById("withdrawPasswordInput").value;
+
+          if (!amount || amount < 0.01) {
+            showToast("Số lượng Pi phải lớn hơn 0 và tối thiểu 1$!", "error");
+            return;
+          }
+
+          if (!password) {
+            showToast("Vui lòng nhập mật khẩu!", "error");
+            return;
+          }
+
+          showToast("Đang xử lý rút Pi...");
+          setTimeout(() => {
+            showToast("Yêu cầu rút Pi đã được gửi!");
+            hideWithdrawModal();
+          }, 1500);
+        }
+
+        // Safety Check
+        function checkSafety() {
+          const checkButton = document.getElementById("checkButton");
+          const loadingSpinner = document.getElementById("loadingSpinner");
+          const safetyResult = document.getElementById("safetyResult");
+          const safetyStatus = document.getElementById("safetyStatus");
+          const safetyScore = document.getElementById("safetyScore");
+          const safetyWarnings = document.getElementById("safetyWarnings");
+          const safetyUrl = document.getElementById("safetyUrlInput").value;
+
+          if (!safetyUrl) {
+            showToast("Vui lòng nhập URL để kiểm tra!", "error");
+            return;
+          }
+
+          checkButton.disabled = true;
+          loadingSpinner.style.display = "block";
+          safetyResult.classList.add("hidden");
+
+          setTimeout(() => {
+            loadingSpinner.style.display = "none";
+            safetyResult.classList.remove("hidden");
+
+            const isSafe = Math.random() > 0.5;
+            safetyResult.classList.remove("safe", "unsafe");
+            safetyResult.classList.add(isSafe ? "safe" : "unsafe");
+            safetyStatus.textContent = isSafe ? "An toàn" : "Không an toàn";
+            safetyScore.textContent = isSafe ? "85" : "30";
+            safetyWarnings.textContent = isSafe
+              ? "Không có cảnh báo"
+              : "Trang web có thể không đáng tin cậy";
+
+            checkButton.disabled = false;
+            showToast(
+              isSafe ? "Kiểm tra thành công: An toàn!" : "Kiểm tra thành công: Không an toàn!",
+              isSafe ? "success" : "error"
+            );
+          }, 1500);
+        }
+
+        // Clear Safety Check Form
+        function clearForm() {
+          document.getElementById("safetyUrlInput").value = "";
+          document.getElementById("safetyResult").classList.add("hidden");
+          showToast("Đã xóa biểu mẫu!");
+        }
+
+        // Initialize on Page Load
+        document.addEventListener("DOMContentLoaded", async () => {
+          await loadUserData();
+          await initCheckIn();
+          initializeSoundToggle();
+          autoCheckBalanceFromURL();
+
+          // Lazy load TradingView Widget
+          const tradingViewSection = document.getElementById("tradingview_chart");
+          const observer = new IntersectionObserver(
+            (entries) => {
+              if (entries[0].isIntersecting) {
+                new TradingView.widget({
+                  width: "100%",
+                  height: 250,
+                  symbol: "OKX:PIUSDT",
+                  interval: "D",
+                  timezone: "Etc/UTC",
+                  theme: "light",
+                  style: "1",
+                  locale: "en",
+                  toolbar_bg: "#f1f3f6",
+                  enable_publishing: false,
+                  allow_symbol_change: true,
+                  container_id: "tradingview_chart"
+                });
+                observer.disconnect();
+              }
+            },
+            { rootMargin: "100px" }
+          );
+          observer.observe(tradingViewSection);
+        });
+      })();
     </script>
   </body>
 </html>
