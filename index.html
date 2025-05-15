@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ví Pi - Đầy đủ</title>
-    <!-- Google Fonts for Inter and Orbitron (for futuristic title) -->
+    <!-- Google Fonts for Inter and Orbitron -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@700&display=swap"
       rel="stylesheet"
@@ -411,30 +411,11 @@
         <p class="text-sm mb-2">Cấp độ: <span id="userLevel">0</span></p>
         <p class="text-sm mb-4">Tiến độ: <span id="checkInProgress">0/15 ngày để lên cấp 1</span></p>
         <p class="text-sm mb-4">Số dư: <span id="pidogeBalance">0</span> PiDoge, <span id="ttBalance">0</span> TT</p>
-        <div class="mb-4">
-          <label for="referralCodeInput" class="text-sm font-bold">Nhập mã giới thiệu:</label>
-          <input
-            id="referralCodeInput"
-            type="text"
-            class="w-full p-2 border rounded mt-1 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
-            placeholder="Nhập mã giới thiệu (nếu có)"
-          />
-          <button
-            id="submitReferralButton"
-            onclick="submitReferralCode()"
-            class="w-full bg-purple-500 text-white py-2 mt-2 rounded-lg btn hover:bg-purple-600"
-          >
-            Xác nhận mã giới thiệu
-          </button>
-        </div>
         <button id="checkInButton" onclick="checkIn()" class="w-full bg-blue-500 text-white py-2 rounded-lg btn hover:bg-blue-600">
           Điểm danh
         </button>
         <h4 class="text-md font-bold mt-4 mb-2">Lịch sử điểm danh</h4>
         <div id="checkInHistory" class="text-sm text-gray-500"></div>
-        <h4 class="text-md font-bold mt-4 mb-2">Thông tin giới thiệu</h4>
-        <p class="text-sm mb-2">Mã giới thiệu của bạn: <span id="userReferralCode">Chưa có</span></p>
-        <p class="text-sm mb-2">Người giới thiệu: <span id="referrerName">Chưa có</span></p>
       </div>
       <!-- Chart Section (TradingView Widget) -->
       <div class="card shadow-xl rounded-2xl p-6 mb-6">
@@ -715,77 +696,110 @@
       ];
 
       // Logic điểm danh
-      function checkIn() {
+      async function checkIn() {
         const checkInButton = document.getElementById("checkInButton");
-        const lastCheckIn = localStorage.getItem("lastCheckIn");
+        const urlParams = new URLSearchParams(window.location.search);
+        const tagId = urlParams.get("tag_id") || "guest";
+        const userRef = db.collection("users").doc(tagId);
         const now = new Date().getTime();
         const oneDay = 24 * 60 * 60 * 1000; // 24 giờ
 
-        // Kiểm tra nếu đã điểm danh trong 24 giờ
-        if (lastCheckIn && now - lastCheckIn < oneDay) {
-          showToast("Bạn chỉ có thể điểm danh mỗi 24 giờ!", "error");
-          return;
-        }
-
-        // Tạo phần thưởng ngẫu nhiên
-        const pidogeReward = Math.floor(Math.random() * (100 - 50 + 1)) + 50;
-        const ttReward = 0.7;
-
-        // Cập nhật số dư
-        let pidogeBalance = parseFloat(localStorage.getItem("pidogeBalance") || "0") + pidogeReward;
-        let ttBalance = parseFloat(localStorage.getItem("ttBalance") || "0") + ttReward;
-        localStorage.setItem("pidogeBalance", pidogeBalance);
-        localStorage.setItem("ttBalance", ttBalance);
-
-        // Cập nhật lịch sử điểm danh
-        let checkInHistory = JSON.parse(localStorage.getItem("checkInHistory") || "[]");
-        const checkInDate = new Date().toLocaleString("vi-VN");
-        checkInHistory.push({ date: checkInDate, pidoge: pidogeReward, tt: ttReward });
-        localStorage.setItem("checkInHistory", JSON.stringify(checkInHistory));
-
-        // Cập nhật số ngày điểm danh
-        let checkInCount = parseInt(localStorage.getItem("checkInCount") || "0") + 1;
-        localStorage.setItem("checkInCount", checkInCount);
-        localStorage.setItem("lastCheckIn", now);
-
-        // Tính cấp độ
-        const levelMilestones = [0, 15, 35, 60, 100, 160, 220, 300];
-        let userLevel = 0;
-        for (let i = 0; i < levelMilestones.length; i++) {
-          if (checkInCount >= levelMilestones[i]) {
-            userLevel = i;
-          } else {
-            break;
+        try {
+          const doc = await userRef.get();
+          if (!doc.exists) {
+            showToast("Không tìm thấy dữ liệu người dùng!", "error");
+            return;
           }
+
+          const userData = doc.data();
+          const lastCheckIn = userData.lastCheckIn ? userData.lastCheckIn.toDate().getTime() : null;
+
+          // Kiểm tra nếu đã điểm danh trong 24 giờ
+          if (lastCheckIn && now - lastCheckIn < oneDay) {
+            showToast("Bạn chỉ có thể điểm danh mỗi 24 giờ!", "error");
+            return;
+          }
+
+          // Tạo phần thưởng ngẫu nhiên
+          const pidogeReward = Math.floor(Math.random() * (100 - 50 + 1)) + 50;
+          const ttReward = 0.7;
+
+          // Cập nhật số dư
+          const newPidogeBalance = (userData.pidogeBalance || 0) + pidogeReward;
+          const newTtBalance = (userData.ttBalance || 0) + ttReward;
+
+          // Cập nhật số ngày điểm danh
+          const newCheckInCount = (userData.checkInCount || 0) + 1;
+
+          // Tính cấp độ
+          const levelMilestones = [0, 15, 35, 60, 100, 160, 220, 300];
+          let newUserLevel = 0;
+          for (let i = 0; i < levelMilestones.length; i++) {
+            if (newCheckInCount >= levelMilestones[i]) {
+              newUserLevel = i;
+            } else {
+              break;
+            }
+          }
+
+          // Cập nhật lịch sử điểm danh
+          const checkInDate = new Date().toLocaleString("vi-VN");
+          const newCheckInHistory = [
+            ...(userData.checkInHistory || []),
+            { date: checkInDate, pidoge: pidogeReward, tt: ttReward }
+          ];
+
+          // Lưu vào Firebase
+          await userRef.update({
+            pidogeBalance: newPidogeBalance,
+            ttBalance: newTtBalance,
+            checkInCount: newCheckInCount,
+            userLevel: newUserLevel,
+            checkInHistory: newCheckInHistory,
+            lastCheckIn: new Date()
+          });
+
+          // Cập nhật giao diện
+          document.getElementById("pidogeBalance").textContent = newPidogeBalance;
+          document.getElementById("ttBalance").textContent = newTtBalance;
+          document.getElementById("userLevel").textContent = newUserLevel;
+          document.getElementById("checkInProgress").textContent = 
+            `${newCheckInCount}/${levelMilestones[newUserLevel + 1] || 300} ngày để lên cấp ${newUserLevel + 1}`;
+
+          // Cập nhật hành tinh
+          const currentPlanet = planets[newUserLevel];
+          document.getElementById("planetName").textContent = currentPlanet.name;
+          document.getElementById("planetDescription").textContent = currentPlanet.description;
+          document.getElementById("planetImage").src = currentPlanet.image;
+
+          // Cập nhật lịch sử điểm danh
+          updateCheckInHistory(newCheckInHistory);
+
+          // Thông báo thành công
+          showToast(`Điểm danh thành công! Nhận ${pidogeReward} PiDoge và ${ttReward} TT`);
+        } catch (error) {
+          console.error("Lỗi khi điểm danh:", error);
+          showToast("Không thể điểm danh! Vui lòng thử lại.", "error");
         }
+      }
 
-        // Cập nhật giao diện
-        document.getElementById("pidogeBalance").textContent = pidogeBalance;
-        document.getElementById("ttBalance").textContent = ttBalance;
-        document.getElementById("userLevel").textContent = userLevel;
-        document.getElementById("checkInProgress").textContent = `${checkInCount}/${levelMilestones[userLevel + 1] || 300} ngày để lên cấp ${userLevel + 1}`;
-
-        // Cập nhật hành tinh
-        const currentPlanet = planets[userLevel];
-        document.getElementById("planetName").textContent = currentPlanet.name;
-        document.getElementById("planetDescription").textContent = currentPlanet.description;
-        document.getElementById("planetImage").src = currentPlanet.image;
-
-        // Cập nhật lịch sử điểm danh
-        updateCheckInHistory();
-
-        // Thông báo thành công
-        showToast(`Điểm danh thành công! Nhận ${pidogeReward} PiDoge và ${ttReward} TT`);
+      // Cập nhật lịch sử điểm danh
+      function updateCheckInHistory(history) {
+        const historyDiv = document.getElementById("checkInHistory");
+        historyDiv.innerHTML = history.length
+          ? history
+              .map((entry) => `<p>${entry.date}: ${entry.pidoge} PiDoge, ${entry.tt} TT</p>`)
+              .join("")
+          : "Chưa có lịch sử điểm danh.";
       }
 
       // Khởi tạo giao diện khi tải trang
-      function initCheckIn() {
+      async function initCheckIn() {
         const planetImage = document.getElementById("planetImage");
         planetImage.onerror = () => {
           planetImage.src = "https://i.imgur.com/ccV8NTe.jpeg"; // Hình dự phòng
         };
-        // Gọi initUserData để đồng bộ dữ liệu từ Firebase
-        initUserData();
+        await initUserData();
       }
 
       // Khởi tạo dữ liệu người dùng trên Firebase
@@ -800,8 +814,6 @@
             // Nếu người dùng chưa có dữ liệu, tạo mới
             await userRef.set({
               tagId: tagId,
-              referralCode: tagId, // Sử dụng tag_id làm mã giới thiệu
-              referrerId: null,
               pidogeBalance: 0,
               ttBalance: 0,
               checkInCount: 0,
@@ -809,89 +821,26 @@
               lastCheckIn: null,
               userLevel: 0
             });
-            document.getElementById("userReferralCode").textContent = tagId;
-            document.getElementById("referrerName").textContent = "Chưa có";
-          } else {
-            // Nếu đã có dữ liệu, cập nhật giao diện
-            const data = doc.data();
-            document.getElementById("userReferralCode").textContent = data.referralCode;
-            document.getElementById("referrerName").textContent = 
-              data.referrerId && memberData[data.referrerId] 
-              ? memberData[data.referrerId].name 
-              : "Chưa có";
-            // Đồng bộ số dư và tiến độ
-            document.getElementById("pidogeBalance").textContent = data.pidogeBalance;
-            document.getElementById("ttBalance").textContent = data.ttBalance;
-            document.getElementById("userLevel").textContent = data.userLevel;
-            document.getElementById("checkInProgress").textContent = 
-              `${data.checkInCount}/${[0, 15, 35, 60, 100, 160, 220, 300][data.userLevel + 1] || 300} ngày để lên cấp ${data.userLevel + 1}`;
-            updateCheckInHistory(data.checkInHistory);
-            // Cập nhật hành tinh
-            const currentPlanet = planets[data.userLevel];
-            document.getElementById("planetName").textContent = currentPlanet.name;
-            document.getElementById("planetDescription").textContent = currentPlanet.description;
-            document.getElementById("planetImage").src = currentPlanet.image;
           }
+          
+          // Lấy dữ liệu và cập nhật giao diện
+          const data = (await userRef.get()).data();
+          document.getElementById("pidogeBalance").textContent = data.pidogeBalance;
+          document.getElementById("ttBalance").textContent = data.ttBalance;
+          document.getElementById("userLevel").textContent = data.userLevel;
+          document.getElementById("checkInProgress").textContent = 
+            `${data.checkInCount}/${[0, 15, 35, 60, 100, 160, 220, 300][data.userLevel + 1] || 300} ngày để lên cấp ${data.userLevel + 1}`;
+          updateCheckInHistory(data.checkInHistory);
+          
+          // Cập nhật hành tinh
+          const currentPlanet = planets[data.userLevel];
+          document.getElementById("planetName").textContent = currentPlanet.name;
+          document.getElementById("planetDescription").textContent = currentPlanet.description;
+          document.getElementById("planetImage").src = currentPlanet.image;
         } catch (error) {
           console.error("Lỗi khi khởi tạo dữ liệu người dùng:", error);
           showToast("Không thể tải dữ liệu người dùng!", "error");
         }
-      }
-
-      // Xử lý gửi mã giới thiệu
-      async function submitReferralCode() {
-        const referralCodeInput = document.getElementById("referralCodeInput").value.trim();
-        const urlParams = new URLSearchParams(window.location.search);
-        const tagId = urlParams.get("tag_id") || "guest";
-        const userRef = db.collection("users").doc(tagId);
-
-        if (!referralCodeInput) {
-          showToast("Vui lòng nhập mã giới thiệu!", "error");
-          return;
-        }
-
-        try {
-          // Tìm người dùng có mã giới thiệu khớp
-          const usersRef = db.collection("users");
-          const query = await usersRef.where("referralCode", "==", referralCodeInput).get();
-          
-          if (query.empty) {
-            showToast("Mã giới thiệu không hợp lệ!", "error");
-            return;
-          }
-
-          const referrerDoc = query.docs[0];
-          const referrerId = referrerDoc.data().tagId;
-
-          if (referrerId === tagId) {
-            showToast("Bạn không thể tự giới thiệu chính mình!", "error");
-            return;
-          }
-
-          // Cập nhật người giới thiệu cho người dùng hiện tại
-          await userRef.update({
-            referrerId: referrerId
-          });
-
-          // Cập nhật giao diện
-          document.getElementById("referrerName").textContent = 
-            memberData[referrerId] ? memberData[referrerId].name : "Người dùng không xác định";
-          showToast("Đã xác nhận mã giới thiệu thành công!");
-          document.getElementById("referralCodeInput").value = "";
-        } catch (error) {
-          console.error("Lỗi khi gửi mã giới thiệu:", error);
-          showToast("Không thể xác nhận mã giới thiệu!", "error");
-        }
-      }
-
-      // Cập nhật lịch sử điểm danh từ Firebase
-      function updateCheckInHistory(history) {
-        const historyDiv = document.getElementById("checkInHistory");
-        historyDiv.innerHTML = history.length
-          ? history
-              .map((entry) => `<p>${entry.date}: ${entry.pidoge} PiDoge, ${entry.tt} TT</p>`)
-              .join("")
-          : "Chưa có lịch sử điểm danh.";
       }
 
       // Show Toast Notification
@@ -925,23 +874,20 @@
         } else {
           userName.textContent = "Không tìm thấy thông tin";
           walletAddress.textContent = "Không tìm thấy địa chỉ ví";
-          avatar.src = "https://picsum.photos/80"; // URL dự phòng chính
+          avatar.src = "https://picsum.photos/80";
           showToast("Tag ID không hợp lệ!", "error");
         }
 
-        // Xử lý khi hình ảnh tải thành công hoặc thất bại
         avatar.onload = () => {
           avatar.classList.add("loaded");
         };
         avatar.onerror = () => {
           console.warn(`Không thể tải hình ảnh: ${avatar.src}`);
-          // Thử URL dự phòng thứ hai
           if (avatar.src !== "https://picsum.photos/seed/fallback/80") {
             avatar.src = "https://picsum.photos/seed/fallback/80";
           } else {
-            // Nếu cả URL dự phòng thứ hai cũng thất bại, hiển thị thông báo
             showToast("Không thể tải hình ảnh đại diện!", "error");
-            avatar.classList.add("loaded"); // Đảm bảo hiển thị dù lỗi
+            avatar.classList.add("loaded");
           }
         };
       }
@@ -970,8 +916,8 @@
       }
 
       // Initialize on page load
-      document.addEventListener("DOMContentLoaded", () => {
-        initCheckIn();
+      document.addEventListener("DOMContentLoaded", async () => {
+        await initCheckIn();
         loadUserData();
         autoCheckBalanceFromURL();
 
@@ -982,7 +928,6 @@
             "Chuyển chế độ sáng";
         }
 
-        // Lazy load TradingView Widget
         const tradingViewSection = document.getElementById("tradingview_chart");
         const observer = new IntersectionObserver(
           (entries) => {
