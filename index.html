@@ -20,6 +20,22 @@
         scroll-behavior: smooth;
         overscroll-behavior: contain;
       }
+<script>
+  // Cấu hình Firebase
+  const firebaseConfig = {
+  apiKey: "AIzaSyDnRKWDFfY3pMX7OwMz8QDxEKZ1g2-lWSc",
+  authDomain: "pi-universe-hub-41ca7.firebaseapp.com",
+  projectId: "pi-universe-hub-41ca7",
+  storageBucket: "pi-universe-hub-41ca7.firebasestorage.app",
+  messagingSenderId: "478656359387",
+  appId: "1:478656359387:web:e0eab8b10e9a0fdd8a95fe",
+  measurementId: "G-YC10G46QSC"
+};
+
+  // Khởi tạo Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
 
       /* Sci-Fi Cyberpunk Background */
       body {
