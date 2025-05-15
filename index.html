@@ -9,6 +9,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@700&display=swap"
       rel="stylesheet"
     />
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- TradingView Widget -->
@@ -20,22 +23,6 @@
         scroll-behavior: smooth;
         overscroll-behavior: contain;
       }
-<script>
-  // Cấu hình Firebase
-  const firebaseConfig = {
-  apiKey: "AIzaSyDnRKWDFfY3pMX7OwMz8QDxEKZ1g2-lWSc",
-  authDomain: "pi-universe-hub-41ca7.firebaseapp.com",
-  projectId: "pi-universe-hub-41ca7",
-  storageBucket: "pi-universe-hub-41ca7.firebasestorage.app",
-  messagingSenderId: "478656359387",
-  appId: "1:478656359387:web:e0eab8b10e9a0fdd8a95fe",
-  measurementId: "G-YC10G46QSC"
-};
-
-  // Khởi tạo Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-</script>
 
       /* Sci-Fi Cyberpunk Background */
       body {
@@ -424,22 +411,22 @@
         <p class="text-sm mb-2">Cấp độ: <span id="userLevel">0</span></p>
         <p class="text-sm mb-4">Tiến độ: <span id="checkInProgress">0/15 ngày để lên cấp 1</span></p>
         <p class="text-sm mb-4">Số dư: <span id="pidogeBalance">0</span> PiDoge, <span id="ttBalance">0</span> TT</p>
-<div class="mb-4">
-  <label for="referralCodeInput" class="text-sm font-bold">Nhập mã giới thiệu:</label>
-  <input
-    id="referralCodeInput"
-    type="text"
-    class="w-full p-2 border rounded mt-1 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
-    placeholder="Nhập mã giới thiệu (nếu có)"
-  />
-  <button
-    id="submitReferralButton"
-    onclick="submitReferralCode()"
-    class="w-full bg-purple-500 text-white py-2 mt-2 rounded-lg btn hover:bg-purple-600"
-  >
-    Xác nhận mã giới thiệu
-  </button>
-</div>
+        <div class="mb-4">
+          <label for="referralCodeInput" class="text-sm font-bold">Nhập mã giới thiệu:</label>
+          <input
+            id="referralCodeInput"
+            type="text"
+            class="w-full p-2 border rounded mt-1 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
+            placeholder="Nhập mã giới thiệu (nếu có)"
+          />
+          <button
+            id="submitReferralButton"
+            onclick="submitReferralCode()"
+            class="w-full bg-purple-500 text-white py-2 mt-2 rounded-lg btn hover:bg-purple-600"
+          >
+            Xác nhận mã giới thiệu
+          </button>
+        </div>
         <button id="checkInButton" onclick="checkIn()" class="w-full bg-blue-500 text-white py-2 rounded-lg btn hover:bg-blue-600">
           Điểm danh
         </button>
@@ -587,6 +574,21 @@
 
     <!-- Inline JavaScript -->
     <script>
+      // Cấu hình Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyDnRKWDFfY3pMX7OwMz8QDxEKZ1g2-lWSc",
+        authDomain: "pi-universe-hub-41ca7.firebaseapp.com",
+        projectId: "pi-universe-hub-41ca7",
+        storageBucket: "pi-universe-hub-41ca7.firebasestorage.app",
+        messagingSenderId: "478656359387",
+        appId: "1:478656359387:web:e0eab8b10e9a0fdd8a95fe",
+        measurementId: "G-YC10G46QSC"
+      };
+
+      // Khởi tạo Firebase
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
       // Danh sách dữ liệu thành viên
       const memberData = {
         "001": {
@@ -776,55 +778,122 @@
         showToast(`Điểm danh thành công! Nhận ${pidogeReward} PiDoge và ${ttReward} TT`);
       }
 
-      // Cập nhật lịch sử điểm danh
-      function updateCheckInHistory() {
+      // Khởi tạo giao diện khi tải trang
+      function initCheckIn() {
+        const planetImage = document.getElementById("planetImage");
+        planetImage.onerror = () => {
+          planetImage.src = "https://i.imgur.com/ccV8NTe.jpeg"; // Hình dự phòng
+        };
+        // Gọi initUserData để đồng bộ dữ liệu từ Firebase
+        initUserData();
+      }
+
+      // Khởi tạo dữ liệu người dùng trên Firebase
+      async function initUserData() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tagId = urlParams.get("tag_id") || "guest";
+        const userRef = db.collection("users").doc(tagId);
+
+        try {
+          const doc = await userRef.get();
+          if (!doc.exists) {
+            // Nếu người dùng chưa có dữ liệu, tạo mới
+            await userRef.set({
+              tagId: tagId,
+              referralCode: tagId, // Sử dụng tag_id làm mã giới thiệu
+              referrerId: null,
+              pidogeBalance: 0,
+              ttBalance: 0,
+              checkInCount: 0,
+              checkInHistory: [],
+              lastCheckIn: null,
+              userLevel: 0
+            });
+            document.getElementById("userReferralCode").textContent = tagId;
+            document.getElementById("referrerName").textContent = "Chưa có";
+          } else {
+            // Nếu đã có dữ liệu, cập nhật giao diện
+            const data = doc.data();
+            document.getElementById("userReferralCode").textContent = data.referralCode;
+            document.getElementById("referrerName").textContent = 
+              data.referrerId && memberData[data.referrerId] 
+              ? memberData[data.referrerId].name 
+              : "Chưa có";
+            // Đồng bộ số dư và tiến độ
+            document.getElementById("pidogeBalance").textContent = data.pidogeBalance;
+            document.getElementById("ttBalance").textContent = data.ttBalance;
+            document.getElementById("userLevel").textContent = data.userLevel;
+            document.getElementById("checkInProgress").textContent = 
+              `${data.checkInCount}/${[0, 15, 35, 60, 100, 160, 220, 300][data.userLevel + 1] || 300} ngày để lên cấp ${data.userLevel + 1}`;
+            updateCheckInHistory(data.checkInHistory);
+            // Cập nhật hành tinh
+            const currentPlanet = planets[data.userLevel];
+            document.getElementById("planetName").textContent = currentPlanet.name;
+            document.getElementById("planetDescription").textContent = currentPlanet.description;
+            document.getElementById("planetImage").src = currentPlanet.image;
+          }
+        } catch (error) {
+          console.error("Lỗi khi khởi tạo dữ liệu người dùng:", error);
+          showToast("Không thể tải dữ liệu người dùng!", "error");
+        }
+      }
+
+      // Xử lý gửi mã giới thiệu
+      async function submitReferralCode() {
+        const referralCodeInput = document.getElementById("referralCodeInput").value.trim();
+        const urlParams = new URLSearchParams(window.location.search);
+        const tagId = urlParams.get("tag_id") || "guest";
+        const userRef = db.collection("users").doc(tagId);
+
+        if (!referralCodeInput) {
+          showToast("Vui lòng nhập mã giới thiệu!", "error");
+          return;
+        }
+
+        try {
+          // Tìm người dùng có mã giới thiệu khớp
+          const usersRef = db.collection("users");
+          const query = await usersRef.where("referralCode", "==", referralCodeInput).get();
+          
+          if (query.empty) {
+            showToast("Mã giới thiệu không hợp lệ!", "error");
+            return;
+          }
+
+          const referrerDoc = query.docs[0];
+          const referrerId = referrerDoc.data().tagId;
+
+          if (referrerId === tagId) {
+            showToast("Bạn không thể tự giới thiệu chính mình!", "error");
+            return;
+          }
+
+          // Cập nhật người giới thiệu cho người dùng hiện tại
+          await userRef.update({
+            referrerId: referrerId
+          });
+
+          // Cập nhật giao diện
+          document.getElementById("referrerName").textContent = 
+            memberData[referrerId] ? memberData[referrerId].name : "Người dùng không xác định";
+          showToast("Đã xác nhận mã giới thiệu thành công!");
+          document.getElementById("referralCodeInput").value = "";
+        } catch (error) {
+          console.error("Lỗi khi gửi mã giới thiệu:", error);
+          showToast("Không thể xác nhận mã giới thiệu!", "error");
+        }
+      }
+
+      // Cập nhật lịch sử điểm danh từ Firebase
+      function updateCheckInHistory(history) {
         const historyDiv = document.getElementById("checkInHistory");
-        const checkInHistory = JSON.parse(localStorage.getItem("checkInHistory") || "[]");
-        historyDiv.innerHTML = checkInHistory.length
-          ? checkInHistory
+        historyDiv.innerHTML = history.length
+          ? history
               .map((entry) => `<p>${entry.date}: ${entry.pidoge} PiDoge, ${entry.tt} TT</p>`)
               .join("")
           : "Chưa có lịch sử điểm danh.";
       }
 
-      // Khởi tạo giao diện khi tải trang
-      function initCheckIn() {
-        const planetImage = document.getElementById("planetImage");
-        planetImage.onerror = () => {
-        planetImage.src = "https://i.imgur.com/ccV8NTe.jpeg"; // Hình dự phòng
-        };
-        const pidogeBalance = localStorage.getItem("pidogeBalance") || "0";
-        const ttBalance = localStorage.getItem("ttBalance") || "0";
-        const checkInCount = parseInt(localStorage.getItem("checkInCount") || "0");
-        const levelMilestones = [0, 15, 35, 60, 100, 160, 220, 300];
-        let userLevel = 0;
-        for (let i = 0; i < levelMilestones.length; i++) {
-          if (checkInCount >= levelMilestones[i]) {
-            userLevel = i;
-          } else {
-            break;
-          }
-        }
-
-        document.getElementById("pidogeBalance").textContent = pidogeBalance;
-        document.getElementById("ttBalance").textContent = ttBalance;
-        document.getElementById("userLevel").textContent = userLevel;
-        document.getElementById("checkInProgress").textContent = `${checkInCount}/${levelMilestones[userLevel + 1] || 300} ngày để lên cấp ${userLevel + 1}`;
-
-        const currentPlanet = planets[userLevel];
-        document.getElementById("planetName").textContent = currentPlanet.name;
-        document.getElementById("planetDescription").textContent = currentPlanet.description;
-        document.getElementById("planetImage").src = currentPlanet.image;
-
-        updateCheckInHistory();
-      }
-
-      // Gọi khi tải trang
-      
-      document.addEventListener("DOMContentLoaded", () => {
-        initCheckIn();
-        // Các hàm khởi tạo khác giữ nguyên
-      });
       // Show Toast Notification
       function showToast(message, type = "success") {
         const toast = document.getElementById("toast");
@@ -902,6 +971,7 @@
 
       // Initialize on page load
       document.addEventListener("DOMContentLoaded", () => {
+        initCheckIn();
         loadUserData();
         autoCheckBalanceFromURL();
 
