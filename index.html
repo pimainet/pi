@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ví Pi - Đầy đủ</title>
-    <!-- Google Fonts for Inter and Orbitron -->
+    <!-- Google Fonts for Inter and Orbitron (for futuristic title) -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@700&display=swap"
       rel="stylesheet"
@@ -13,9 +13,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- TradingView Widget -->
     <script src="https://s3.tradingview.com/tv.js"></script>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
     <!-- Local CSS -->
     <style>
       /* Smooth Scroll */
@@ -70,6 +67,7 @@
         opacity: 0;
         animation: fadeIn 1s ease-in 1s forwards;
       }
+      /* Particle Background Effect */
       .title-card::before {
         content: '';
         position: absolute;
@@ -104,7 +102,7 @@
         to { opacity: 1; }
       }
 
-      /* Dark Mode */
+      /* Dark Mode (Sci-Fi Variant) */
       .dark-mode {
         background: linear-gradient(135deg, #0A0A0A, #1A1A2E, #2E2E4D);
         color: #D0D0D0;
@@ -152,7 +150,6 @@
       .dark-mode #piBalance,
       .dark-mode #withdrawStatus,
       .dark-mode #checkInStatus,
-      .dark-mode #referralBalance,
       .dark-mode .text-sm {
         color: #00D1FF;
         text-shadow: 0 0 4px rgba(0, 209, 255, 0.3);
@@ -188,7 +185,7 @@
         font-size: 1.25rem;
       }
 
-      /* Button Ripple Effect */
+      /* Button Ripple Effect with Neon Glow */
       .btn {
         position: relative;
         overflow: hidden;
@@ -330,11 +327,16 @@
       }
     </style>
   </head>
-  <body class="min-h-screen font-sans text-gray-800 transition-colors duration-500">
+  <body
+    class="min-h-screen font-sans text-gray-800 transition-colors duration-500"
+  >
     <div class="container mx-auto p-4 max-w-md">
       <!-- Dark Mode Toggle -->
       <div class="flex justify-end mb-4">
-        <button id="darkModeToggle" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors btn">
+        <button
+          id="darkModeToggle"
+          class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors btn"
+        >
           Chuyển chế độ tối
         </button>
       </div>
@@ -346,29 +348,53 @@
       </div>
 
       <!-- Toast Notification -->
-      <div id="toast" class="fixed top-4 right-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg">
+      <div
+        id="toast"
+        class="fixed top-4 right-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg"
+      >
         <span id="toastMessage"></span>
       </div>
 
       <!-- Card Section -->
       <div class="card shadow-xl rounded-2xl p-6 mb-6">
         <div class="flex items-center mb-4">
-          <img id="avatar" src="https://picsum.photos/80" alt="Avatar" class="avatar mr-4" loading="lazy" />
+          <img
+            id="avatar"
+            src="https://picsum.photos/80"
+            alt="Avatar"
+            class="avatar mr-4"
+            loading="lazy"
+          />
           <div class="flex-1">
             <h2 id="userName" class="text-xl font-bold">Tên của bạn</h2>
           </div>
         </div>
         <div class="mb-4">
-          <p class="text-sm text-gray-500">Ví: <span id="walletAddress" class="break-words text-sm text-gray-500">Chưa nhập địa chỉ ví</span></p>
-          <p class="text-sm text-gray-500 mt-1">Số dư: <span id="balanceDisplay">Chưa kiểm tra</span></p>
-          <p class="text-sm text-gray-500 mt-1">Thưởng giới thiệu: <span id="referralBalance">0</span> PiDoge</p>
+          <p class="text-sm text-gray-500">
+            Ví:
+            <span id="walletAddress" class="break-words text-sm text-gray-500"
+              >Chưa nhập địa chỉ ví</span
+            >
+          </p>
+          <p class="text-sm text-gray-500 mt-1">
+            Số dư: <span id="balanceDisplay">Chưa kiểm tra</span>
+          </p>
         </div>
         <div class="flex space-x-2">
-          <button onclick="copyWalletAddress()" class="flex-1 bg-indigo-500 text-white py-2 rounded-lg btn hover:bg-indigo-600">Sao chép ví</button>
-          <button onclick="checkBalance()" class="flex-1 bg-green-500 text-white py-2 rounded-lg btn hover:bg-green-600">Kiểm tra số dư</button>
+          <button
+            onclick="copyWalletAddress()"
+            class="flex-1 bg-indigo-500 text-white py-2 rounded-lg btn hover:bg-indigo-600"
+          >
+            Sao chép ví
+          </button>
+          <button
+            onclick="checkBalance()"
+            class="flex-1 bg-green-500 text-white py-2 rounded-lg btn hover:bg-green-600"
+          >
+            Kiểm tra số dư
+          </button>
         </div>
       </div>
-
       <!-- Check-in Section -->
       <div class="card shadow-xl rounded-2xl p-6 mb-6">
         <h3 class="text-lg font-bold mb-4">Khám phá Vũ trụ Pi</h3>
@@ -382,40 +408,71 @@
         <p class="text-sm mb-2">Cấp độ: <span id="userLevel">0</span></p>
         <p class="text-sm mb-4">Tiến độ: <span id="checkInProgress">0/15 ngày để lên cấp 1</span></p>
         <p class="text-sm mb-4">Số dư: <span id="pidogeBalance">0</span> PiDoge, <span id="ttBalance">0</span> TT</p>
-        <button id="checkInButton" onclick="checkIn()" class="w-full bg-blue-500 text-white py-2 rounded-lg btn hover:bg-blue-600">Điểm danh</button>
+        <button id="checkInButton" onclick="checkIn()" class="w-full bg-blue-500 text-white py-2 rounded-lg btn hover:bg-blue-600">
+          Điểm danh
+        </button>
         <h4 class="text-md font-bold mt-4 mb-2">Lịch sử điểm danh</h4>
         <div id="checkInHistory" class="text-sm text-gray-500"></div>
-        <h4 class="text-md font-bold mt-4 mb-2">Lịch sử thưởng giới thiệu</h4>
-        <div id="referralHistory" class="text-sm text-gray-500"></div>
       </div>
-
-      <!-- Chart Section -->
+      <!-- Chart Section (TradingView Widget) -->
       <div class="card shadow-xl rounded-2xl p-6 mb-6">
         <h3 class="text-lg font-bold mb-4">Giá Pi (USD)</h3>
         <div id="tradingview_chart"></div>
-      </div>
+      </div> 
 
       <!-- Safety Check Section -->
       <div class="card shadow-xl rounded-2xl p-6 mb-6">
         <h3 class="text-lg font-bold mb-4">Kiểm tra Web/Ứng dụng</h3>
-        <select id="checkType" class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200">
+        <select
+          id="checkType"
+          class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
+        >
           <option value="website">Trang web</option>
           <option value="app">Ứng dụng</option>
         </select>
-        <input id="safetyUrl" type="text" class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200" placeholder="Nhập URL (ví dụ: https://example.com hoặc link Google Play)" />
+        <input
+          id="safetyUrl"
+          type="text"
+          class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
+          placeholder="Nhập URL (ví dụ: https://example.com hoặc link Google Play)"
+        />
         <div class="flex space-x-2">
-          <button onclick="checkSafety()" id="checkButton" class="flex-1 bg-indigo-500 text-white py-2 rounded-lg btn hover:bg-indigo-600">Kiểm tra</button>
-          <button onclick="clearForm()" class="flex-1 bg-gray-300 text-gray-800 py-2 rounded-lg btn hover:bg-gray-400">Xóa</button>
+          <button
+            onclick="checkSafety()"
+            id="checkButton"
+            class="flex-1 bg-indigo-500 text-white py-2 rounded-lg btn hover:bg-indigo-600"
+          >
+            Kiểm tra
+          </button>
+          <button
+            onclick="clearForm()"
+            class="flex-1 bg-gray-300 text-gray-800 py-2 rounded-lg btn hover:bg-gray-400"
+          >
+            Xóa
+          </button>
         </div>
         <div id="loadingSpinner" class="spinner mx-auto mt-4"></div>
         <div id="safetyResult" class="mt-4 hidden">
           <p class="text-sm font-bold flex items-center">
             Kết quả: <span id="safetyStatus" class="ml-2"></span>
-            <svg id="statusIcon" class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            <svg
+              id="statusIcon"
+              class="w-5 h-5 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           </p>
-          <p class="text-sm">Điểm tin cậy: <span id="safetyScore"></span>/100</p>
+          <p class="text-sm">
+            Điểm tin cậy: <span id="safetyScore"></span>/100
+          </p>
           <p class="text-sm">Cảnh báo: <span id="safetyWarnings"></span></p>
         </div>
       </div>
@@ -423,24 +480,71 @@
       <!-- Support Section -->
       <div class="card shadow-xl rounded-2xl p-6">
         <h3 class="text-lg font-bold mb-4">Hỗ trợ</h3>
-        <p class="text-sm text-gray-600 mb-2">Liên hệ: <a href="mailto:support@example.com" class="text-indigo-500 hover:underline">support@example.com</a></p>
-        <p class="text-sm text-gray-600 mb-4">Hotline: <a href="tel:+84987654321" class="text-indigo-500 hover:underline">+84 987 654 321</a></p>
+        <p class="text-sm text-gray-600 mb-2">
+          Liên hệ:
+          <a
+            href="mailto:support@example.com"
+            class="text-indigo-500 hover:underline"
+            >support@example.com</a
+          >
+        </p>
+        <p class="text-sm text-gray-600 mb-4">
+          Hotline:
+          <a href="tel:+84987654321" class="text-indigo-500 hover:underline"
+            >+84 987 654 321</a
+          >
+        </p>
         <h4 class="text-md font-bold mb-2">Video hướng dẫn</h4>
         <div class="relative" style="padding-top: 56.25%">
-          <iframe class="absolute top-0 left-0 w-full h-full rounded-lg" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Hướng dẫn sử dụng ví Pi" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <iframe
+            class="absolute top-0 left-0 w-full h-full rounded-lg"
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+            title="Hướng dẫn sử dụng ví Pi"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"
+          ></iframe>
         </div>
       </div>
 
       <!-- Withdraw Modal -->
-      <div id="withdrawModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden modal">
+      <div
+        id="withdrawModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden modal"
+      >
         <div class="modal-content rounded-lg p-6 w-11/12 max-w-sm">
           <h3 class="text-lg font-bold mb-4">Rút Pi</h3>
-          <p class="text-sm text-gray-600 mb-4">Số dư hiện tại: <span id="withdrawBalance">0 Pi</span></p>
-          <input id="withdrawAmount" type="number" step="0.01" min="0" class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200" placeholder="Số lượng Pi (tối thiểu 1$)" />
-          <input id="withdrawPassword" type="password" class="w-full p-2 border rounded mb>_4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200" placeholder="Nhập mật khẩu" />
+          <p class="text-sm text-gray-600 mb-4">
+            Số dư hiện tại: <span id="withdrawBalance">0 Pi</span>
+          </p>
+          <input
+            id="withdrawAmount"
+            type="number"
+            step="0.01"
+            min="0"
+            class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
+            placeholder="Số lượng Pi (tối thiểu 1$)"
+          />
+          <input
+            id="withdrawPassword"
+            type="password"
+            class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
+            placeholder="Nhập mật khẩu"
+          />
           <div class="flex justify-end space-x-2">
-            <button onclick="hideWithdrawModal()" class="bg-gray-300 text-gray-800 py-2 px-4 rounded btn hover:bg-gray-400">Hủy</button>
-            <button onclick="withdrawPi()" class="bg-red-500 text-white py-2 px-4 rounded btn hover:bg-red-600">Rút</button>
+            <button
+              onclick="hideWithdrawModal()"
+              class="bg-gray-300 text-gray-800 py-2 px-4 rounded btn hover:bg-gray-400"
+            >
+              Hủy
+            </button>
+            <button
+              onclick="withdrawPi()"
+              class="bg-red-500 text-white py-2 px-4 rounded btn hover:bg-red-600"
+            >
+              Rút
+            </button>
           </div>
         </div>
       </div>
@@ -448,197 +552,215 @@
 
     <!-- Inline JavaScript -->
     <script>
-      // Firebase Configuration
-      const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
-      };
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
-
-      // Danh sách dữ liệu thành viên với thông tin giới thiệu
+      // Danh sách dữ liệu thành viên
       const memberData = {
         "001": {
-          name: "HOÀNG VĂN MINH",
+          name: "HOÀNG VĂN MINH ",
           avatar: "https://i.imgur.com/6ceGYoC.jpeg",
-          wallet_address: "GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
-          referred_by: null,
-          referrals: ["002"]
+          wallet_address:
+            "GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
         },
         "002": {
           name: "LÊ VĂN HOẰNG",
           avatar: "https://i.imgur.com/bacHB3U.jpeg",
-          wallet_address: "GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
-          referred_by: "001",
-          referrals: []
+          wallet_address:
+            "GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
         },
         "003": {
           name: "PHẠM THỊ XUÂN",
           avatar: "https://i.imgur.com/FgV7fRT.jpeg",
-          wallet_address: "GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
-          referred_by: null,
-          referrals: []
+          wallet_address:
+            "GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
         },
         "004": {
           name: "LÊ THỊ HƯƠNG",
           avatar: "https://i.imgur.com/qPmerTD.jpeg",
-          wallet_address: "GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
-          referred_by: null,
-          referrals: []
+          wallet_address:
+            "GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
         },
         "005": {
           name: "LÊ TRỌNG KHOA",
           avatar: "https://i.imgur.com/h2G4JTA.jpeg",
-          wallet_address: "GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
-          referred_by: null,
-          referrals: []
+          wallet_address:
+            "GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
         },
         "006": {
           name: "HOÀNG VĂN TRỤ",
           avatar: "https://i.imgur.com/wNUTVEz.jpeg",
-          wallet_address: "GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
-          referred_by: null,
-          referrals: []
+          wallet_address:
+            "GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
         },
         "007": {
           name: "MINH TRANG",
           avatar: "https://i.imgur.com/HskgNhC.jpeg",
-          wallet_address: "GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
-          referred_by: null,
-          referrals: []
+          wallet_address:
+            "GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
         },
         "008": {
           name: "LÊ THỊ HÀ",
           avatar: "https://i.imgur.com/zAX7aF4.jpeg",
-          wallet_address: "GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
-          referred_by: null,
-          referrals: []
+          wallet_address:
+            "GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
         },
-        "009": {
-          name: "LÊ THỊ HỒNG",
-          avatar: "https://i.imgur.com/E44n0YR.jpeg",
-          wallet_address: "GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC",
-          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC",
-          referred_by: null,
-          referrals: []
-        }
+         "009":{
+           name: "LÊ THỊ HỒNG",
+           avatar:"https://i.imgur.com/E44n0YR.jpeg",
+           wallet_address:"GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC",
+           explorer_link:"https://blockexplorer.minepi.com/mainnet/accounts/GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC",
+        },
       };
-
       // Dữ liệu hành tinh
       const planets = [
-        { level: 0, name: "Chưa khám phá", image: "https://i.imgur.com/xLt0X9f.jpeg", description: "Hãy điểm danh để bắt đầu hành trình khám phá Vũ trụ Pi!" },
-        { level: 1, name: "Hành tinh PiDoge", image: "https://i.imgur.com/8gDHqeY.jpeg", description: "Nơi cư dân đào PiDoge với niềm vui và năng lượng tích cực." },
-        { level: 2, name: "Hành tinh TT", image: "https://i.imgur.com/27lNYa5.jpeg", description: "Một hành tinh bí ẩn, nơi TT là nguồn năng lượng chính." },
-        { level: 3, name: "Hành tinh Nova", image: "https://i.imgur.com/ccV8NTe.jpeg", description: "Hành tinh rực rỡ với những ngôi sao sáng dẫn lối." },
-        { level: 4, name: "Hành tinh Nebulaotene", image: "https://i.imgur.com/CJCOZtV.jpeg", description: "Vùng không gian đầy sương mù và bí ẩn vũ trụ." },
-        { level: 5, name: "Hành tinh Quasar", image: "https://i.imgur.com/LnO70Wb.jpeg", description: "Nguồn năng lượng mạnh mẽ, tỏa sáng khắp thiên hà." },
-        { level: 6, name: "Hành tinh Pulsar", image: "https://images.unsplash.com/photo-1614314069749-7c2603923c3a?auto=format&fit=crop&w=80", description: "Hành tinh nhấp nháy với nhịp điệu của vũ trụ." },
-        { level: 7, name: "Hành tinh Genesis", image: "https://images.unsplash.com/photo-1614732621357-6b6e47e9a2f8?auto=format&fit=crop&w=80", description: "Cội nguồn của Vũ trụ Pi, nơi mọi thứ bắt đầu." }
+        {
+          level: 0,
+          name: "Chưa khám phá",
+          image: "https://i.imgur.com/xLt0X9f.jpeg",
+          description: "Hãy điểm danh để bắt đầu hành trình khám phá Vũ trụ Pi!"
+        },
+        {
+          level: 1,
+          name: "Hành tinh PiDoge",
+          image: "https://i.imgur.com/8gDHqeY.jpeg",
+          description: "Nơi cư dân đào PiDoge với niềm vui và năng lượng tích cực."
+        },
+        {
+          level: 2,
+          name: "Hành tinh TT",
+          image: "https://i.imgur.com/27lNYa5.jpeg",
+          description: "Một hành tinh bí ẩn, nơi TT là nguồn năng lượng chính."
+        },
+        {
+          level: 3,
+          name: "Hành tinh Nova",
+          image: "https://i.imgur.com/ccV8NTe.jpeg",
+          description: "Hành tinh rực rỡ với những ngôi sao sáng dẫn lối."
+        },
+        {
+          level: 4,
+          name: "Hành tinh Nebula",
+          image: "https://i.imgur.com/CJCOZtV.jpeg",
+          description: "Vùng không gian đầy sương mù và bí ẩn vũ trụ."
+        },
+        {
+          level: 5,
+          name: "Hành tinh Quasar",
+          image: "https://i.imgur.com/LnO70Wb.jpeg",
+          description: "Nguồn năng lượng mạnh mẽ, tỏa sáng khắp thiên hà."
+        },
+        {
+          level: 6,
+          name: "Hành tinh Pulsar",
+          image: "https://images.unsplash.com/photo-1614314069749-7c2603923c3a?auto=format&fit=crop&w=80",
+          description: "Hành tinh nhấp nháy với nhịp điệu của vũ trụ."
+        },
+        {
+          level: 7,
+          name: "Hành tinh Genesis",
+          image: "https://images.unsplash.com/photo-1614732621357-6b6e47e9a2f8?auto=format&fit=crop&w=80",
+          description: "Cội nguồn của Vũ trụ Pi, nơi mọi thứ bắt đầu."
+        }
       ];
 
       // Logic điểm danh
-      async function checkIn() {
+      function checkIn() {
         const checkInButton = document.getElementById("checkInButton");
-        const tagId = new URLSearchParams(window.location.search).get("tag_id");
-        if (!tagId || !memberData[tagId]) {
-          showToast("Tag ID không hợp lệ!", "error");
+        const lastCheckIn = localStorage.getItem("lastCheckIn");
+        const now = new Date().getTime();
+        const oneDay = 24 * 60 * 60 * 1000; // 24 giờ
+
+        // Kiểm tra nếu đã điểm danh trong 24 giờ
+        if (lastCheckIn && now - lastCheckIn < oneDay) {
+          showToast("Bạn chỉ có thể điểm danh mỗi 24 giờ!", "error");
           return;
         }
 
-        const userRef = db.collection("users").doc(tagId);
-        const now = new Date().getTime();
-        const oneDay = 24 * 60 * 60 * 1000;
+        // Tạo phần thưởng ngẫu nhiên
+        const pidogeReward = Math.floor(Math.random() * (100 - 50 + 1)) + 50;
+        const ttReward = 0.7;
 
-        checkInButton.disabled = true;
+        // Cập nhật số dư
+        let pidogeBalance = parseFloat(localStorage.getItem("pidogeBalance") || "0") + pidogeReward;
+        let ttBalance = parseFloat(localStorage.getItem("ttBalance") || "0") + ttReward;
+        localStorage.setItem("pidogeBalance", pidogeBalance);
+        localStorage.setItem("ttBalance", ttBalance);
 
-        try {
-          const userDoc = await userRef.get();
-          const userData = userDoc.exists ? userDoc.data() : { lastCheckIn: 0, checkInCount: 0, pidogeBalance: 0, ttBalance: 0, referralBalance: 0 };
+        // Cập nhật lịch sử điểm danh
+        let checkInHistory = JSON.parse(localStorage.getItem("checkInHistory") || "[]");
+        const checkInDate = new Date().toLocaleString("vi-VN");
+        checkInHistory.push({ date: checkInDate, pidoge: pidogeReward, tt: ttReward });
+        localStorage.setItem("checkInHistory", JSON.stringify(checkInHistory));
 
-          // Kiểm tra thời gian điểm danh
-          if (userData.lastCheckIn && now - userData.lastCheckIn < oneDay) {
-            showToast("Bạn chỉ có thể điểm danh mỗi 24 giờ!", "error");
-            checkInButton.disabled = false;
-            return;
+        // Cập nhật số ngày điểm danh
+        let checkInCount = parseInt(localStorage.getItem("checkInCount") || "0") + 1;
+        localStorage.setItem("checkInCount", checkInCount);
+        localStorage.setItem("lastCheckIn", now);
+
+        // Tính cấp độ
+        const levelMilestones = [0, 15, 35, 60, 100, 160, 220, 300];
+        let userLevel = 0;
+        for (let i = 0; i < levelMilestones.length; i++) {
+          if (checkInCount >= levelMilestones[i]) {
+            userLevel = i;
+          } else {
+            break;
           }
-
-          // Tạo phần thưởng ngẫu nhiên
-          const pidogeReward = Math.floor(Math.random() * (100 - 50 + 1)) + 50;
-          const ttReward = 0.7;
-
-          // Tính thưởng giới thiệu
-          const referralBonus = pidogeReward * 0.15; // 15% từ phần thưởng
-          const checkInDate = new Date().toLocaleString("vi-VN");
-
-          // Cập nhật số dư người dùng
-          const newPidogeBalance = userData.pidogeBalance + pidogeReward;
-          const newTtBalance = userData.ttBalance + ttReward;
-          const newCheckInCount = userData.checkInCount + 1;
-
-          // Lưu điểm danh và lịch sử
-          await userRef.set({
-            lastCheckIn: now,
-            checkInCount: newCheckInCount,
-            pidogeBalance: newPidogeBalance,
-            ttBalance: newTtBalance,
-            referralBalance: userData.referralBalance || 0,
-            checkInHistory: firebase.firestore.FieldValue.arrayUnion({
-              date: checkInDate,
-              pidoge: pidogeReward,
-              tt: ttReward
-            })
-          }, { merge: true });
-
-          // Xử lý thưởng giới thiệu
-          const member = memberData[tagId];
-          if (member.referred_by) {
-            const referrerRef = db.collection("users").doc(member.referred_by);
-            await referrerRef.update({
-              referralBalance: firebase.firestore.FieldValue.increment(referralBonus),
-              referralHistory: firebase.firestore.FieldValue.arrayUnion({
-                date: checkInDate,
-                from: tagId,
-                amount: referralBonus
-              })
-            });
-          }
-          for (const referralId of member.referrals) {
-            const referralRef = db.collection("users").doc(referralId);
-            await referralRef.update({
-              referralBalance: firebase.firestore.FieldValue.increment(referralBonus),
-              referralHistory: firebase.firestore.FieldValue.arrayUnion({
-                date: checkInDate,
-                from: tagId,
-                amount: referralBonus
-              })
-            });
-          }
-
-          // Cập nhật giao diện
-          updateUserInterface(tagId, newPidogeBalance, newTtBalance, newCheckInCount);
-          showToast(`Điểm danh thành công! Nhận ${pidogeReward} PiDoge và ${ttReward} TT`);
-        } catch (error) {
-          console.error("Lỗi khi điểm danh:", error);
-          showToast("Đã xảy ra lỗi khi điểm danh!", "error");
-        } finally {
-          checkInButton.disabled = false;
         }
+
+        // Cập nhật giao diện
+        document.getElementById("pidogeBalance").textContent = pidogeBalance;
+        document.getElementById("ttBalance").textContent = ttBalance;
+        document.getElementById("userLevel").textContent = userLevel;
+        document.getElementById("checkInProgress").textContent = `${checkInCount}/${levelMilestones[userLevel + 1] || 300} ngày để lên cấp ${userLevel + 1}`;
+
+        // Cập nhật hành tinh
+        const currentPlanet = planets[userLevel];
+        document.getElementById("planetName").textContent = currentPlanet.name;
+        document.getElementById("planetDescription").textContent = currentPlanet.description;
+        document.getElementById("planetImage").src = currentPlanet.image;
+
+        // Cập nhật lịch sử điểm danh
+        updateCheckInHistory();
+
+        // Thông báo thành công
+        showToast(`Điểm danh thành công! Nhận ${pidogeReward} PiDoge và ${ttReward} TT`);
       }
 
-      // Cập nhật giao diện người dùng
-      async function updateUserInterface(tagId, pidogeBalance, ttBalance, checkInCount) {
+      // Cập nhật lịch sử điểm danh
+      function updateCheckInHistory() {
+        const historyDiv = document.getElementById("checkInHistory");
+        const checkInHistory = JSON.parse(localStorage.getItem("checkInHistory") || "[]");
+        historyDiv.innerHTML = checkInHistory.length
+          ? checkInHistory
+              .map((entry) => `<p>${entry.date}: ${entry.pidoge} PiDoge, ${entry.tt} TT</p>`)
+              .join("")
+          : "Chưa có lịch sử điểm danh.";
+      }
+
+      // Khởi tạo giao diện khi tải trang
+      function initCheckIn() {
+        const planetImage = document.getElementById("planetImage");
+        planetImage.onerror = () => {
+        planetImage.src = "https://i.imgur.com/ccV8NTe.jpeg"; // Hình dự phòng
+        };
+        const pidogeBalance = localStorage.getItem("pidogeBalance") || "0";
+        const ttBalance = localStorage.getItem("ttBalance") || "0";
+        const checkInCount = parseInt(localStorage.getItem("checkInCount") || "0");
         const levelMilestones = [0, 15, 35, 60, 100, 160, 220, 300];
         let userLevel = 0;
         for (let i = 0; i < levelMilestones.length; i++) {
@@ -659,53 +781,14 @@
         document.getElementById("planetDescription").textContent = currentPlanet.description;
         document.getElementById("planetImage").src = currentPlanet.image;
 
-        // Cập nhật số dư thưởng giới thiệu
-        const userDoc = await db.collection("users").doc(tagId).get();
-        const referralBalance = userDoc.exists ? userDoc.data().referralBalance || 0 : 0;
-        document.getElementById("referralBalance").textContent = referralBalance;
-
-        // Cập nhật lịch sử
-        updateCheckInHistory(tagId);
-        updateReferralHistory(tagId);
+        updateCheckInHistory();
       }
 
-      // Cập nhật lịch sử điểm danh
-      async function updateCheckInHistory(tagId) {
-        const historyDiv = document.getElementById("checkInHistory");
-        const userDoc = await db.collection("users").doc(tagId).get();
-        const checkInHistory = userDoc.exists ? userDoc.data().checkInHistory || [] : [];
-        historyDiv.innerHTML = checkInHistory.length
-          ? checkInHistory.map((entry) => `<p>${entry.date}: ${entry.pidoge} PiDoge, ${entry.tt} TT</p>`).join("")
-          : "Chưa có lịch sử điểm danh.";
-      }
-
-      // Cập nhật lịch sử thưởng giới thiệu
-      async function updateReferralHistory(tagId) {
-        const historyDiv = document.getElementById("referralHistory");
-        const userDoc = await db.collection("users").doc(tagId).get();
-        const referralHistory = userDoc.exists ? userDoc.data().referralHistory || [] : [];
-        historyDiv.innerHTML = referralHistory.length
-          ? referralHistory.map((entry) => `<p>${entry.date}: Nhận ${entry.amount} PiDoge từ ${memberData[entry.from]?.name || entry.from}</p>`).join("")
-          : "Chưa có lịch sử thưởng giới thiệu.";
-      }
-
-      // Khởi tạo giao diện
-      async function initCheckIn() {
-        const planetImage = document.getElementById("planetImage");
-        planetImage.onerror = () => {
-          planetImage.src = "https://i.imgur.com/ccV8NTe.jpeg";
-        };
-
-        const tagId = new URLSearchParams(window.location.search).get("tag_id");
-        if (!tagId || !memberData[tagId]) return;
-
-        const userRef = db.collection("users").doc(tagId);
-        const userDoc = await userRef.get();
-        const userData = userDoc.exists ? userDoc.data() : { checkInCount: 0, pidogeBalance: 0, ttBalance: 0, referralBalance: 0 };
-
-        updateUserInterface(tagId, userData.pidogeBalance, userData.ttBalance, userData.checkInCount);
-      }
-
+      // Gọi khi tải trang
+      document.addEventListener("DOMContentLoaded", () => {
+        initCheckIn();
+        // Các hàm khởi tạo khác giữ nguyên
+      });
       // Show Toast Notification
       function showToast(message, type = "success") {
         const toast = document.getElementById("toast");
@@ -721,7 +804,7 @@
         }, 3000);
       }
 
-      // Load user data
+      // Load user data based on tag_id
       function loadUserData() {
         const urlParams = new URLSearchParams(window.location.search);
         const tagId = urlParams.get("tag_id");
@@ -737,17 +820,23 @@
         } else {
           userName.textContent = "Không tìm thấy thông tin";
           walletAddress.textContent = "Không tìm thấy địa chỉ ví";
-          avatar.src = "https://picsum.photos/80";
+          avatar.src = "https://picsum.photos/80"; // URL dự phòng chính
           showToast("Tag ID không hợp lệ!", "error");
         }
 
-        avatar.onload = () => avatar.classList.add("loaded");
+        // Xử lý khi hình ảnh tải thành công hoặc thất bại
+        avatar.onload = () => {
+          avatar.classList.add("loaded");
+        };
         avatar.onerror = () => {
+          console.warn(`Không thể tải hình ảnh: ${avatar.src}`);
+          // Thử URL dự phòng thứ hai
           if (avatar.src !== "https://picsum.photos/seed/fallback/80") {
             avatar.src = "https://picsum.photos/seed/fallback/80";
           } else {
+            // Nếu cả URL dự phòng thứ hai cũng thất bại, hiển thị thông báo
             showToast("Không thể tải hình ảnh đại diện!", "error");
-            avatar.classList.add("loaded");
+            avatar.classList.add("loaded"); // Đảm bảo hiển thị dù lỗi
           }
         };
       }
@@ -762,13 +851,15 @@
         }
       }
 
-      // Check Balance
+      // Check Balance (Redirect to Pi Block Explorer)
       function checkBalance() {
         const walletAddress = document.getElementById("walletAddress").textContent;
+
         if (!walletAddress || walletAddress === "Không tìm thấy địa chỉ ví") {
           showToast("Không có địa chỉ ví để kiểm tra!", "error");
           return;
         }
+
         const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
         window.location.href = explorerUrl;
       }
@@ -777,14 +868,15 @@
       document.addEventListener("DOMContentLoaded", () => {
         loadUserData();
         autoCheckBalanceFromURL();
-        initCheckIn();
 
         const darkModePreference = localStorage.getItem("darkMode");
         if (darkModePreference === "enabled") {
           document.body.classList.add("dark-mode");
-          document.getElementById("darkModeToggle").textContent = "Chuyển chế độ sáng";
+          document.getElementById("darkModeToggle").textContent =
+            "Chuyển chế độ sáng";
         }
 
+        // Lazy load TradingView Widget
         const tradingViewSection = document.getElementById("tradingview_chart");
         const observer = new IntersectionObserver(
           (entries) => {
@@ -801,7 +893,7 @@
                 toolbar_bg: "#f1f3f6",
                 enable_publishing: false,
                 allow_symbol_change: true,
-                container_id: "tradingview_chart"
+                container_id: "tradingview_chart",
               });
               observer.disconnect();
             }
@@ -818,9 +910,14 @@
           showToast("Không có địa chỉ ví để sao chép!", "error");
           return;
         }
-        navigator.clipboard.writeText(walletAddress)
-          .then(() => showToast("Đã sao chép địa chỉ ví!"))
-          .catch(() => showToast("Không thể sao chép địa chỉ ví!", "error"));
+        navigator.clipboard
+          .writeText(walletAddress)
+          .then(() => {
+            showToast("Đã sao chép địa chỉ ví!");
+          })
+          .catch(() => {
+            showToast("Không thể sao chép địa chỉ ví!", "error");
+          });
       }
 
       // Show Withdraw Modal
@@ -837,10 +934,8 @@
         withdrawModal.classList.add("hidden");
       }
 
-      // Withdraw Pi
-      function withdraw
-
-Pi() {
+      // Withdraw Pi (Mock)
+      function withdrawPi() {
         const amount = parseFloat(document.getElementById("withdrawAmount").value);
         const password = document.getElementById("withdrawPassword").value;
         const withdrawStatus = document.getElementById("withdrawStatus");
@@ -864,7 +959,7 @@ Pi() {
         }, 1500);
       }
 
-      // Safety Check
+      // Safety Check (Mock)
       function checkSafety() {
         const checkButton = document.getElementById("checkButton");
         const loadingSpinner = document.getElementById("loadingSpinner");
@@ -886,10 +981,17 @@ Pi() {
           safetyResult.classList.add(isSafe ? "safe" : "unsafe");
           safetyStatus.textContent = isSafe ? "An toàn" : "Không an toàn";
           safetyScore.textContent = isSafe ? "85" : "30";
-          safetyWarnings.textContent = isSafe ? "Không có cảnh báo" : "Trang web có thể không đáng tin cậy";
+          safetyWarnings.textContent = isSafe
+            ? "Không có cảnh báo"
+            : "Trang web có thể không đáng tin cậy";
 
           checkButton.disabled = false;
-          showToast(isSafe ? "Kiểm tra thành công: An toàn!" : "Kiểm tra thành công: Không an toàn!", isSafe ? "success" : "error");
+          showToast(
+            isSafe
+              ? "Kiểm tra thành công: An toàn!"
+              : "Kiểm tra thành công: Không an toàn!",
+            isSafe ? "success" : "error"
+          );
         }, 1500);
       }
 
@@ -904,7 +1006,9 @@ Pi() {
       document.getElementById("darkModeToggle").addEventListener("click", () => {
         document.body.classList.toggle("dark-mode");
         const isDarkMode = document.body.classList.contains("dark-mode");
-        document.getElementById("darkModeToggle").textContent = isDarkMode ? "Chuyển chế độ sáng" : "Chuyển chế độ tối";
+        document.getElementById("darkModeToggle").textContent = isDarkMode
+          ? "Chuyển chế độ sáng"
+          : "Chuyển chế độ tối";
         localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
       });
     </script>
