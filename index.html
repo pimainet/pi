@@ -9,10 +9,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@700&display=swap"
       rel="stylesheet"
     />
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS CDN (giữ cho thử nghiệm) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- TradingView Widget -->
     <script src="https://s3.tradingview.com/tv.js"></script>
@@ -148,11 +145,9 @@
       .dark-mode #safetyStatus,
       .dark-mode #safetyScore,
       .dark-mode #safetyWarnings,
-      .dark-mode #ppBalance,
       .dark-mode #pidogeBalance,
-      .dark-mode #piBalance,
+      .dark-mode #ttBalance,
       .dark-mode #withdrawStatus,
-      .dark-mode #checkInStatus,
       .dark-mode .text-sm {
         color: #00D1FF;
         text-shadow: 0 0 4px rgba(0, 209, 255, 0.3);
@@ -554,7 +549,11 @@
     </div>
 
     <!-- Inline JavaScript -->
-    <script>
+    <script type="module">
+      // Nhập Firebase SDK
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+      import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+
       // Cấu hình Firebase
       const firebaseConfig = {
         apiKey: "AIzaSyDnRKWDFfY3pMX7OwMz8QDxEKZ1g2-lWSc",
@@ -567,13 +566,13 @@
       };
 
       // Khởi tạo Firebase
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
 
       // Danh sách dữ liệu thành viên
       const memberData = {
         "001": {
-          name: "HOÀNG VĂN MINH ",
+          name: "HOÀNG VĂN MINH",
           avatar: "https://i.imgur.com/6ceGYoC.jpeg",
           wallet_address:
             "GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
@@ -636,13 +635,16 @@
           explorer_link:
             "https://blockexplorer.minepi.com/mainnet/accounts/GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
         },
-         "009":{
-           name: "LÊ THỊ HỒNG",
-           avatar:"https://i.imgur.com/E44n0YR.jpeg",
-           wallet_address:"GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC",
-           explorer_link:"https://blockexplorer.minepi.com/mainnet/accounts/GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC",
+        "009": {
+          name: "LÊ THỊ HỒNG",
+          avatar: "https://i.imgur.com/E44n0YR.jpeg",
+          wallet_address:
+            "GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC",
+          explorer_link:
+            "https://blockexplorer.minepi.com/mainnet/accounts/GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC",
         },
       };
+
       // Dữ liệu hành tinh
       const planets = [
         {
@@ -700,18 +702,18 @@
         const checkInButton = document.getElementById("checkInButton");
         const urlParams = new URLSearchParams(window.location.search);
         const tagId = urlParams.get("tag_id") || "guest";
-        const userRef = db.collection("users").doc(tagId);
+        const userRef = doc(db, "users", tagId);
         const now = new Date().getTime();
         const oneDay = 24 * 60 * 60 * 1000; // 24 giờ
 
         try {
-          const doc = await userRef.get();
-          if (!doc.exists) {
+          const docSnap = await getDoc(userRef);
+          if (!docSnap.exists()) {
             showToast("Không tìm thấy dữ liệu người dùng!", "error");
             return;
           }
 
-          const userData = doc.data();
+          const userData = docSnap.data();
           const lastCheckIn = userData.lastCheckIn ? userData.lastCheckIn.toDate().getTime() : null;
 
           // Kiểm tra nếu đã điểm danh trong 24 giờ
@@ -750,7 +752,7 @@
           ];
 
           // Lưu vào Firebase
-          await userRef.update({
+          await updateDoc(userRef, {
             pidogeBalance: newPidogeBalance,
             ttBalance: newTtBalance,
             checkInCount: newCheckInCount,
@@ -806,13 +808,13 @@
       async function initUserData() {
         const urlParams = new URLSearchParams(window.location.search);
         const tagId = urlParams.get("tag_id") || "guest";
-        const userRef = db.collection("users").doc(tagId);
+        const userRef = doc(db, "users", tagId);
 
         try {
-          const doc = await userRef.get();
-          if (!doc.exists) {
+          const docSnap = await getDoc(userRef);
+          if (!docSnap.exists()) {
             // Nếu người dùng chưa có dữ liệu, tạo mới
-            await userRef.set({
+            await setDoc(userRef, {
               tagId: tagId,
               pidogeBalance: 0,
               ttBalance: 0,
@@ -824,7 +826,7 @@
           }
           
           // Lấy dữ liệu và cập nhật giao diện
-          const data = (await userRef.get()).data();
+          const data = (await getDoc(userRef)).data();
           document.getElementById("pidogeBalance").textContent = data.pidogeBalance;
           document.getElementById("ttBalance").textContent = data.ttBalance;
           document.getElementById("userLevel").textContent = data.userLevel;
@@ -917,45 +919,6 @@
         const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
         window.location.href = explorerUrl;
       }
-
-      // Initialize on page load
-      document.addEventListener("DOMContentLoaded", async () => {
-        await initCheckIn();
-        loadUserData();
-        autoCheckBalanceFromURL();
-
-        const darkModePreference = localStorage.getItem("darkMode");
-        if (darkModePreference === "enabled") {
-          document.body.classList.add("dark-mode");
-          document.getElementById("darkModeToggle").textContent =
-            "Chuyển chế độ sáng";
-        }
-
-        const tradingViewSection = document.getElementById("tradingview_chart");
-        const observer = new IntersectionObserver(
-          (entries) => {
-            if (entries[0].isIntersecting) {
-              new TradingView.widget({
-                width: "100%",
-                height: 250,
-                symbol: "OKX:PIUSDT",
-                interval: "D",
-                timezone: "Etc/UTC",
-                theme: "light",
-                style: "1",
-                locale: "en",
-                toolbar_bg: "#f1f3f6",
-                enable_publishing: false,
-                allow_symbol_change: true,
-                container_id: "tradingview_chart",
-              });
-              observer.disconnect();
-            }
-          },
-          { rootMargin: "100px" }
-        );
-        observer.observe(tradingViewSection);
-      });
 
       // Copy Wallet Address
       function copyWalletAddress() {
@@ -1064,6 +1027,45 @@
           ? "Chuyển chế độ sáng"
           : "Chuyển chế độ tối";
         localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
+      });
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", async () => {
+        await initCheckIn();
+        loadUserData();
+        autoCheckBalanceFromURL();
+
+        const darkModePreference = localStorage.getItem("darkMode");
+        if (darkModePreference === "enabled") {
+          document.body.classList.add("dark-mode");
+          document.getElementById("darkModeToggle").textContent =
+            "Chuyển chế độ sáng";
+        }
+
+        const tradingViewSection = document.getElementById("tradingview_chart");
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0].isIntersecting) {
+              new TradingView.widget({
+                width: "100%",
+                height: 250,
+                symbol: "OKX:PIUSDT",
+                interval: "D",
+                timezone: "Etc/UTC",
+                theme: "light",
+                style: "1",
+                locale: "en",
+                toolbar_bg: "#f1f3f6",
+                enable_publishing: false,
+                allow_symbol_change: true,
+                container_id: "tradingview_chart",
+              });
+              observer.disconnect();
+            }
+          },
+          { rootMargin: "100px" }
+        );
+        observer.observe(tradingViewSection);
       });
     </script>
   </body>
