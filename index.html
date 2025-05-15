@@ -568,6 +568,8 @@
       // Khởi tạo Firebase
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
+      console.log("Firebase initialized:", app);
+      console.log("Firestore initialized:", db);
 
       // Danh sách dữ liệu thành viên
       const memberData = {
@@ -697,11 +699,43 @@
         }
       ];
 
+      // Hàm sao chép ví
+      function copyWalletAddress() {
+        console.log("Copying wallet address...");
+        const walletAddress = document.getElementById("walletAddress").textContent;
+        console.log("Wallet address:", walletAddress);
+        if (walletAddress === "Không tìm thấy địa chỉ ví") {
+          showToast("Không có địa chỉ ví để sao chép!", "error");
+          return;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(walletAddress)
+            .then(() => showToast("Đã sao chép địa chỉ ví!"))
+            .catch(() => showToast("Không thể sao chép, dùng Ctrl+C thủ công!", "error"));
+        } else {
+          showToast("Trình duyệt không hỗ trợ, dùng Ctrl+C thủ công!", "error");
+        }
+      }
+
+      // Hàm kiểm tra số dư
+      function checkBalance() {
+        console.log("Checking balance...");
+        const walletAddress = document.getElementById("walletAddress").textContent;
+        console.log("Wallet address:", walletAddress);
+        if (!walletAddress || walletAddress === "Không tìm thấy địa chỉ ví") {
+          showToast("Không có địa chỉ ví để kiểm tra!", "error");
+          return;
+        }
+        const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
+        window.location.href = explorerUrl;
+      }
+
       // Logic điểm danh
       async function checkIn() {
-        const checkInButton = document.getElementById("checkInButton");
+        console.log("Checking in...");
         const urlParams = new URLSearchParams(window.location.search);
         const tagId = urlParams.get("tag_id") || "guest";
+        console.log("Tag ID for check-in:", tagId);
         const userRef = doc(db, "users", tagId);
         const now = new Date().getTime();
         const oneDay = 24 * 60 * 60 * 1000; // 24 giờ
@@ -709,11 +743,21 @@
         try {
           const docSnap = await getDoc(userRef);
           if (!docSnap.exists()) {
-            showToast("Không tìm thấy dữ liệu người dùng!", "error");
-            return;
+            console.log("User data not found, initializing...");
+            await setDoc(userRef, {
+              tagId: tagId,
+              pidogeBalance: 0,
+              ttBalance: 0,
+              checkInCount: 0,
+              checkInHistory: [],
+              lastCheckIn: null,
+              userLevel: 0
+            });
+            showToast("Dữ liệu người dùng đã được tạo!", "success");
           }
 
-          const userData = docSnap.data();
+          const userData = (await getDoc(userRef)).data();
+          console.log("User data:", userData);
           const lastCheckIn = userData.lastCheckIn ? userData.lastCheckIn.toDate().getTime() : null;
 
           // Kiểm tra nếu đã điểm danh trong 24 giờ
@@ -760,10 +804,11 @@
             checkInHistory: newCheckInHistory,
             lastCheckIn: new Date()
           });
+          console.log("Updated user data in Firestore:", { pidogeBalance: newPidogeBalance, ttBalance: newTtBalance });
 
           // Cập nhật giao diện
           document.getElementById("pidogeBalance").textContent = newPidogeBalance;
-          document.getElementById("ttBalance").textContent = newTtBalance;
+          document.getElementById("ttBalance").textContent = newTtBalance.toFixed(1);
           document.getElementById("userLevel").textContent = newUserLevel;
           document.getElementById("checkInProgress").textContent = 
             `${newCheckInCount}/${levelMilestones[newUserLevel + 1] || 300} ngày để lên cấp ${newUserLevel + 1}`;
@@ -787,6 +832,7 @@
 
       // Cập nhật lịch sử điểm danh
       function updateCheckInHistory(history) {
+        console.log("Updating check-in history:", history);
         const historyDiv = document.getElementById("checkInHistory");
         historyDiv.innerHTML = history.length
           ? history
@@ -797,6 +843,7 @@
 
       // Khởi tạo giao diện khi tải trang
       async function initCheckIn() {
+        console.log("Initializing check-in...");
         const planetImage = document.getElementById("planetImage");
         planetImage.onerror = () => {
           planetImage.src = "https://i.imgur.com/ccV8NTe.jpeg"; // Hình dự phòng
@@ -806,6 +853,7 @@
 
       // Khởi tạo dữ liệu người dùng trên Firebase
       async function initUserData() {
+        console.log("Initializing user data...");
         const urlParams = new URLSearchParams(window.location.search);
         const tagId = urlParams.get("tag_id") || "guest";
         const userRef = doc(db, "users", tagId);
@@ -813,7 +861,7 @@
         try {
           const docSnap = await getDoc(userRef);
           if (!docSnap.exists()) {
-            // Nếu người dùng chưa có dữ liệu, tạo mới
+            console.log("Creating new user data...");
             await setDoc(userRef, {
               tagId: tagId,
               pidogeBalance: 0,
@@ -825,16 +873,15 @@
             });
           }
           
-          // Lấy dữ liệu và cập nhật giao diện
           const data = (await getDoc(userRef)).data();
+          console.log("User data loaded:", data);
           document.getElementById("pidogeBalance").textContent = data.pidogeBalance;
-          document.getElementById("ttBalance").textContent = data.ttBalance;
+          document.getElementById("ttBalance").textContent = data.ttBalance.toFixed(1);
           document.getElementById("userLevel").textContent = data.userLevel;
           document.getElementById("checkInProgress").textContent = 
             `${data.checkInCount}/${[0, 15, 35, 60, 100, 160, 220, 300][data.userLevel + 1] || 300} ngày để lên cấp ${data.userLevel + 1}`;
           updateCheckInHistory(data.checkInHistory);
           
-          // Cập nhật hành tinh
           const currentPlanet = planets[data.userLevel];
           document.getElementById("planetName").textContent = currentPlanet.name;
           document.getElementById("planetDescription").textContent = currentPlanet.description;
@@ -847,6 +894,7 @@
 
       // Show Toast Notification
       function showToast(message, type = "success") {
+        console.log("Showing toast:", message, type);
         const toast = document.getElementById("toast");
         const toastMessage = document.getElementById("toastMessage");
         toastMessage.textContent = message;
@@ -864,19 +912,19 @@
       function loadUserData() {
         const urlParams = new URLSearchParams(window.location.search);
         const tagId = urlParams.get("tag_id");
-        console.log("Tag ID:", tagId); // Debug
+        console.log("Tag ID:", tagId);
         const userName = document.getElementById("userName");
         const walletAddress = document.getElementById("walletAddress");
         const avatar = document.getElementById("avatar");
 
         if (tagId && memberData[tagId]) {
           const member = memberData[tagId];
-          console.log("Member data:", member); // Debug
+          console.log("Member data:", member);
           userName.textContent = member.name;
           walletAddress.textContent = member.wallet_address;
           avatar.src = member.avatar;
         } else {
-          console.log("No member data for tagId:", tagId); // Debug
+          console.log("No member data for tagId:", tagId);
           userName.textContent = "Không tìm thấy thông tin";
           walletAddress.textContent = "Không tìm thấy địa chỉ ví";
           avatar.src = "https://picsum.photos/80";
@@ -887,7 +935,7 @@
           avatar.classList.add("loaded");
         };
         avatar.onerror = () => {
-          console.warn(`Không thể tải hình ảnh: ${avatar.src}`);
+          console.warn(`Không thể tải hình ảnh Big: ${avatar.src}`);
           if (avatar.src !== "https://picsum.photos/seed/fallback/80") {
             avatar.src = "https://picsum.photos/seed/fallback/80";
           } else {
@@ -907,38 +955,9 @@
         }
       }
 
-      // Check Balance (Redirect to Pi Block Explorer)
-      function checkBalance() {
-        const walletAddress = document.getElementById("walletAddress").textContent;
-
-        if (!walletAddress || walletAddress === "Không tìm thấy địa chỉ ví") {
-          showToast("Không có địa chỉ ví để kiểm tra!", "error");
-          return;
-        }
-
-        const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
-        window.location.href = explorerUrl;
-      }
-
-      // Copy Wallet Address
-      function copyWalletAddress() {
-        const walletAddress = document.getElementById("walletAddress").textContent;
-        if (walletAddress === "Không tìm thấy địa chỉ ví") {
-          showToast("Không có địa chỉ ví để sao chép!", "error");
-          return;
-        }
-        navigator.clipboard
-          .writeText(walletAddress)
-          .then(() => {
-            showToast("Đã sao chép địa chỉ ví!");
-          })
-          .catch(() => {
-            showToast("Không thể sao chép địa chỉ ví!", "error");
-          });
-      }
-
       // Show Withdraw Modal
       function showWithdrawModal() {
+        console.log("Showing withdraw modal...");
         const withdrawModal = document.getElementById("withdrawModal");
         withdrawModal.classList.remove("hidden");
         withdrawModal.classList.add("show");
@@ -946,6 +965,7 @@
 
       // Hide Withdraw Modal
       function hideWithdrawModal() {
+        console.log("Hiding withdraw modal...");
         const withdrawModal = document.getElementById("withdrawModal");
         withdrawModal.classList.remove("show");
         withdrawModal.classList.add("hidden");
@@ -953,9 +973,9 @@
 
       // Withdraw Pi (Mock)
       function withdrawPi() {
+        console.log("Withdrawing Pi...");
         const amount = parseFloat(document.getElementById("withdrawAmount").value);
         const password = document.getElementById("withdrawPassword").value;
-        const withdrawStatus = document.getElementById("withdrawStatus");
 
         if (!amount || amount < 0.01) {
           showToast("Số lượng Pi phải lớn hơn 0 và tối thiểu 1$!", "error");
@@ -967,10 +987,7 @@
           return;
         }
 
-        withdrawStatus.textContent = "Đang xử lý...";
-
         setTimeout(() => {
-          withdrawStatus.textContent = "Đã gửi yêu cầu rút Pi";
           showToast("Yêu cầu rút Pi đã được gửi!");
           hideWithdrawModal();
         }, 1500);
@@ -978,6 +995,7 @@
 
       // Safety Check (Mock)
       function checkSafety() {
+        console.log("Checking safety...");
         const checkButton = document.getElementById("checkButton");
         const loadingSpinner = document.getElementById("loadingSpinner");
         const safetyResult = document.getElementById("safetyResult");
@@ -1014,6 +1032,7 @@
 
       // Clear Safety Check Form
       function clearForm() {
+        console.log("Clearing safety form...");
         document.getElementById("safetyUrl").value = "";
         document.getElementById("safetyResult").classList.add("hidden");
         showToast("Đã xóa biểu mẫu!");
@@ -1021,6 +1040,7 @@
 
       // Dark Mode Toggle
       document.getElementById("darkModeToggle").addEventListener("click", () => {
+        console.log("Toggling dark mode...");
         document.body.classList.toggle("dark-mode");
         const isDarkMode = document.body.classList.contains("dark-mode");
         document.getElementById("darkModeToggle").textContent = isDarkMode
@@ -1031,6 +1051,7 @@
 
       // Initialize on page load
       document.addEventListener("DOMContentLoaded", async () => {
+        console.log("Page loaded, initializing...");
         await initCheckIn();
         loadUserData();
         autoCheckBalanceFromURL();
