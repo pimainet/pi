@@ -424,6 +424,22 @@
         <p class="text-sm mb-2">Cấp độ: <span id="userLevel">0</span></p>
         <p class="text-sm mb-4">Tiến độ: <span id="checkInProgress">0/15 ngày để lên cấp 1</span></p>
         <p class="text-sm mb-4">Số dư: <span id="pidogeBalance">0</span> PiDoge, <span id="ttBalance">0</span> TT</p>
+<div class="mb-4">
+  <label for="referralCodeInput" class="text-sm font-bold">Nhập mã giới thiệu:</label>
+  <input
+    id="referralCodeInput"
+    type="text"
+    class="w-full p-2 border rounded mt-1 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
+    placeholder="Nhập mã giới thiệu (nếu có)"
+  />
+  <button
+    id="submitReferralButton"
+    onclick="submitReferralCode()"
+    class="w-full bg-purple-500 text-white py-2 mt-2 rounded-lg btn hover:bg-purple-600"
+  >
+    Xác nhận mã giới thiệu
+  </button>
+</div>
         <button id="checkInButton" onclick="checkIn()" class="w-full bg-blue-500 text-white py-2 rounded-lg btn hover:bg-blue-600">
           Điểm danh
         </button>
