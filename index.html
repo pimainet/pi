@@ -548,7 +548,7 @@
       </div>
     </div>
 
-    <!-- Inline JavaScript (không dùng module) -->
+    <!-- Inline JavaScript -->
     <script>
       // Cấu hình Firebase
       const firebaseConfig = {
@@ -714,7 +714,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const tagId = urlParams.get("tag_id") || "guest";
         console.log("Tag ID for check-in:", tagId);
-        const userRef = db.doc(`users/${tagId}`);
+        const userRef = db.collection("users").doc(tagId);
         const now = new Date().getTime();
         const oneDay = 24 * 60 * 60 * 1000; // 24 giờ
 
@@ -834,7 +834,7 @@
         console.log("Initializing user data...");
         const urlParams = new URLSearchParams(window.location.search);
         const tagId = urlParams.get("tag_id") || "guest";
-        const userRef = db.doc(`users/${tagId}`);
+        const userRef = db.collection("users").doc(tagId);
 
         try {
           const docSnap = await userRef.get();
@@ -1066,8 +1066,8 @@
         observer.observe(tradingViewSection);
       });
     </script>
-    <!-- Thêm Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
+    <!-- Thêm Firebase SDK phiên bản 8.10.1 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   </body>
 </html>
