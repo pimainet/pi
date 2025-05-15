@@ -548,527 +548,526 @@
       </div>
     </div>
 
-    <!-- Inline JavaScript -->
-   <script type="module">
-  // Nhập Firebase SDK
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-  import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+    <!-- Inline JavaScript (không dùng module) -->
+    <script>
+      // Cấu hình Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyDnRKWDFfY3pMX7OwMz8QDxEKZ1g2-lWSc",
+        authDomain: "pi-universe-hub-41ca7.firebaseapp.com",
+        projectId: "pi-universe-hub-41ca7",
+        storageBucket: "pi-universe-hub-41ca7.firebasestorage.app",
+        messagingSenderId: "478656359387",
+        appId: "1:478656359387:web:e0eab8b10e9a0fdd8a95fe",
+        measurementId: "G-YC10G46QSC"
+      };
 
-  // Cấu hình Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyDnRKWDFfY3pMX7OwMz8QDxEKZ1g2-lWSc",
-    authDomain: "pi-universe-hub-41ca7.firebaseapp.com",
-    projectId: "pi-universe-hub-41ca7",
-    storageBucket: "pi-universe-hub-41ca7.firebasestorage.app",
-    messagingSenderId: "478656359387",
-    appId: "1:478656359387:web:e0eab8b10e9a0fdd8a95fe",
-    measurementId: "G-YC10G46QSC"
-  };
+      // Khởi tạo Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      console.log("Firebase initialized:", app);
+      console.log("Firestore initialized:", db);
 
-  // Khởi tạo Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  console.log("Firebase initialized:", app);
-  console.log("Firestore initialized:", db);
-
-  // Danh sách dữ liệu thành viên
-  const memberData = {
-    "001": {
-      name: "HOÀNG VĂN MINH",
-      avatar: "https://i.imgur.com/6ceGYoC.jpeg",
-      wallet_address: "GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
-      explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ"
-    },
-    "002": {
-      name: "LÊ VĂN HOẰNG",
-      avatar: "https://i.imgur.com/bacHB3U.jpeg",
-      wallet_address: "GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
-      explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP"
-    },
-    "003": {
-      name: "PHẠM THỊ XUÂN",
-      avatar: "https://i.imgur.com/FgV7fRT.jpeg",
-      wallet_address: "GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
-      explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4"
-    },
-    "004": {
-      name: "LÊ THỊ HƯƠNG",
-      avatar: "https://i.imgur.com/qPmerTD.jpeg",
-      wallet_address: "GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
-      explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3"
-    },
-    "005": {
-      name: "LÊ TRỌNG KHOA",
-      avatar: "https://i.imgur.com/h2G4JTA.jpeg",
-      wallet_address: "GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
-      explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ"
-    },
-    "006": {
-      name: "HOÀNG VĂN TRỤ",
-      avatar: "https://i.imgur.com/wNUTVEz.jpeg",
-      wallet_address: "GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
-      explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN"
-    },
-    "007": {
-      name: "MINH TRANG",
-      avatar: "https://i.imgur.com/HskgNhC.jpeg",
-      wallet_address: "GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
-      explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6"
-    },
-    "008": {
-      name: "LÊ THỊ HÀ",
-      avatar: "https://i.imgur.com/zAX7aF4.jpeg",
-      wallet_address: "GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
-      explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS"
-    },
-    "009": {
-      name: "LÊ THỊ HỒNG",
-      avatar: "https://i.imgur.com/E44n0YR.jpeg",
-      wallet_address: "GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC",
-      explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC"
-    }
-  };
-
-  // Dữ liệu hành tinh
-  const planets = [
-    {
-      level: 0,
-      name: "Chưa khám phá",
-      image: "https://i.imgur.com/xLt0X9f.jpeg",
-      description: "Hãy điểm danh để bắt đầu hành trình khám phá Vũ trụ Pi!"
-    },
-    {
-      level: 1,
-      name: "Hành tinh PiDoge",
-      image: "https://i.imgur.com/8gDHqeY.jpeg",
-      description: "Nơi cư dân đào PiDoge với niềm vui và năng lượng tích cực."
-    },
-    {
-      level: 2,
-      name: "Hành tinh TT",
-      image: "https://i.imgur.com/27lNYa5.jpeg",
-      description: "Một hành tinh bí ẩn, nơi TT là nguồn năng lượng chính."
-    },
-    {
-      level: 3,
-      name: "Hành tinh Nova",
-      image: "https://i.imgur.com/ccV8NTe.jpeg",
-      description: "Hành tinh rực rỡ với những ngôi sao sáng dẫn lối."
-    },
-    {
-      level: 4,
-      name: "Hành tinh Nebula",
-      image: "https://i.imgur.com/CJCOZtV.jpeg",
-      description: "Vùng không gian đầy sương mù và bí ẩn vũ trụ."
-    },
-    {
-      level: 5,
-      name: "Hành tinh Quasar",
-      image: "https://i.imgur.com/LnO70Wb.jpeg",
-      description: "Nguồn năng lượng mạnh mẽ, tỏa sáng khắp thiên hà."
-    },
-    {
-      level: 6,
-      name: "Hành tinh Pulsar",
-      image: "https://images.unsplash.com/photo-1614314069749-7c2603923c3a?auto=format&fit=crop&w=80",
-      description: "Hành tinh nhấp nháy với nhịp điệu của vũ trụ."
-    },
-    {
-      level: 7,
-      name: "Hành tinh Genesis",
-      image: "https://images.unsplash.com/photo-1614732621357-6b6e47e9a2f8?auto=format&fit=crop&w=80",
-      description: "Cội nguồn của Vũ trụ Pi, nơi mọi thứ bắt đầu."
-    }
-  ];
-
-  // Hàm sao chép ví
-  function copyWalletAddress() {
-    console.log("Copying wallet address...");
-    const walletAddress = document.getElementById("walletAddress").textContent;
-    console.log("Wallet address:", walletAddress);
-    if (walletAddress === "Không tìm thấy địa chỉ ví") {
-      showToast("Không có địa chỉ ví để sao chép!", "error");
-      return;
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(walletAddress)
-        .then(() => showToast("Đã sao chép địa chỉ ví!"))
-        .catch(() => showToast("Không thể sao chép, dùng Ctrl+C thủ công!", "error"));
-    } else {
-      showToast("Trình duyệt không hỗ trợ, dùng Ctrl+C thủ công!", "error");
-    }
-  }
-
-  // Hàm kiểm tra số dư
-  function checkBalance() {
-    console.log("Checking balance...");
-    const walletAddress = document.getElementById("walletAddress").textContent;
-    console.log("Wallet address:", walletAddress);
-    if (!walletAddress || walletAddress === "Không tìm thấy địa chỉ ví") {
-      showToast("Không có địa chỉ ví để kiểm tra!", "error");
-      return;
-    }
-    const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
-    window.location.href = explorerUrl;
-  }
-
-  // Logic điểm danh
-  async function checkIn() {
-    console.log("Checking in...");
-    const urlParams = new URLSearchParams(window.location.search);
-    const tagId = urlParams.get("tag_id") || "guest";
-    console.log("Tag ID for check-in:", tagId); // Di chuyển log sau khi khai báo tagId
-    const userRef = doc(db, "users", tagId);
-    const now = new Date().getTime();
-    const oneDay = 24 * 60 * 60 * 1000; // 24 giờ
-
-    try {
-      const docSnap = await getDoc(userRef);
-      if (!docSnap.exists()) {
-        console.log("User data not found, initializing...");
-        await setDoc(userRef, {
-          tagId: tagId,
-          pidogeBalance: 0,
-          ttBalance: 0,
-          checkInCount: 0,
-          checkInHistory: [],
-          lastCheckIn: null,
-          userLevel: 0
-        });
-        showToast("Dữ liệu người dùng đã được tạo!", "success");
-      }
-
-      const userData = (await getDoc(userRef)).data();
-      console.log("User data:", userData);
-      const lastCheckIn = userData.lastCheckIn ? userData.lastCheckIn.toDate().getTime() : null;
-
-      // Kiểm tra nếu đã điểm danh trong 24 giờ
-      if (lastCheckIn && now - lastCheckIn < oneDay) {
-        showToast("Bạn chỉ có thể điểm danh mỗi 24 giờ!", "error");
-        return;
-      }
-
-      // Tạo phần thưởng ngẫu nhiên
-      const pidogeReward = Math.floor(Math.random() * (100 - 50 + 1)) + 50;
-      const ttReward = 0.7;
-
-      // Cập nhật số dư
-      const newPidogeBalance = (userData.pidogeBalance || 0) + pidogeReward;
-      const newTtBalance = (userData.ttBalance || 0) + ttReward;
-
-      // Cập nhật số ngày điểm danh
-      const newCheckInCount = (userData.checkInCount || 0) + 1;
-
-      // Tính cấp độ
-      const levelMilestones = [0, 15, 35, 60, 100, 160, 220, 300];
-      let newUserLevel = 0;
-      for (let i = 0; i < levelMilestones.length; i++) {
-        if (newCheckInCount >= levelMilestones[i]) {
-          newUserLevel = i;
-        } else {
-          break;
+      // Danh sách dữ liệu thành viên
+      const memberData = {
+        "001": {
+          name: "HOÀNG VĂN MINH",
+          avatar: "https://i.imgur.com/6ceGYoC.jpeg",
+          wallet_address: "GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ",
+          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GAB3DTZTDHAQQ2IXO4RDPMYQY3CNZABM6ZGK4HWK55QKRQ6W6QCKRSDQ"
+        },
+        "002": {
+          name: "LÊ VĂN HOẰNG",
+          avatar: "https://i.imgur.com/bacHB3U.jpeg",
+          wallet_address: "GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP",
+          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GCVBQP2M5AWPLHFLUWX7ZRSE24INWWYEYC2EI3NPQWXIL5WVXXZITGJP"
+        },
+        "003": {
+          name: "PHẠM THỊ XUÂN",
+          avatar: "https://i.imgur.com/FgV7fRT.jpeg",
+          wallet_address: "GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4",
+          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GBDUXC2JUGEVI7N2NGLXB6B3VMUUVNUK6QI4TL5XIB2LIY3U7CDGK3B4"
+        },
+        "004": {
+          name: "LÊ THỊ HƯƠNG",
+          avatar: "https://i.imgur.com/qPmerTD.jpeg",
+          wallet_address: "GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3",
+          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GCWRIG2I5BNCTN5HXSMAYPQC45MRY7BQFX6AUUPAKTGACFZLBDGJG7I3"
+        },
+        "005": {
+          name: "LÊ TRỌNG KHOA",
+          avatar: "https://i.imgur.com/h2G4JTA.jpeg",
+          wallet_address: "GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ",
+          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GDMBS366RAH5STHNFCH3QWLV4VNK2U77TGFU7WEG66ZFGMHGOWZCHDOZ"
+        },
+        "006": {
+          name: "HOÀNG VĂN TRỤ",
+          avatar: "https://i.imgur.com/wNUTVEz.jpeg",
+          wallet_address: "GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN",
+          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GC4QQVU6A4EWTNCW4235WUOQ5FHKBOF57RKO2EPTIXDJKRYTLXZOHSGN"
+        },
+        "007": {
+          name: "MINH TRANG",
+          avatar: "https://i.imgur.com/HskgNhC.jpeg",
+          wallet_address: "GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6",
+          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GD7M2UZCORSH4AJUJJN2V56MAA33OCIMYMRJ6OXMBQPG5T2FJ4OZ6TA6"
+        },
+        "008": {
+          name: "LÊ THỊ HÀ",
+          avatar: "https://i.imgur.com/zAX7aF4.jpeg",
+          wallet_address: "GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS",
+          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GAL4V2DVKA437NPZT2B6NEQA7AJ4BE53OCKQUXNJ44G3Z3IJF3BGZ7SS"
+        },
+        "009": {
+          name: "LÊ THỊ HỒNG",
+          avatar: "https://i.imgur.com/E44n0YR.jpeg",
+          wallet_address: "GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC",
+          explorer_link: "https://blockexplorer.minepi.com/mainnet/accounts/GDSTSA7GBFL4BXWQMUAJ264LSG3XGBYIPGOW62H4TOTX3F3LCMDSKEHC"
         }
-      }
+      };
 
-      // Cập nhật lịch sử điểm danh
-      const checkInDate = new Date().toLocaleString("vi-VN");
-      const newCheckInHistory = [
-        ...(userData.checkInHistory || []),
-        { date: checkInDate, pidoge: pidogeReward, tt: ttReward }
+      // Dữ liệu hành tinh
+      const planets = [
+        {
+          level: 0,
+          name: "Chưa khám phá",
+          image: "https://i.imgur.com/xLt0X9f.jpeg",
+          description: "Hãy điểm danh để bắt đầu hành trình khám phá Vũ trụ Pi!"
+        },
+        {
+          level: 1,
+          name: "Hành tinh PiDoge",
+          image: "https://i.imgur.com/8gDHqeY.jpeg",
+          description: "Nơi cư dân đào PiDoge với niềm vui và năng lượng tích cực."
+        },
+        {
+          level: 2,
+          name: "Hành tinh TT",
+          image: "https://i.imgur.com/27lNYa5.jpeg",
+          description: "Một hành tinh bí ẩn, nơi TT là nguồn năng lượng chính."
+        },
+        {
+          level: 3,
+          name: "Hành tinh Nova",
+          image: "https://i.imgur.com/ccV8NTe.jpeg",
+          description: "Hành tinh rực rỡ với những ngôi sao sáng dẫn lối."
+        },
+        {
+          level: 4,
+          name: "Hành tinh Nebula",
+          image: "https://i.imgur.com/CJCOZtV.jpeg",
+          description: "Vùng không gian đầy sương mù và bí ẩn vũ trụ."
+        },
+        {
+          level: 5,
+          name: "Hành tinh Quasar",
+          image: "https://i.imgur.com/LnO70Wb.jpeg",
+          description: "Nguồn năng lượng mạnh mẽ, tỏa sáng khắp thiên hà."
+        },
+        {
+          level: 6,
+          name: "Hành tinh Pulsar",
+          image: "https://images.unsplash.com/photo-1614314069749-7c2603923c3a?auto=format&fit=crop&w=80",
+          description: "Hành tinh nhấp nháy với nhịp điệu của vũ trụ."
+        },
+        {
+          level: 7,
+          name: "Hành tinh Genesis",
+          image: "https://images.unsplash.com/photo-1614732621357-6b6e47e9a2f8?auto=format&fit=crop&w=80",
+          description: "Cội nguồn của Vũ trụ Pi, nơi mọi thứ bắt đầu."
+        }
       ];
 
-      // Lưu vào Firebase
-      await updateDoc(userRef, {
-        pidogeBalance: newPidogeBalance,
-        ttBalance: newTtBalance,
-        checkInCount: newCheckInCount,
-        userLevel: newUserLevel,
-        checkInHistory: newCheckInHistory,
-        lastCheckIn: new Date()
-      });
-      console.log("Updated user data in Firestore:", { pidogeBalance: newPidogeBalance, ttBalance: newTtBalance });
+      // Hàm sao chép ví
+      function copyWalletAddress() {
+        console.log("Copying wallet address...");
+        const walletAddress = document.getElementById("walletAddress").textContent;
+        console.log("Wallet address:", walletAddress);
+        if (walletAddress === "Không tìm thấy địa chỉ ví") {
+          showToast("Không có địa chỉ ví để sao chép!", "error");
+          return;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(walletAddress)
+            .then(() => showToast("Đã sao chép địa chỉ ví!"))
+            .catch(() => showToast("Không thể sao chép, dùng Ctrl+C thủ công!", "error"));
+        } else {
+          showToast("Trình duyệt không hỗ trợ, dùng Ctrl+C thủ công!", "error");
+        }
+      }
 
-      // Cập nhật giao diện
-      document.getElementById("pidogeBalance").textContent = newPidogeBalance;
-      document.getElementById("ttBalance").textContent = newTtBalance.toFixed(1);
-      document.getElementById("userLevel").textContent = newUserLevel;
-      document.getElementById("checkInProgress").textContent = 
-        `${newCheckInCount}/${levelMilestones[newUserLevel + 1] || 300} ngày để lên cấp ${newUserLevel + 1}`;
+      // Hàm kiểm tra số dư
+      function checkBalance() {
+        console.log("Checking balance...");
+        const walletAddress = document.getElementById("walletAddress").textContent;
+        console.log("Wallet address:", walletAddress);
+        if (!walletAddress || walletAddress === "Không tìm thấy địa chỉ ví") {
+          showToast("Không có địa chỉ ví để kiểm tra!", "error");
+          return;
+        }
+        const explorerUrl = `https://blockexplorer.minepi.com/mainnet/accounts/${walletAddress}`;
+        window.location.href = explorerUrl;
+      }
 
-      // Cập nhật hành tinh
-      const currentPlanet = planets[newUserLevel];
-      document.getElementById("planetName").textContent = currentPlanet.name;
-      document.getElementById("planetDescription").textContent = currentPlanet.description;
-      document.getElementById("planetImage").src = currentPlanet.image;
+      // Logic điểm danh
+      async function checkIn() {
+        console.log("Checking in...");
+        const urlParams = new URLSearchParams(window.location.search);
+        const tagId = urlParams.get("tag_id") || "guest";
+        console.log("Tag ID for check-in:", tagId);
+        const userRef = db.doc(`users/${tagId}`);
+        const now = new Date().getTime();
+        const oneDay = 24 * 60 * 60 * 1000; // 24 giờ
+
+        try {
+          const docSnap = await userRef.get();
+          if (!docSnap.exists) {
+            console.log("User data not found, initializing...");
+            await userRef.set({
+              tagId: tagId,
+              pidogeBalance: 0,
+              ttBalance: 0,
+              checkInCount: 0,
+              checkInHistory: [],
+              lastCheckIn: null,
+              userLevel: 0
+            });
+            showToast("Dữ liệu người dùng đã được tạo!", "success");
+          }
+
+          const userData = docSnap.data();
+          console.log("User data:", userData);
+          const lastCheckIn = userData.lastCheckIn ? userData.lastCheckIn.toDate().getTime() : null;
+
+          // Kiểm tra nếu đã điểm danh trong 24 giờ
+          if (lastCheckIn && now - lastCheckIn < oneDay) {
+            showToast("Bạn chỉ có thể điểm danh mỗi 24 giờ!", "error");
+            return;
+          }
+
+          // Tạo phần thưởng ngẫu nhiên
+          const pidogeReward = Math.floor(Math.random() * (100 - 50 + 1)) + 50;
+          const ttReward = 0.7;
+
+          // Cập nhật số dư
+          const newPidogeBalance = (userData.pidogeBalance || 0) + pidogeReward;
+          const newTtBalance = (userData.ttBalance || 0) + ttReward;
+
+          // Cập nhật số ngày điểm danh
+          const newCheckInCount = (userData.checkInCount || 0) + 1;
+
+          // Tính cấp độ
+          const levelMilestones = [0, 15, 35, 60, 100, 160, 220, 300];
+          let newUserLevel = 0;
+          for (let i = 0; i < levelMilestones.length; i++) {
+            if (newCheckInCount >= levelMilestones[i]) {
+              newUserLevel = i;
+            } else {
+              break;
+            }
+          }
+
+          // Cập nhật lịch sử điểm danh
+          const checkInDate = new Date().toLocaleString("vi-VN");
+          const newCheckInHistory = [
+            ...(userData.checkInHistory || []),
+            { date: checkInDate, pidoge: pidogeReward, tt: ttReward }
+          ];
+
+          // Lưu vào Firebase
+          await userRef.update({
+            pidogeBalance: newPidogeBalance,
+            ttBalance: newTtBalance,
+            checkInCount: newCheckInCount,
+            userLevel: newUserLevel,
+            checkInHistory: newCheckInHistory,
+            lastCheckIn: new Date()
+          });
+          console.log("Updated user data in Firestore:", { pidogeBalance: newPidogeBalance, ttBalance: newTtBalance });
+
+          // Cập nhật giao diện
+          document.getElementById("pidogeBalance").textContent = newPidogeBalance;
+          document.getElementById("ttBalance").textContent = newTtBalance.toFixed(1);
+          document.getElementById("userLevel").textContent = newUserLevel;
+          document.getElementById("checkInProgress").textContent = 
+            `${newCheckInCount}/${levelMilestones[newUserLevel + 1] || 300} ngày để lên cấp ${newUserLevel + 1}`;
+
+          // Cập nhật hành tinh
+          const currentPlanet = planets[newUserLevel];
+          document.getElementById("planetName").textContent = currentPlanet.name;
+          document.getElementById("planetDescription").textContent = currentPlanet.description;
+          document.getElementById("planetImage").src = currentPlanet.image;
+
+          // Cập nhật lịch sử điểm danh
+          updateCheckInHistory(newCheckInHistory);
+
+          // Thông báo thành công
+          showToast(`Điểm danh thành công! Nhận ${pidogeReward} PiDoge và ${ttReward} TT`);
+        } catch (error) {
+          console.error("Lỗi khi điểm danh:", error);
+          showToast("Không thể điểm danh! Vui lòng thử lại.", "error");
+        }
+      }
 
       // Cập nhật lịch sử điểm danh
-      updateCheckInHistory(newCheckInHistory);
-
-      // Thông báo thành công
-      showToast(`Điểm danh thành công! Nhận ${pidogeReward} PiDoge và ${ttReward} TT`);
-    } catch (error) {
-      console.error("Lỗi khi điểm danh:", error);
-      showToast("Không thể điểm danh! Vui lòng thử lại.", "error");
-    }
-  }
-
-  // Cập nhật lịch sử điểm danh
-  function updateCheckInHistory(history) {
-    console.log("Updating check-in history:", history);
-    const historyDiv = document.getElementById("checkInHistory");
-    historyDiv.innerHTML = history.length
-      ? history
-          .map((entry) => `<p>${entry.date}: ${entry.pidoge} PiDoge, ${entry.tt} TT</p>`)
-          .join("")
-      : "Chưa có lịch sử điểm danh.";
-  }
-
-  // Khởi tạo giao diện khi tải trang
-  async function initCheckIn() {
-    console.log("Initializing check-in...");
-    const planetImage = document.getElementById("planetImage");
-    planetImage.onerror = () => {
-      planetImage.src = "https://i.imgur.com/ccV8NTe.jpeg"; // Hình dự phòng
-    };
-    await initUserData();
-  }
-
-  // Khởi tạo dữ liệu người dùng trên Firebase
-  async function initUserData() {
-    console.log("Initializing user data...");
-    const urlParams = new URLSearchParams(window.location.search);
-    const tagId = urlParams.get("tag_id") || "guest";
-    const userRef = doc(db, "users", tagId);
-
-    try {
-      const docSnap = await getDoc(userRef);
-      if (!docSnap.exists()) {
-        console.log("Creating new user data...");
-        await setDoc(userRef, {
-          tagId: tagId,
-          pidogeBalance: 0,
-          ttBalance: 0,
-          checkInCount: 0,
-          checkInHistory: [],
-          lastCheckIn: null,
-          userLevel: 0
-        });
+      function updateCheckInHistory(history) {
+        console.log("Updating check-in history:", history);
+        const historyDiv = document.getElementById("checkInHistory");
+        historyDiv.innerHTML = history.length
+          ? history
+              .map((entry) => `<p>${entry.date}: ${entry.pidoge} PiDoge, ${entry.tt} TT</p>`)
+              .join("")
+          : "Chưa có lịch sử điểm danh.";
       }
-      
-      const data = (await getDoc(userRef)).data();
-      console.log("User data loaded:", data);
-      document.getElementById("pidogeBalance").textContent = data.pidogeBalance;
-      document.getElementById("ttBalance").textContent = data.ttBalance.toFixed(1);
-      document.getElementById("userLevel").textContent = data.userLevel;
-      document.getElementById("checkInProgress").textContent = 
-        `${data.checkInCount}/${[0, 15, 35, 60, 100, 160, 220, 300][data.userLevel + 1] || 300} ngày để lên cấp ${data.userLevel + 1}`;
-      updateCheckInHistory(data.checkInHistory);
-      
-      const currentPlanet = planets[data.userLevel];
-      document.getElementById("planetName").textContent = currentPlanet.name;
-      document.getElementById("planetDescription").textContent = currentPlanet.description;
-      document.getElementById("planetImage").src = currentPlanet.image;
-    } catch (error) {
-      console.error("Lỗi khi khởi tạo dữ liệu người dùng:", error);
-      showToast("Không thể tải dữ liệu người dùng!", "error");
-    }
-  }
 
-  // Show Toast Notification
-  function showToast(message, type = "success") {
-    console.log("Showing toast:", message, type);
-    const toast = document.getElementById("toast");
-    const toastMessage = document.getElementById("toastMessage");
-    toastMessage.textContent = message;
-    toast.classList.remove("bg-green-500", "bg-red-500");
-    toast.classList.add(type === "success" ? "bg-green-500" : "bg-red-500");
-    toast.classList.remove("hidden");
-    toast.classList.add("show");
-    setTimeout(() => {
-      toast.classList.remove("show");
-      toast.classList.add("hidden");
-    }, 3000);
-  }
-
-  // Load user data based on tag_id
-  function loadUserData() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tagId = urlParams.get("tag_id");
-    console.log("Tag ID:", tagId);
-    const userName = document.getElementById("userName");
-    const walletAddress = document.getElementById("walletAddress");
-    const avatar = document.getElementById("avatar");
-
-    if (tagId && memberData[tagId]) {
-      const member = memberData[tagId];
-      console.log("Member data:", member);
-      userName.textContent = member.name;
-      walletAddress.textContent = member.wallet_address;
-      avatar.src = member.avatar;
-    } else {
-      console.log("No member data for tagId:", tagId);
-      userName.textContent = "Không tìm thấy thông tin";
-      walletAddress.textContent = "Không tìm thấy địa chỉ ví";
-      avatar.src = "https://picsum.photos/80";
-      showToast("Tag ID không hợp lệ!", "error");
-    }
-
-    avatar.onload = () => {
-      avatar.classList.add("loaded");
-    };
-    avatar.onerror = () => {
-      console.warn(`Không thể tải hình ảnh Big: ${avatar.src}`);
-      if (avatar.src !== "https://picsum.photos/seed/fallback/80") {
-        avatar.src = "https://picsum.photos/seed/fallback/80";
-      } else {
-        showToast("Không thể tải hình ảnh đại diện!", "error");
-        avatar.classList.add("loaded");
+      // Khởi tạo giao diện khi tải trang
+      async function initCheckIn() {
+        console.log("Initializing check-in...");
+        const planetImage = document.getElementById("planetImage");
+        planetImage.onerror = () => {
+          planetImage.src = "https://i.imgur.com/ccV8NTe.jpeg"; // Hình dự phòng
+        };
+        await initUserData();
       }
-    };
-  }
 
-  // Auto-check balance from URL
-  function autoCheckBalanceFromURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const walletAddress = urlParams.get("wallet");
-    if (walletAddress) {
-      document.getElementById("walletAddress").textContent = walletAddress;
-      checkBalance();
-    }
-  }
+      // Khởi tạo dữ liệu người dùng trên Firebase
+      async function initUserData() {
+        console.log("Initializing user data...");
+        const urlParams = new URLSearchParams(window.location.search);
+        const tagId = urlParams.get("tag_id") || "guest";
+        const userRef = db.doc(`users/${tagId}`);
 
-  // Show Withdraw Modal
-  function showWithdrawModal() {
-    console.log("Showing withdraw modal...");
-    const withdrawModal = document.getElementById("withdrawModal");
-    withdrawModal.classList.remove("hidden");
-    withdrawModal.classList.add("show");
-  }
-
-  // Hide Withdraw Modal
-  function hideWithdrawModal() {
-    console.log("Hiding withdraw modal...");
-    const withdrawModal = document.getElementById("withdrawModal");
-    withdrawModal.classList.remove("show");
-    withdrawModal.classList.add("hidden");
-  }
-
-  // Withdraw Pi (Mock)
-  function withdrawPi() {
-    console.log("Withdrawing Pi...");
-    const amount = parseFloat(document.getElementById("withdrawAmount").value);
-    const password = document.getElementById("withdrawPassword").value;
-
-    if (!amount || amount < 0.01) {
-      showToast("Số lượng Pi phải lớn hơn 0 và tối thiểu 1$!", "error");
-      return;
-    }
-
-    if (!password) {
-      showToast("Vui lòng nhập mật khẩu!", "error");
-      return;
-    }
-
-    setTimeout(() => {
-      showToast("Yêu cầu rút Pi đã được gửi!");
-      hideWithdrawModal();
-    }, 1500);
-  }
-
-  // Safety Check (Mock)
-  function checkSafety() {
-    console.log("Checking safety...");
-    const checkButton = document.getElementById("checkButton");
-    const loadingSpinner = document.getElementById("loadingSpinner");
-    const safetyResult = document.getElementById("safetyResult");
-    const safetyStatus = document.getElementById("safetyStatus");
-    const safetyScore = document.getElementById("safetyScore");
-    const safetyWarnings = document.getElementById("safetyWarnings");
-
-    checkButton.disabled = true;
-    loadingSpinner.style.display = "block";
-    safetyResult.classList.add("hidden");
-
-    setTimeout(() => {
-      loadingSpinner.style.display = "none";
-      safetyResult.classList.remove("hidden");
-
-      const isSafe = Math.random() > 0.5;
-      safetyResult.classList.remove("safe", "unsafe");
-      safetyResult.classList.add(isSafe ? "safe" : "unsafe");
-      safetyStatus.textContent = isSafe ? "An toàn" : "Không an toàn";
-      safetyScore.textContent = isSafe ? "85" : "30";
-      safetyWarnings.textContent = isSafe
-        ? "Không có cảnh báo"
-        : "Trang web có thể không đáng tin cậy";
-
-      checkButton.disabled = false;
-      showToast(
-        isSafe
-          ? "Kiểm tra thành công: An toàn!"
-          : "Kiểm tra thành công: Không an toàn!",
-        isSafe ? "success" : "error"
-      );
-    }, 1500);
-  }
-
-  // Clear Safety Check Form
-  function clearForm() {
-    console.log("Clearing safety form...");
-    document.getElementById("safetyUrl").value = "";
-    document.getElementById("safetyResult").classList.add("hidden");
-    showToast("Đã xóa biểu mẫu!");
-  }
-
-  // Dark Mode Toggle
-  document.getElementById("darkModeToggle").addEventListener("click", () => {
-    console.log("Toggling dark mode...");
-    document.body.classList.toggle("dark-mode");
-    const isDarkMode = document.body.classList.contains("dark-mode");
-    document.getElementById("darkModeToggle").textContent = isDarkMode
-      ? "Chuyển chế độ sáng"
-      : "Chuyển chế độ tối";
-    localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
-  });
-
-  // Initialize on page load
-  document.addEventListener("DOMContentLoaded", async () => {
-    console.log("Page loaded, initializing...");
-    await initCheckIn();
-    loadUserData();
-    autoCheckBalanceFromURL();
-
-    const darkModePreference = localStorage.getItem("darkMode");
-    if (darkModePreference === "enabled") {
-      document.body.classList.add("dark-mode");
-      document.getElementById("darkModeToggle").textContent = "Chuyển chế độ sáng";
-    }
-
-    const tradingViewSection = document.getElementById("tradingview_chart");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          new TradingView.widget({
-            width: "100%",
-            height: 250,
-            symbol: "OKX:PIUSDT",
-            interval: "D",
-            timezone: "Etc/UTC",
-            theme: "light",
-            style: "1",
-            locale: "en",
-            toolbar_bg: "#f1f3f6",
-            enable_publishing: false,
-            allow_symbol_change: true,
-            container_id: "tradingview_chart"
-          });
-          observer.disconnect();
+        try {
+          const docSnap = await userRef.get();
+          if (!docSnap.exists) {
+            console.log("Creating new user data...");
+            await userRef.set({
+              tagId: tagId,
+              pidogeBalance: 0,
+              ttBalance: 0,
+              checkInCount: 0,
+              checkInHistory: [],
+              lastCheckIn: null,
+              userLevel: 0
+            });
+          }
+          
+          const data = (await userRef.get()).data();
+          console.log("User data loaded:", data);
+          document.getElementById("pidogeBalance").textContent = data.pidogeBalance;
+          document.getElementById("ttBalance").textContent = data.ttBalance.toFixed(1);
+          document.getElementById("userLevel").textContent = data.userLevel;
+          document.getElementById("checkInProgress").textContent = 
+            `${data.checkInCount}/${[0, 15, 35, 60, 100, 160, 220, 300][data.userLevel + 1] || 300} ngày để lên cấp ${data.userLevel + 1}`;
+          updateCheckInHistory(data.checkInHistory);
+          
+          const currentPlanet = planets[data.userLevel];
+          document.getElementById("planetName").textContent = currentPlanet.name;
+          document.getElementById("planetDescription").textContent = currentPlanet.description;
+          document.getElementById("planetImage").src = currentPlanet.image;
+        } catch (error) {
+          console.error("Lỗi khi khởi tạo dữ liệu người dùng:", error);
+          showToast("Không thể tải dữ liệu người dùng!", "error");
         }
-      },
-      { rootMargin: "100px" }
-    );
-    observer.observe(tradingViewSection);
-  });
-</script>
+      }
+
+      // Show Toast Notification
+      function showToast(message, type = "success") {
+        console.log("Showing toast:", message, type);
+        const toast = document.getElementById("toast");
+        const toastMessage = document.getElementById("toastMessage");
+        toastMessage.textContent = message;
+        toast.classList.remove("bg-green-500", "bg-red-500");
+        toast.classList.add(type === "success" ? "bg-green-500" : "bg-red-500");
+        toast.classList.remove("hidden");
+        toast.classList.add("show");
+        setTimeout(() => {
+          toast.classList.remove("show");
+          toast.classList.add("hidden");
+        }, 3000);
+      }
+
+      // Load user data based on tag_id
+      function loadUserData() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tagId = urlParams.get("tag_id");
+        console.log("Tag ID:", tagId);
+        const userName = document.getElementById("userName");
+        const walletAddress = document.getElementById("walletAddress");
+        const avatar = document.getElementById("avatar");
+
+        if (tagId && memberData[tagId]) {
+          const member = memberData[tagId];
+          console.log("Member data:", member);
+          userName.textContent = member.name;
+          walletAddress.textContent = member.wallet_address;
+          avatar.src = member.avatar;
+        } else {
+          console.log("No member data for tagId:", tagId);
+          userName.textContent = "Không tìm thấy thông tin";
+          walletAddress.textContent = "Không tìm thấy địa chỉ ví";
+          avatar.src = "https://picsum.photos/80";
+          showToast("Tag ID không hợp lệ!", "error");
+        }
+
+        avatar.onload = () => {
+          avatar.classList.add("loaded");
+        };
+        avatar.onerror = () => {
+          console.warn(`Không thể tải hình ảnh Big: ${avatar.src}`);
+          if (avatar.src !== "https://picsum.photos/seed/fallback/80") {
+            avatar.src = "https://picsum.photos/seed/fallback/80";
+          } else {
+            showToast("Không thể tải hình ảnh đại diện!", "error");
+            avatar.classList.add("loaded");
+          }
+        };
+      }
+
+      // Auto-check balance from URL
+      function autoCheckBalanceFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const walletAddress = urlParams.get("wallet");
+        if (walletAddress) {
+          document.getElementById("walletAddress").textContent = walletAddress;
+          checkBalance();
+        }
+      }
+
+      // Show Withdraw Modal
+      function showWithdrawModal() {
+        console.log("Showing withdraw modal...");
+        const withdrawModal = document.getElementById("withdrawModal");
+        withdrawModal.classList.remove("hidden");
+        withdrawModal.classList.add("show");
+      }
+
+      // Hide Withdraw Modal
+      function hideWithdrawModal() {
+        console.log("Hiding withdraw modal...");
+        const withdrawModal = document.getElementById("withdrawModal");
+        withdrawModal.classList.remove("show");
+        withdrawModal.classList.add("hidden");
+      }
+
+      // Withdraw Pi (Mock)
+      function withdrawPi() {
+        console.log("Withdrawing Pi...");
+        const amount = parseFloat(document.getElementById("withdrawAmount").value);
+        const password = document.getElementById("withdrawPassword").value;
+
+        if (!amount || amount < 0.01) {
+          showToast("Số lượng Pi phải lớn hơn 0 và tối thiểu 1$!", "error");
+          return;
+        }
+
+        if (!password) {
+          showToast("Vui lòng nhập mật khẩu!", "error");
+          return;
+        }
+
+        setTimeout(() => {
+          showToast("Yêu cầu rút Pi đã được gửi!");
+          hideWithdrawModal();
+        }, 1500);
+      }
+
+      // Safety Check (Mock)
+      function checkSafety() {
+        console.log("Checking safety...");
+        const checkButton = document.getElementById("checkButton");
+        const loadingSpinner = document.getElementById("loadingSpinner");
+        const safetyResult = document.getElementById("safetyResult");
+        const safetyStatus = document.getElementById("safetyStatus");
+        const safetyScore = document.getElementById("safetyScore");
+        const safetyWarnings = document.getElementById("safetyWarnings");
+
+        checkButton.disabled = true;
+        loadingSpinner.style.display = "block";
+        safetyResult.classList.add("hidden");
+
+        setTimeout(() => {
+          loadingSpinner.style.display = "none";
+          safetyResult.classList.remove("hidden");
+
+          const isSafe = Math.random() > 0.5;
+          safetyResult.classList.remove("safe", "unsafe");
+          safetyResult.classList.add(isSafe ? "safe" : "unsafe");
+          safetyStatus.textContent = isSafe ? "An toàn" : "Không an toàn";
+          safetyScore.textContent = isSafe ? "85" : "30";
+          safetyWarnings.textContent = isSafe
+            ? "Không có cảnh báo"
+            : "Trang web có thể không đáng tin cậy";
+
+          checkButton.disabled = false;
+          showToast(
+            isSafe
+              ? "Kiểm tra thành công: An toàn!"
+              : "Kiểm tra thành công: Không an toàn!",
+            isSafe ? "success" : "error"
+          );
+        }, 1500);
+      }
+
+      // Clear Safety Check Form
+      function clearForm() {
+        console.log("Clearing safety form...");
+        document.getElementById("safetyUrl").value = "";
+        document.getElementById("safetyResult").classList.add("hidden");
+        showToast("Đã xóa biểu mẫu!");
+      }
+
+      // Dark Mode Toggle
+      document.getElementById("darkModeToggle").addEventListener("click", () => {
+        console.log("Toggling dark mode...");
+        document.body.classList.toggle("dark-mode");
+        const isDarkMode = document.body.classList.contains("dark-mode");
+        document.getElementById("darkModeToggle").textContent = isDarkMode
+          ? "Chuyển chế độ sáng"
+          : "Chuyển chế độ tối";
+        localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
+      });
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", async () => {
+        console.log("Page loaded, initializing...");
+        await initCheckIn();
+        loadUserData();
+        autoCheckBalanceFromURL();
+
+        const darkModePreference = localStorage.getItem("darkMode");
+        if (darkModePreference === "enabled") {
+          document.body.classList.add("dark-mode");
+          document.getElementById("darkModeToggle").textContent = "Chuyển chế độ sáng";
+        }
+
+        const tradingViewSection = document.getElementById("tradingview_chart");
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0].isIntersecting) {
+              new TradingView.widget({
+                width: "100%",
+                height: 250,
+                symbol: "OKX:PIUSDT",
+                interval: "D",
+                timezone: "Etc/UTC",
+                theme: "light",
+                style: "1",
+                locale: "en",
+                toolbar_bg: "#f1f3f6",
+                enable_publishing: false,
+                allow_symbol_change: true,
+                container_id: "tradingview_chart"
+              });
+              observer.disconnect();
+            }
+          },
+          { rootMargin: "100px" }
+        );
+        observer.observe(tradingViewSection);
+      });
+    </script>
+    <!-- Thêm Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
   </body>
 </html>
