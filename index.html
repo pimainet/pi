@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ví Pi - Đầy đủ</title>
-    <!-- Google Fonts -->
+    <!-- Google Fonts for Inter and Orbitron -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@700&display=swap"
       rel="stylesheet"
@@ -13,12 +13,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- TradingView Widget -->
     <script src="https://s3.tradingview.com/tv.js"></script>
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK (Version 8 for compatibility) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <!-- Local CSS -->
     <style>
-      html { scroll-behavior: smooth; overscroll-behavior: contain; }
+      /* Smooth Scroll */
+      html {
+        scroll-behavior: smooth;
+        overscroll-behavior: contain;
+      }
+
+      /* Sci-Fi Cyberpunk Background */
       body {
         background: linear-gradient(135deg, #0A0A0A, #1A1A2E, #2E2E4D);
         position: relative;
@@ -27,11 +33,14 @@
         color: #D0D0D0;
         font-family: 'Inter', sans-serif;
       }
+
       @keyframes gradientShift {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
       }
+
+      /* Pi Universe Hub Title Card */
       .title-card {
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(12px);
@@ -61,6 +70,7 @@
         opacity: 0;
         animation: fadeIn 1s ease-in 1s forwards;
       }
+      /* Particle Background Effect */
       .title-card::before {
         content: '';
         position: absolute;
@@ -94,42 +104,8 @@
       @keyframes fadeIn {
         to { opacity: 1; }
       }
-      .dark-mode {
-        background: linear-gradient(135deg, #0A0A0A, #1A1A2E, #2E2E4D);
-        color: #D0D0D0;
-      }
-      .dark-mode .bg-white {
-        background: rgba(26, 26, 46, 0.85);
-        backdrop-filter: blur(10px);
-      }
-      .dark-mode .text-gray-800 { color: #F5F5F5; }
-      .dark-mode .text-gray-500, .dark-mode .text-gray-600 {
-        color: #00D1FF;
-        text-shadow: 0 0 4px rgba(0, 209, 255, 0.3);
-      }
-      .dark-mode .bg-gray-200 { background: #3A3A5A; }
-      .dark-mode .hover:bg-gray-300 { background: #4A4A6A; }
-      .dark-mode .border-gray-300 { border-color: #3A3A5A; }
-      .dark-mode .btn:hover {
-        filter: brightness(1.2);
-        box-shadow: 0 0 15px rgba(0, 209, 255, 0.6);
-      }
-      .dark-mode #userName, .dark-mode h3, .dark-mode h4 {
-        color: #B300FF;
-        text-shadow: 0 0 10px rgba(179, 0, 255, 0.5);
-        font-weight: 800;
-      }
-      .dark-mode #walletAddress, .dark-mode #balanceDisplay, .dark-mode #safetyResult,
-      .dark-mode #safetyStatus, .dark-mode #safetyScore, .dark-mode #safetyWarnings,
-      .dark-mode #pidogeBalance, .dark-mode #ttBalance, .dark-mode .text-sm {
-        color: #00D1FF;
-        text-shadow: 0 0 4px rgba(0, 209, 255, 0.3);
-        font-weight: 500;
-      }
-      .dark-mode a {
-        color: #00D1FF;
-        text-shadow: 0 0 4px rgba(0, 209, 255, 0.3);
-      }
+
+      /* Glassmorphism Effect for Cards */
       .card {
         background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(12px);
@@ -153,6 +129,8 @@
         font-weight: 800;
         font-size: 1.25rem;
       }
+
+      /* Button Ripple Effect with Neon Glow */
       .btn {
         position: relative;
         overflow: hidden;
@@ -182,6 +160,8 @@
         transform: translate(-50%, -50%) scale(1);
         opacity: 0;
       }
+
+      /* Spinner Animation */
       .spinner {
         border: 4px solid #A0A0C0;
         border-top: 4px solid #00D1FF;
@@ -195,6 +175,8 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
+
+      /* Safety Status Colors */
       .safe {
         color: #00FF99;
         text-shadow: 0 0 8px rgba(0, 255, 153, 0.4);
@@ -205,26 +187,12 @@
         text-shadow: 0 0 8px rgba(255, 61, 61, 0.4);
         font-weight: 600;
       }
-      .modal.show { opacity: 1; transform: scale(1); }
-      .modal .modal-content {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(0, 209, 255, 0.4);
-        transform: scale(0.8);
-        transition: transform 0.3s ease, opacity 0.3s ease;
+
+      /* Toast Animation */
+      #toast.show {
+        transform: translateX(0);
+        opacity: 1;
       }
-      .modal.show .modal-content { transform: scale(1); opacity: 1; }
-      .modal p, .modal span {
-        color: #F5F5F5;
-        text-shadow: 0 0 4px rgba(0, 209, 255, 0.3);
-        font-weight: 500;
-      }
-      .modal h3 {
-        color: #B300FF;
-        text-shadow: 0 0 10px rgba(179, 0, 255, 0.5);
-        font-weight: 800;
-      }
-      #toast.show { transform: translateX(0); opacity: 1; }
       #toast {
         transition: transform 0.3s ease, opacity 0.3s ease;
         transform: translateX(100%);
@@ -233,10 +201,15 @@
         color: #0A0A0A;
         font-weight: 600;
       }
-      input:focus, select:focus {
+
+      /* Input Focus Animation */
+      input:focus,
+      select:focus {
         box-shadow: 0 0 10px rgba(0, 209, 255, 0.5);
         border-color: #00D1FF;
       }
+
+      /* Avatar Styles */
       .avatar {
         width: 64px;
         height: 64px;
@@ -247,13 +220,16 @@
         opacity: 1;
         will-change: transform, box-shadow, border;
       }
-      .avatar.loaded { opacity: 1; }
+      .avatar.loaded {
+        opacity: 1;
+      }
       .avatar:hover {
         transform: scale(1.1) rotate(3deg);
         box-shadow: 0 8px 16px rgba(179, 0, 255, 0.4);
         border: 2px solid #00D1FF;
       }
-      .dark-mode .avatar:hover { border: 2px solid #B300FF; }
+
+      /* Planet Image Styles */
       #planetImage {
         width: 64px;
         height: 64px;
@@ -268,13 +244,6 @@
   </head>
   <body class="min-h-screen font-sans text-gray-800 transition-colors duration-500">
     <div class="container mx-auto p-4 max-w-md">
-      <!-- Dark Mode Toggle -->
-      <div class="flex justify-end mb-4">
-        <button id="darkModeToggle" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors btn">
-          Chuyển chế độ tối
-        </button>
-      </div>
-
       <!-- Pi Universe Hub Title Card -->
       <div class="title-card shadow-xl rounded-2xl mb-6">
         <h1>Pi Universe Hub</h1>
@@ -282,7 +251,7 @@
       </div>
 
       <!-- Toast Notification -->
-      <div id="toast" class="fixed top-4 right-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg">
+      <div id="toast" class="fixed top-4 right-4 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg hidden">
         <span id="toastMessage"></span>
       </div>
 
@@ -399,44 +368,6 @@
             allowfullscreen
             loading="lazy"
           ></iframe>
-        </div>
-      </div>
-
-      <!-- Withdraw Modal -->
-      <div id="withdrawModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden modal">
-        <div class="modal-content rounded-lg p-6 w-11/12 max-w-sm">
-          <h3 class="text-lg font-bold mb-4">Rút Pi</h3>
-          <p class="text-sm text-gray-600 mb-4">
-            Số dư hiện tại: <span id="withdrawBalance">0 Pi</span>
-          </p>
-          <input
-            id="withdrawAmount"
-            type="number"
-            step="0.01"
-            min="0"
-            class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
-            placeholder="Số lượng Pi (tối thiểu 1$)"
-          />
-          <input
-            id="withdrawPassword"
-            type="password"
-            class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
-            placeholder="Nhập mật khẩu"
-          />
-          <div class="flex justify-end space-x-2">
-            <button
-              onclick="hideWithdrawModal()"
-              class="bg-gray-300 text-gray-800 py-2 px-4 rounded btn hover:bg-gray-400"
-            >
-              Hủy
-            </button>
-            <button
-              onclick="withdrawPi()"
-              class="bg-red-500 text-white py-2 px-4 rounded btn hover:bg-red-600"
-            >
-              Rút
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -576,6 +507,42 @@
         }
       ];
 
+      // Load user data based on tag_id
+      function loadUserData() {
+        console.log("loadUserData called");
+        const urlParams = new URLSearchParams(window.location.search);
+        const tagId = urlParams.get("tag_id");
+        const userName = document.getElementById("userName");
+        const walletAddress = document.getElementById("walletAddress");
+        const avatar = document.getElementById("avatar");
+
+        console.log("Tag ID:", tagId);
+        if (tagId && memberData[tagId]) {
+          const member = memberData[tagId];
+          console.log("Member data:", member);
+          userName.textContent = member.name;
+          walletAddress.textContent = member.wallet_address;
+          avatar.src = member.avatar;
+        } else {
+          console.warn("Invalid or missing tag_id:", tagId);
+          userName.textContent = "Không tìm thấy thông tin";
+          walletAddress.textContent = "Không tìm thấy địa chỉ ví";
+          avatar.src = "https://picsum.photos/seed/avatar/80";
+          showToast("Tag ID không hợp lệ!", "error");
+        }
+
+        avatar.onload = () => {
+          console.log("Avatar loaded:", avatar.src);
+          avatar.classList.add("loaded");
+        };
+        avatar.onerror = () => {
+          console.error("Avatar failed to load:", avatar.src);
+          avatar.src = "https://picsum.photos/seed/avatar/80";
+          avatar.classList.add("loaded");
+          showToast("Không thể tải hình ảnh đại diện!", "error");
+        };
+      }
+
       // Logic điểm danh
       function checkIn() {
         console.log("checkIn called");
@@ -595,7 +562,7 @@
           return;
         }
 
-        const userRef = database.ref(`users/${tagId}`); // Lưu trực tiếp vào /users/002
+        const userRef = database.ref(`users/${tagId}`);
         userRef.once(
           "value",
           (snapshot) => {
@@ -663,7 +630,7 @@
                 } ngày để lên cấp ${userLevel + 1}`;
 
                 // Cập nhật hành tinh
-                const currentPlanet = planets[userLevel];
+                const currentPlanet = planets[userLevel] || planets[0];
                 document.getElementById("planetName").textContent = currentPlanet.name;
                 document.getElementById("planetDescription").textContent = currentPlanet.description;
                 document.getElementById("planetImage").src = currentPlanet.image;
@@ -701,7 +668,7 @@
         const planetImage = document.getElementById("planetImage");
 
         planetImage.onerror = () => {
-          console.warn("Planet image failed to load, using fallback");
+          console.warn("Planet image failed to load:", planetImage.src);
           planetImage.src = "https://i.imgur.com/ccV8NTe.jpeg";
         };
 
@@ -725,7 +692,7 @@
           return;
         }
 
-        const userRef = database.ref(`users/${tagId}`); // Tải từ /users/002
+        const userRef = database.ref(`users/${tagId}`);
         userRef.once(
           "value",
           (snapshot) => {
@@ -735,7 +702,7 @@
             const ttBalance = data.ttBalance || 0;
             const checkInCount = data.checkInCount || 0;
             const levelMilestones = [0, 15, 35, 60, 100, 160, 220, 300];
-            let userLevel = 0;
+            let userLevel = data.userLevel || 0;
             for (let i = 0; i < levelMilestones.length; i++) {
               if (checkInCount >= levelMilestones[i]) {
                 userLevel = i;
@@ -751,10 +718,10 @@
               levelMilestones[userLevel + 1] || 300
             } ngày để lên cấp ${userLevel + 1}`;
 
-            const currentPlanet = planets[userLevel];
+            const currentPlanet = planets[userLevel] || planets[0];
             document.getElementById("planetName").textContent = currentPlanet.name;
             document.getElementById("planetDescription").textContent = currentPlanet.description;
-            document.getElementById origini l planetImage.src = currentPlanet.image;
+            document.getElementById("planetImage").src = currentPlanet.image;
 
             updateCheckInHistory(data.checkInHistory || []);
           },
@@ -779,42 +746,6 @@
           toast.classList.remove("show");
           toast.classList.add("hidden");
         }, 3000);
-      }
-
-      // Load user data based on tag_id
-      function loadUserData() {
-        console.log("loadUserData called");
-        const urlParams = new URLSearchParams(window.location.search);
-        const tagId = urlParams.get("tag_id");
-        const userName = document.getElementById("userName");
-        const walletAddress = document.getElementById("walletAddress");
-        const avatar = document.getElementById("avatar");
-
-        console.log("Tag ID:", tagId);
-        if (tagId && memberData[tagId]) {
-          const member = memberData[tagId];
-          console.log("Member data:", member);
-          userName.textContent = member.name;
-          walletAddress.textContent = member.wallet_address;
-          avatar.src = member.avatar;
-        } else {
-          console.log("Invalid or missing tag_id");
-          userName.textContent = "Không tìm thấy thông tin";
-          walletAddress.textContent = "Không tìm thấy địa chỉ ví";
-          avatar.src = "https://picsum.photos/80";
-          showToast("Tag ID không hợp lệ!", "error");
-        }
-
-        avatar.onload = () => {
-          console.log("Avatar loaded:", avatar.src);
-          avatar.classList.add("loaded");
-        };
-        avatar.onerror = () => {
-          console.error("Avatar failed to load:", avatar.src);
-          avatar.src = "https://picsum.photos/seed/avatar/80";
-          avatar.classList.add("loaded");
-          showToast("Không thể tải hình ảnh đại diện!", "error");
-        };
       }
 
       // Auto-check balance from URL
@@ -850,12 +781,6 @@
           initCheckIn();
           autoCheckBalanceFromURL();
 
-          const darkModePreference = localStorage.getItem("darkMode");
-          if (darkModePreference === "enabled") {
-            document.body.classList.add("dark-mode");
-            document.getElementById("darkModeToggle").textContent = "Chuyển chế độ sáng";
-          }
-
           // Lazy load TradingView Widget
           const tradingViewSection = document.getElementById("tradingview_chart");
           const observer = new IntersectionObserver(
@@ -865,13 +790,13 @@
                 new TradingView.widget({
                   width: "100%",
                   height: 250,
-                  symbol: "BINANCE:PIUSDT",
+                  symbol: "OKX:PIUSDT",
                   interval: "D",
                   timezone: "Etc/UTC",
-                  theme: "dark",
+                  theme: "light",
                   style: "1",
                   locale: "en",
-                  toolbar_bg: "#1A1A2E",
+                  toolbar_bg: "#f1f3f6",
                   enable_publishing: false,
                   allow_symbol_change: true,
                   container_id: "tradingview_chart"
@@ -904,48 +829,6 @@
             showToast("Không thể sao chép địa chỉ ví!", "error");
           }
         );
-      }
-
-      // Show Withdraw Modal
-      function showWithdrawModal() {
-        console.log("showWithdrawModal called");
-        const withdrawModal = document.getElementById("withdrawModal");
-        withdrawModal.classList.remove("hidden");
-        withdrawModal.classList.add("show");
-      }
-
-      // Hide Withdraw Modal
-      function hideWithdrawModal() {
-        console.log("hideWithdrawModal called");
-        const withdrawModal = document.getElementById("withdrawModal");
-        withdrawModal.classList.remove("show");
-        withdrawModal.classList.add("hidden");
-      }
-
-      // Withdraw Pi (Mock)
-      function withdrawPi() {
-        console.log("withdrawPi called");
-        const amount = parseFloat(document.getElementById("withdrawAmount").value);
-        const password = document.getElementById("withdrawPassword").value;
-        const withdrawStatus = document.getElementById("withdrawStatus");
-
-        if (!amount || amount < 0.01) {
-          showToast("Số lượng Pi phải lớn hơn 0 và tối thiểu 1$!", "error");
-          return;
-        }
-
-        if (!password) {
-          showToast("Vui lòng nhập mật khẩu!", "error");
-          return;
-        }
-
-        withdrawStatus.textContent = "Đang xử lý...";
-
-        setTimeout(() => {
-          withdrawStatus.textContent = "Đã gửi yêu cầu rút Pi";
-          showToast("Yêu cầu rút Pi đã được gửi!");
-          hideWithdrawModal();
-        }, 1500);
       }
 
       // Safety Check (Mock)
@@ -985,15 +868,6 @@
         document.getElementById("safetyResult").classList.add("hidden");
         showToast("Đã xóa biểu mẫu!");
       }
-
-      // Dark Mode Toggle
-      document.getElementById("darkModeToggle").addEventListener("click", () => {
-        console.log("Dark mode toggle clicked");
-        document.body.classList.toggle("dark-mode");
-        const isDarkMode = document.body.classList.contains("dark-mode");
-        document.getElementById("darkModeToggle").textContent = isDarkMode ? "Chuyển chế độ sáng" : "Chuyển chế độ tối";
-        localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
-      });
     </script>
   </body>
 </html>
